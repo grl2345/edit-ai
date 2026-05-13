@@ -1,0 +1,223 @@
+.prose {
+  font-family: var(--prose-font);
+  font-size: 16.5px;
+  line-height: 1.85;
+  color: var(--text);
+  word-wrap: break-word;
+}
+.prose > *:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  border-top: none !important;
+}
+.prose p,
+.prose li,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  overflow-wrap: break-word;
+}
+.prose h1 {
+  font-family: var(--prose-heading-font);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  line-height: 1.3;
+  margin-top: 48px;
+  margin-bottom: 20px;
+}
+.prose h2 {
+  font-family: var(--prose-heading-font);
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 56px;
+  margin-bottom: 20px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  letter-spacing: -0.3px;
+}
+.prose h3 {
+  font-family: var(--prose-heading-font);
+  font-size: 19px;
+  font-weight: 700;
+  margin-top: 40px;
+  margin-bottom: 14px;
+}
+.prose h4 {
+  font-family: var(--prose-heading-font);
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 28px;
+  margin-bottom: 10px;
+}
+.prose p {
+  margin-bottom: 20px;
+}
+.prose strong {
+  font-weight: 600;
+  color: var(--text);
+}
+.prose em {
+  font-style: italic;
+}
+.prose ul,
+.prose ol {
+  margin-bottom: 20px;
+  padding-left: 24px;
+}
+.prose li {
+  margin-bottom: 8px;
+}
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 16px 24px;
+  margin: 28px 0;
+  background: var(--accent-glow);
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: var(--gray-600);
+}
+.prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 15px;
+}
+.prose th {
+  text-align: left;
+  padding: 12px 16px;
+  background: var(--gray-100);
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+  font-size: 14px;
+}
+.prose td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.prose tr:last-child td {
+  border-bottom: none;
+}
+.prose img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin: 28px 0;
+}
+.prose hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 48px 0;
+}
+.prose code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--gray-100);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--accent);
+}
+.prose pre {
+  background: var(--terminal-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 28px 0;
+  padding: 20px;
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--terminal-text);
+  overflow-x: auto;
+}
+.prose pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+/* highlight.js token colors (github-dark adapted to terminal palette) */
+.prose .hljs-keyword,
+.prose .hljs-selector-tag,
+.prose .hljs-built_in {
+  color: #ff7b72;
+}
+.prose .hljs-string,
+.prose .hljs-attr {
+  color: #a5d6ff;
+}
+.prose .hljs-number,
+.prose .hljs-literal {
+  color: #79c0ff;
+}
+.prose .hljs-comment,
+.prose .hljs-quote {
+  color: #8b949e;
+  font-style: italic;
+}
+.prose .hljs-title,
+.prose .hljs-function,
+.prose .hljs-name {
+  color: #d2a8ff;
+}
+.prose .hljs-variable,
+.prose .hljs-params {
+  color: #ffa657;
+}
+.prose .hljs-tag,
+.prose .hljs-meta {
+  color: #7ee787;
+}
+.prose .hljs-doctag,
+.prose .hljs-section {
+  color: #79c0ff;
+}
+
+@media (max-width: 900px) {
+  .prose {
+    font-size: 15px;
+    line-height: 1.78;
+  }
+  .prose p {
+    margin-bottom: 16px;
+  }
+  .prose h1 {
+    font-size: 22px;
+  }
+  .prose h2 {
+    font-size: 20px;
+    margin-top: 36px;
+    margin-bottom: 14px;
+    padding-top: 24px;
+  }
+  .prose h3 {
+    font-size: 17px;
+    margin-top: 28px;
+    margin-bottom: 10px;
+  }
+  .prose ul,
+  .prose ol {
+    padding-left: 20px;
+    margin-bottom: 16px;
+  }
+  .prose pre {
+    padding: 16px;
+    font-size: 12.5px;
+  }
+  .prose table {
+    font-size: 13px;
+    display: block;
+    overflow-x: auto;
+  }
+}

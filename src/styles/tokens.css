@@ -1,0 +1,153 @@
+/* ============================================================
+   tokens.css —— 配色 (palette) + 字体 (font) + 主题 (theme)
+   切换方式：在 <html> 上设置
+     data-theme   = light | dark
+     data-palette = chushaa | qingmo | mohei | molan | liyuan
+     data-font    = wenkai | songti | kaiti | heiti
+   ============================================================ */
+
+/* ---------- 基础：朱砂 · 浅色（默认） ---------- */
+:root {
+  --ink: #1a1a1a;
+  --paper: #f6f3ed;
+  --accent: #c44b2b;
+  --accent-light: #e8694d;
+  --accent-glow: rgba(196, 75, 43, 0.12);
+
+  --gray-100: #f0ede7;
+  --gray-200: #e2ded6;
+  --gray-300: #c9c4ba;
+  --gray-400: #9e9890;
+  --gray-500: #6b665e;
+  --gray-600: #4a4640;
+
+  --terminal-bg: #0d1117;
+  --terminal-text: #c9d1d9;
+
+  --bg: var(--paper);
+  --surface: #ffffff;
+  --surface-2: #fbfaf7;
+  --border: var(--gray-200);
+  --text: var(--ink);
+  --text-muted: var(--gray-500);
+
+  --serif: 'LXGW WenKai TC', 'LXGW WenKai', 'Songti SC', 'STSongti', Georgia, serif;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'WenQuanYi Micro Hei', sans-serif;
+  --mono: 'JetBrains Mono', 'Menlo', monospace;
+  --prose-font: var(--serif);
+  --prose-heading-font: var(--serif);
+}
+
+/* ---------- 基础：朱砂 · 深色 ---------- */
+:root[data-theme='dark'] {
+  --ink: #ececec;
+  --paper: #14181f;
+  --accent: #e8694d;
+  --accent-light: #ff8060;
+  --accent-glow: rgba(232, 105, 77, 0.18);
+
+  --gray-100: #1c2129;
+  --gray-200: #242a33;
+  --gray-300: #3a414c;
+  --gray-400: #6a7280;
+  --gray-500: #9aa3b0;
+  --gray-600: #c2c8d2;
+
+  --terminal-bg: #0a0d12;
+  --terminal-text: #d1d6dd;
+
+  --surface: #1a1f27;
+  --surface-2: #161b22;
+}
+
+/* ---------- Palette · 浅色 ---------- */
+:root[data-palette='qingmo'] {
+  --accent: #2e7d8a;
+  --accent-light: #43a3b0;
+  --accent-glow: rgba(46, 125, 138, 0.12);
+  --paper: #eef3f1;
+}
+:root[data-palette='mohei'] {
+  --accent: #262626;
+  --accent-light: #404040;
+  --accent-glow: rgba(38, 38, 38, 0.1);
+  --paper: #f3f1ec;
+}
+:root[data-palette='molan'] {
+  --accent: #1d4ed8;
+  --accent-light: #3b6ff5;
+  --accent-glow: rgba(29, 78, 216, 0.1);
+  --paper: #f4f6fb;
+}
+:root[data-palette='liyuan'] {
+  --accent: #7c2d12;
+  --accent-light: #a14123;
+  --accent-glow: rgba(124, 45, 18, 0.12);
+  --paper: #fbf5e9;
+}
+
+/* ---------- Palette · 深色 ---------- */
+:root[data-palette='qingmo'][data-theme='dark'] {
+  --accent: #5cb6c2;
+  --accent-light: #7fd0db;
+  --accent-glow: rgba(92, 182, 194, 0.18);
+  --paper: #101618;
+}
+:root[data-palette='mohei'][data-theme='dark'] {
+  --accent: #dadada;
+  --accent-light: #ffffff;
+  --accent-glow: rgba(218, 218, 218, 0.14);
+  --paper: #0e0e10;
+}
+:root[data-palette='molan'][data-theme='dark'] {
+  --accent: #7aa8ff;
+  --accent-light: #9dbeff;
+  --accent-glow: rgba(122, 168, 255, 0.16);
+  --paper: #0e1320;
+}
+:root[data-palette='liyuan'][data-theme='dark'] {
+  --accent: #d97757;
+  --accent-light: #ee9279;
+  --accent-glow: rgba(217, 119, 87, 0.18);
+  --paper: #1a120c;
+}
+
+/* ---------- 字体 ---------- */
+:root[data-font='songti'] {
+  --serif: 'Source Han Serif SC', 'Source Han Serif CN', 'Noto Serif SC', 'Songti SC',
+    'STSongti', Georgia, serif;
+  --prose-font: var(--serif);
+  --prose-heading-font: var(--serif);
+}
+:root[data-font='kaiti'] {
+  --serif: 'STKaiti', 'KaiTi', 'BiauKai', 'SimKai', serif;
+  --prose-font: var(--serif);
+  --prose-heading-font: var(--serif);
+}
+:root[data-font='heiti'] {
+  --serif: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei',
+    sans-serif;
+  --prose-font: var(--serif);
+  --prose-heading-font: var(--serif);
+}
+
+/* ---------- reset ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
