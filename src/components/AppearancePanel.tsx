@@ -1,24 +1,54 @@
-import { FONTS, FontId, PALETTES, PaletteId, ThemeMode } from '../utils/themes';
+import {
+  FONTS,
+  FontId,
+  PALETTES,
+  PaletteId,
+  TEMPLATES,
+  TemplateId,
+  ThemeMode,
+} from '../utils/themes';
 
 export interface AppearancePanelProps {
   palette: PaletteId;
   font: FontId;
   theme: ThemeMode;
+  template: TemplateId;
   onPalette(id: PaletteId): void;
   onFont(id: FontId): void;
   onTheme(t: ThemeMode): void;
+  onTemplate(id: TemplateId): void;
 }
 
 export default function AppearancePanel({
   palette,
   font,
   theme,
+  template,
   onPalette,
   onFont,
   onTheme,
+  onTemplate,
 }: AppearancePanelProps) {
   return (
     <div className="appearance">
+      <div className="appearance-row">
+        <span className="appearance-label">版式</span>
+        <div className="template-grid">
+          {TEMPLATES.map((t) => (
+            <button
+              key={t.id}
+              className={`template-chip ${template === t.id ? 'active' : ''}`}
+              onClick={() => onTemplate(t.id)}
+              title={`${t.name} · ${t.desc}`}
+            >
+              <TemplateThumb id={t.id} />
+              <span className="template-chip-name">{t.name}</span>
+              <span className="template-chip-desc">{t.desc}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="appearance-row">
         <span className="appearance-label">配色</span>
         <div className="palette-grid">
@@ -76,6 +106,52 @@ export default function AppearancePanel({
       </div>
     </div>
   );
+}
+
+function TemplateThumb({ id }: { id: TemplateId }) {
+  if (id === 'suijian') {
+    return (
+      <svg className="template-thumb" viewBox="0 0 80 48" aria-hidden>
+        <line x1="14" y1="13" x2="46" y2="13" stroke="currentColor" strokeWidth="2" />
+        <line x1="14" y1="22" x2="66" y2="22" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+        <line x1="14" y1="28" x2="60" y2="28" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+        <line x1="14" y1="34" x2="64" y2="34" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+      </svg>
+    );
+  }
+  if (id === 'yuanbao') {
+    return (
+      <svg className="template-thumb" viewBox="0 0 80 48" aria-hidden>
+        <line x1="10" y1="12" x2="70" y2="12" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+        <line x1="28" y1="17" x2="52" y2="17" stroke="currentColor" strokeWidth="2.4" />
+        <line x1="10" y1="22" x2="70" y2="22" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+        <line x1="16" y1="30" x2="64" y2="30" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+        <line x1="16" y1="36" x2="58" y2="36" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+      </svg>
+    );
+  }
+  if (id === 'kapian') {
+    return (
+      <svg className="template-thumb" viewBox="0 0 80 48" aria-hidden>
+        <rect x="10" y="10" width="3" height="10" fill="currentColor" rx="1" />
+        <line x1="18" y1="13" x2="44" y2="13" stroke="currentColor" strokeWidth="2.2" />
+        <rect x="10" y="26" width="60" height="14" rx="4" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+        <line x1="16" y1="32" x2="50" y2="32" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+      </svg>
+    );
+  }
+  if (id === 'moyin') {
+    return (
+      <svg className="template-thumb" viewBox="0 0 80 48" aria-hidden>
+        <text x="40" y="14" textAnchor="middle" fontSize="6" fill="currentColor" opacity="0.7">❉ · ❉</text>
+        <rect x="12" y="20" width="6" height="6" fill="currentColor" rx="0.5" />
+        <line x1="22" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="2" />
+        <line x1="12" y1="32" x2="68" y2="32" stroke="currentColor" strokeWidth="1" opacity="0.4" strokeDasharray="2 2" />
+        <line x1="12" y1="38" x2="60" y2="38" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+      </svg>
+    );
+  }
+  return null;
 }
 
 function SunIcon() {

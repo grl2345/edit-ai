@@ -4,12 +4,24 @@ import hljs from 'highlight.js/lib/common';
 import {
   DEFAULT_FONT,
   DEFAULT_PALETTE,
+  DEFAULT_TEMPLATE,
   FontId,
   PaletteId,
+  TemplateId,
   ThemeMode,
   getFontStack,
   getPaletteVars,
 } from './themes';
+import yuanbaoCss from '../styles/templates/yuanbao.css?raw';
+import kapianCss from '../styles/templates/kapian.css?raw';
+import moyinCss from '../styles/templates/moyin.css?raw';
+
+const TEMPLATE_CSS: Record<TemplateId, string> = {
+  suijian: '',
+  yuanbao: yuanbaoCss,
+  kapian: kapianCss,
+  moyin: moyinCss,
+};
 
 const marked = new Marked(
   markedHighlight({
@@ -42,6 +54,7 @@ export interface ExportAppearance {
   palette: PaletteId;
   font: FontId;
   theme: ThemeMode;
+  template: TemplateId;
 }
 
 export function buildStandaloneHTML(
@@ -51,12 +64,14 @@ export function buildStandaloneHTML(
     palette: DEFAULT_PALETTE,
     font: DEFAULT_FONT,
     theme: 'light',
+    template: DEFAULT_TEMPLATE,
   }
 ): string {
   const body = renderMarkdown(markdown);
   const v = getPaletteVars(appearance.palette, appearance.theme);
   const prose = getFontStack(appearance.font);
   const isDark = appearance.theme === 'dark';
+  const templateCss = TEMPLATE_CSS[appearance.template] ?? '';
 
   return `<!doctype html>
 <html lang="zh-CN">
@@ -116,10 +131,11 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);-
 .hljs-variable,.hljs-params{color:#ffa657}
 .hljs-tag,.hljs-meta{color:#7ee787}
 ${isDark ? '@media (prefers-color-scheme: light){body{color-scheme:dark}}' : ''}
+${templateCss}
 </style>
 </head>
 <body>
-<article class="prose">
+<article class="prose" data-template="${appearance.template}">
 ${body}
 </article>
 </body>
