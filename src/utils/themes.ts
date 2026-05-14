@@ -1,6 +1,7 @@
 export type PaletteId = 'chushaa' | 'qingmo' | 'mohei' | 'molan' | 'liyuan';
 export type FontId = 'wenkai' | 'songti' | 'kaiti' | 'heiti';
 export type ThemeMode = 'light' | 'dark';
+export type TemplateId = 'suijian' | 'yuanbao' | 'kapian' | 'moyin';
 
 export interface PaletteMeta {
   id: PaletteId;
@@ -11,6 +12,12 @@ export interface PaletteMeta {
 
 export interface FontMeta {
   id: FontId;
+  name: string;
+  desc: string;
+}
+
+export interface TemplateMeta {
+  id: TemplateId;
   name: string;
   desc: string;
 }
@@ -30,8 +37,16 @@ export const FONTS: FontMeta[] = [
   { id: 'heiti', name: '苹方·黑体', desc: '简洁 · 现代' },
 ];
 
+export const TEMPLATES: TemplateMeta[] = [
+  { id: 'suijian', name: '素简', desc: '克制 · 默认' },
+  { id: 'yuanbao', name: '元宝', desc: '杂志 · 双线' },
+  { id: 'kapian', name: '卡片', desc: '软文 · 浅卡' },
+  { id: 'moyin', name: '墨印', desc: '中式 · 朱砂' },
+];
+
 export const DEFAULT_PALETTE: PaletteId = 'chushaa';
 export const DEFAULT_FONT: FontId = 'wenkai';
+export const DEFAULT_TEMPLATE: TemplateId = 'suijian';
 
 export interface PaletteVars {
   accent: string;
@@ -189,4 +204,7 @@ export function isPalette(v: unknown): v is PaletteId {
 }
 export function isFont(v: unknown): v is FontId {
   return typeof v === 'string' && FONTS.some((f) => f.id === v);
+}
+export function isTemplate(v: unknown): v is TemplateId {
+  return typeof v === 'string' && TEMPLATES.some((t) => t.id === v);
 }

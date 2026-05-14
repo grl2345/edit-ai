@@ -16,11 +16,14 @@ import {
 import {
   DEFAULT_FONT,
   DEFAULT_PALETTE,
+  DEFAULT_TEMPLATE,
   FontId,
   PaletteId,
+  TemplateId,
   ThemeMode,
   isFont,
   isPalette,
+  isTemplate,
 } from './utils/themes';
 
 type Tab = 'edit' | 'preview';
@@ -28,6 +31,7 @@ type Tab = 'edit' | 'preview';
 const THEME_KEY = 'markdown-ai:theme';
 const PALETTE_KEY = 'markdown-ai:palette';
 const FONT_KEY = 'markdown-ai:font';
+const TEMPLATE_KEY = 'markdown-ai:template';
 const SIDEBAR_KEY = 'markdown-ai:sidebar-collapsed';
 
 export default function App() {
@@ -47,6 +51,11 @@ export default function App() {
   const [font, setFont] = useState<FontId>(() => {
     const v = localStorage.getItem(FONT_KEY);
     return isFont(v) ? v : DEFAULT_FONT;
+  });
+
+  const [template, setTemplate] = useState<TemplateId>(() => {
+    const v = localStorage.getItem(TEMPLATE_KEY);
+    return isTemplate(v) ? v : DEFAULT_TEMPLATE;
   });
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(
@@ -86,10 +95,12 @@ export default function App() {
     r.setAttribute('data-theme', theme);
     r.setAttribute('data-palette', palette);
     r.setAttribute('data-font', font);
+    r.setAttribute('data-template', template);
     localStorage.setItem(THEME_KEY, theme);
     localStorage.setItem(PALETTE_KEY, palette);
     localStorage.setItem(FONT_KEY, font);
-  }, [theme, palette, font]);
+    localStorage.setItem(TEMPLATE_KEY, template);
+  }, [theme, palette, font, template]);
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_KEY, sidebarCollapsed ? '1' : '0');
@@ -248,7 +259,7 @@ export default function App() {
     setCopyMenuOpen(false);
     const node = previewRef.current;
     if (!node) return;
-    const styled = toWeChatHTML(node.innerHTML, palette, font, theme);
+    const styled = toWeChatHTML(node.innerHTML, palette, font, theme, template);
     const ok = await writeRich(styled, node.innerText);
     showToast(ok ? '已复制公众号样式，到编辑器粘贴即可' : '已复制纯文本（浏览器不支持富文本写入）');
   }
@@ -256,7 +267,7 @@ export default function App() {
   async function handleCopyTwitter() {
     setCopyMenuOpen(false);
     if (!active) return;
-    const { text, chars, tweets } = toTwitterText(active.content);
+    const { text, chars, tweets } = toTwitterText(active.content ?? '');
     try {
       await navigator.clipboard.writeText(text);
       const hint = tweets > 1 ? `（${chars} 字，约 ${tweets} 条）` : `（${chars} 字）`;
@@ -268,9 +279,10 @@ export default function App() {
 
   function handleExportHTML() {
     if (!active) return;
-    const title = active.title || extractTitle(active.content, 'markdown');
+    const content = active.content ?? '';
+    const title = active.title || extractTitle(content, 'markdown');
     const blob = new Blob(
-      [buildStandaloneHTML(active.content, title, { palette, font, theme })],
+      [buildStandaloneHTML(content, title, { palette, font, theme, template })],
       { type: 'text/html;charset=utf-8' }
     );
     const url = URL.createObjectURL(blob);
@@ -288,7 +300,7 @@ export default function App() {
     setCopyMenuOpen(false);
     if (!active) return;
     try {
-      await navigator.clipboard.writeText(active.content);
+      await navigator.clipboard.writeText(active.content ?? '');
       showToast('Markdown 源码已复制');
     } catch {
       showToast('复制失败');
@@ -369,9 +381,11 @@ export default function App() {
             palette,
             font,
             theme,
+            template,
             onPalette: setPalette,
             onFont: setFont,
             onTheme: setTheme,
+            onTemplate: setTemplate,
           }}
           onSelect={handleSelect}
           onCreateDoc={handleCreateDoc}
@@ -419,6 +433,7 @@ export default function App() {
               <div className="preview-scroll">
                 <article
                   className="preview-inner prose"
+                  data-template={template}
                   ref={previewRef}
                   dangerouslySetInnerHTML={{ __html: html }}
                 />

@@ -1,0 +1,154 @@
+/* ============================================================
+   元宝 · yuanbao —— 杂志感版式
+   关键装饰：
+   - h1 居中，下方 accent 短线
+   - h2 上下双 hairline，居中
+   - h3 左侧 accent 短竖条
+   - blockquote 居中斜体，前置大引号
+   - hr 三点 ··· 居中
+   ============================================================ */
+
+.prose[data-template='yuanbao'] {
+  font-size: 16.5px;
+  line-height: 1.95;
+}
+
+.prose[data-template='yuanbao'] h1 {
+  font-size: 32px;
+  text-align: center;
+  margin: 8px 0 12px;
+  padding: 16px 0 0;
+  letter-spacing: -0.3px;
+  border: none;
+}
+.prose[data-template='yuanbao'] h1::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: var(--accent);
+  margin: 18px auto 0;
+}
+
+.prose[data-template='yuanbao'] h2 {
+  font-size: 21px;
+  text-align: center;
+  margin: 56px 0 28px;
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  letter-spacing: -0.1px;
+  font-weight: 700;
+}
+
+.prose[data-template='yuanbao'] h3 {
+  font-size: 18px;
+  margin: 36px 0 14px;
+  padding-left: 12px;
+  border-left: 3px solid var(--accent);
+  line-height: 1.4;
+}
+
+.prose[data-template='yuanbao'] h4 {
+  font-size: 16px;
+  margin: 28px 0 10px;
+  color: var(--gray-600);
+}
+
+.prose[data-template='yuanbao'] blockquote {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  text-align: center;
+  font-size: 17.5px;
+  color: var(--ink);
+  font-style: italic;
+  padding: 8px 32px 16px;
+  margin: 36px 0;
+  position: relative;
+}
+.prose[data-template='yuanbao'] blockquote::before {
+  content: '\201C';
+  display: block;
+  font-size: 56px;
+  color: var(--accent);
+  line-height: 0.6;
+  font-family: Georgia, 'Times New Roman', serif;
+  margin-bottom: 8px;
+  font-style: normal;
+}
+.prose[data-template='yuanbao'] blockquote p {
+  margin-bottom: 8px;
+}
+
+.prose[data-template='yuanbao'] hr {
+  border: none;
+  height: auto;
+  background: transparent;
+  text-align: center;
+  margin: 56px 0;
+  position: relative;
+  line-height: 1;
+}
+.prose[data-template='yuanbao'] hr::before {
+  content: '\B7   \B7   \B7';
+  color: var(--text-muted);
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+.prose[data-template='yuanbao'] ul,
+.prose[data-template='yuanbao'] ol {
+  padding-left: 0;
+  list-style: none;
+}
+.prose[data-template='yuanbao'] ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.prose[data-template='yuanbao'] ul > li::before {
+  content: '\25B8';
+  position: absolute;
+  left: 4px;
+  top: 0;
+  color: var(--accent);
+  font-size: 0.9em;
+}
+.prose[data-template='yuanbao'] ol {
+  counter-reset: yuanbao-ol;
+}
+.prose[data-template='yuanbao'] ol > li {
+  position: relative;
+  padding-left: 30px;
+  counter-increment: yuanbao-ol;
+}
+.prose[data-template='yuanbao'] ol > li::before {
+  content: counter(yuanbao-ol);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 0.85em;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.prose[data-template='yuanbao'] code {
+  background: transparent;
+  padding: 0 2px;
+  border-radius: 0;
+  color: var(--accent);
+  border-bottom: 1px dashed var(--accent);
+}
+.prose[data-template='yuanbao'] pre code {
+  border-bottom: none;
+}
+
+.prose[data-template='yuanbao'] a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 1px;
+}
