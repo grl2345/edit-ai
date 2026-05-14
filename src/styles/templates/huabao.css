@@ -1,0 +1,167 @@
+/* ============================================================
+   画报 · huabao —— 杂志感首字下沉 + 居中 kicker + 全大写 h2
+   签名：h1 居中 + h2 全大写小号 + 首段 drop-cap accent 巨字
+   ============================================================ */
+
+.prose[data-template='huabao'] {
+  font-size: 17px;
+  line-height: 1.95;
+}
+
+.prose[data-template='huabao'] h1 {
+  font-family: var(--prose-font);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  margin: 8px 0 8px;
+  padding: 20px 0 0;
+  border: none;
+  letter-spacing: -0.4px;
+}
+.prose[data-template='huabao'] h1::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--accent);
+  margin: 0 auto 16px;
+}
+
+/* —— 核心：h2 小号居中 + 上下细线 + 字母间距 —— */
+.prose[data-template='huabao'] h2 {
+  font-family: var(--prose-font);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  margin: 56px 0 8px;
+  padding: 12px 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  letter-spacing: 6px;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+
+.prose[data-template='huabao'] h3 {
+  font-family: var(--prose-font);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 36px 0 12px;
+  color: var(--ink);
+  font-style: italic;
+  letter-spacing: 0.2px;
+}
+.prose[data-template='huabao'] h4 {
+  font-family: var(--prose-font);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  color: var(--gray-600);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* —— 首段首字下沉 —— */
+.prose[data-template='huabao'] h1 + p::first-letter,
+.prose[data-template='huabao'] h2 + p::first-letter {
+  font-size: 3.6em;
+  float: left;
+  line-height: 0.86;
+  padding: 8px 12px 0 0;
+  font-weight: 800;
+  color: var(--accent);
+  font-family: var(--prose-font);
+}
+
+.prose[data-template='huabao'] blockquote {
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-style: italic;
+  color: var(--ink);
+  padding: 14px 32px 18px;
+  margin: 36px 0;
+  font-size: 19px;
+  line-height: 1.7;
+  position: relative;
+}
+.prose[data-template='huabao'] blockquote::before {
+  content: '\201C';
+  display: block;
+  font-size: 56px;
+  color: var(--accent);
+  line-height: 0.6;
+  font-family: Georgia, 'Times New Roman', serif;
+  margin-bottom: 8px;
+  font-style: normal;
+}
+.prose[data-template='huabao'] blockquote::after {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+  margin: 14px auto 0;
+}
+.prose[data-template='huabao'] blockquote p { margin: 0 0 8px; }
+
+.prose[data-template='huabao'] hr {
+  border: none;
+  height: auto;
+  background: transparent;
+  text-align: center;
+  margin: 56px 0;
+  line-height: 1;
+}
+.prose[data-template='huabao'] hr::before {
+  content: '\2756';
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.prose[data-template='huabao'] ul,
+.prose[data-template='huabao'] ol { padding-left: 4px; list-style: none; }
+.prose[data-template='huabao'] ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.prose[data-template='huabao'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.78em;
+  width: 8px;
+  height: 1px;
+  background: var(--ink);
+}
+.prose[data-template='huabao'] ol { counter-reset: huabao-ol; }
+.prose[data-template='huabao'] ol > li {
+  counter-increment: huabao-ol;
+  position: relative;
+  padding-left: 32px;
+}
+.prose[data-template='huabao'] ol > li::before {
+  content: counter(huabao-ol);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.15em;
+  color: var(--accent);
+}
+
+.prose[data-template='huabao'] a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--accent);
+  text-decoration: none;
+}
+.prose[data-template='huabao'] strong {
+  color: var(--ink);
+  font-weight: 700;
+  border-bottom: 1px solid var(--accent);
+}

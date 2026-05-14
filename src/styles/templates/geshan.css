@@ -1,0 +1,173 @@
+/* ============================================================
+   格栅 · geshan —— 极客 / 代码风
+   签名：点阵网格 + h2 用 [ ] 方括号包裹 + ol 用 01. 02. mono
+   ============================================================ */
+
+.prose[data-template='geshan'] {
+  font-size: 16px;
+  line-height: 1.85;
+  background-image:
+    linear-gradient(var(--gray-200) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gray-200) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+  background-color: var(--surface);
+  padding: 32px 28px 64px;
+  border: 1px solid var(--border);
+}
+
+.prose[data-template='geshan'] h1 {
+  font-family: var(--mono), var(--prose-font);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 4px 0 8px;
+  padding: 0;
+  border: none;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+.prose[data-template='geshan'] h1::before {
+  content: '# ';
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 700;
+}
+
+/* —— 核心：h2 [ ] mono 括号 —— */
+.prose[data-template='geshan'] h2 {
+  font-family: var(--mono), var(--prose-font);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 40px 0 18px;
+  padding: 8px 12px;
+  border: 1px dashed var(--accent);
+  background: var(--surface);
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  display: inline-block;
+}
+.prose[data-template='geshan'] h2::before {
+  content: '[ ';
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose[data-template='geshan'] h2::after {
+  content: ' ]';
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.prose[data-template='geshan'] h3 {
+  font-family: var(--mono), var(--prose-font);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 28px 0 12px;
+  color: var(--ink);
+}
+.prose[data-template='geshan'] h3::before {
+  content: '> ';
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose[data-template='geshan'] h4 {
+  font-family: var(--mono), var(--prose-font);
+  font-size: 15px;
+  font-weight: 600;
+  margin: 22px 0 8px;
+  color: var(--gray-600);
+}
+.prose[data-template='geshan'] h4::before { content: '// '; color: var(--gray-500); }
+
+.prose[data-template='geshan'] blockquote {
+  border: 1px solid var(--ink);
+  border-left: 4px solid var(--accent);
+  background: var(--surface);
+  padding: 14px 18px;
+  margin: 24px 0;
+  border-radius: 0;
+  color: var(--ink);
+  font-style: normal;
+  font-family: var(--mono), var(--prose-font);
+  font-size: 14px;
+  line-height: 1.75;
+}
+.prose[data-template='geshan'] blockquote p { margin-bottom: 6px; font-family: inherit; }
+.prose[data-template='geshan'] blockquote p::before { content: '> '; color: var(--accent); }
+.prose[data-template='geshan'] blockquote p:last-child { margin-bottom: 0; }
+
+.prose[data-template='geshan'] hr {
+  border: none;
+  height: 1px;
+  background: var(--ink);
+  margin: 40px 0;
+  position: relative;
+}
+.prose[data-template='geshan'] hr::after {
+  content: '/ / /';
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  transform: translateX(-50%);
+  background: var(--surface);
+  padding: 0 12px;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.prose[data-template='geshan'] ul,
+.prose[data-template='geshan'] ol { padding-left: 4px; list-style: none; }
+.prose[data-template='geshan'] ul > li {
+  position: relative;
+  padding-left: 22px;
+  font-family: var(--prose-font);
+}
+.prose[data-template='geshan'] ul > li::before {
+  content: '-';
+  position: absolute;
+  left: 4px;
+  top: 0;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 700;
+}
+.prose[data-template='geshan'] ol { counter-reset: geshan-ol; }
+.prose[data-template='geshan'] ol > li {
+  counter-increment: geshan-ol;
+  position: relative;
+  padding-left: 38px;
+}
+.prose[data-template='geshan'] ol > li::before {
+  content: counter(geshan-ol, decimal-leading-zero) '.';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.prose[data-template='geshan'] strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose[data-template='geshan'] em {
+  color: var(--gray-600);
+  font-style: italic;
+}
+.prose[data-template='geshan'] a {
+  color: var(--accent);
+  font-family: var(--mono);
+  text-decoration: underline;
+}
+.prose[data-template='geshan'] code {
+  background: var(--ink);
+  color: var(--accent);
+  border-radius: 0;
+  font-weight: 500;
+}

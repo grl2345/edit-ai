@@ -1,7 +1,17 @@
 export type PaletteId = 'chushaa' | 'qingmo' | 'mohei' | 'molan' | 'liyuan';
 export type FontId = 'wenkai' | 'songti' | 'kaiti' | 'heiti';
 export type ThemeMode = 'light' | 'dark';
-export type TemplateId = 'suijian' | 'yuanbao' | 'kapian' | 'moyin';
+export type TemplateId =
+  | 'qingye'
+  | 'haibao'
+  | 'ningmeng'
+  | 'chongying'
+  | 'huabao'
+  | 'yinzhang'
+  | 'geshan'
+  | 'shouzha'
+  | 'jiguang'
+  | 'zhangye';
 
 export interface PaletteMeta {
   id: PaletteId;
@@ -38,15 +48,21 @@ export const FONTS: FontMeta[] = [
 ];
 
 export const TEMPLATES: TemplateMeta[] = [
-  { id: 'suijian', name: '素简', desc: '克制 · 默认' },
-  { id: 'yuanbao', name: '元宝', desc: '杂志 · 双线' },
-  { id: 'kapian', name: '卡片', desc: '软文 · 浅卡' },
-  { id: 'moyin', name: '墨印', desc: '中式 · 朱砂' },
+  { id: 'qingye', name: '晴野', desc: '点阵 · 大引号' },
+  { id: 'haibao', name: '海报', desc: '反白 · hero' },
+  { id: 'ningmeng', name: '柠檬', desc: '高亮笔 · 海报' },
+  { id: 'chongying', name: '重影', desc: '贴纸 · 偏移' },
+  { id: 'huabao', name: '画报', desc: '杂志 · 首字' },
+  { id: 'yinzhang', name: '印章', desc: '中式 · 朱印' },
+  { id: 'geshan', name: '格栅', desc: '点阵 · 极客' },
+  { id: 'shouzha', name: '手札', desc: '波浪 · 手记' },
+  { id: 'jiguang', name: '极光', desc: '渐变 · 现代' },
+  { id: 'zhangye', name: '章页', desc: '书籍 · 罗马' },
 ];
 
 export const DEFAULT_PALETTE: PaletteId = 'chushaa';
 export const DEFAULT_FONT: FontId = 'wenkai';
-export const DEFAULT_TEMPLATE: TemplateId = 'suijian';
+export const DEFAULT_TEMPLATE: TemplateId = 'qingye';
 
 export interface PaletteVars {
   accent: string;
