@@ -207,6 +207,9 @@
   text-transform: uppercase;
   color: var(--text-muted);
 }
+.new-wrap {
+  position: relative;
+}
 .sidebar-new {
   display: inline-flex;
   align-items: center;
@@ -224,6 +227,22 @@
 }
 .sidebar-new:hover {
   border-color: var(--accent);
+  color: var(--accent);
+}
+.new-menu {
+  top: 32px;
+  right: 0;
+  min-width: 150px;
+}
+.new-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.new-menu button svg {
+  color: var(--text-muted);
+}
+.new-menu button:hover svg {
   color: var(--accent);
 }
 
@@ -343,6 +362,122 @@
   text-align: center;
   color: var(--text-muted);
   font-size: 12.5px;
+}
+
+/* ============ Tree (folders + docs) ============ */
+.tree-list {
+  gap: 0;
+}
+.tree-branch {
+  display: flex;
+  flex-direction: column;
+}
+.tree-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding-right: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  color: var(--text);
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+.tree-row:hover {
+  background: var(--surface);
+}
+.tree-row.active {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.tree-row.is-folder .tree-title {
+  font-weight: 600;
+}
+.tree-chevron {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.tree-chevron.open {
+  transform: rotate(90deg);
+}
+.tree-chevron.spacer {
+  visibility: hidden;
+}
+.tree-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+.tree-icon.folder {
+  color: var(--accent);
+}
+.tree-row.is-doc.active .tree-icon {
+  color: var(--accent);
+}
+.tree-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tree-actions {
+  position: relative;
+  display: none;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.tree-row:hover .tree-actions,
+.tree-row.active .tree-actions {
+  display: inline-flex;
+}
+.tree-icon-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.tree-icon-btn:hover {
+  background: var(--gray-100);
+  color: var(--accent);
+}
+.tree-menu {
+  top: 26px;
+  right: 0;
+  min-width: 140px;
+}
+.tree-children {
+  display: flex;
+  flex-direction: column;
+}
+.tree-row .doc-rename-input {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 6px;
+  font-size: 13px;
 }
 
 /* ============ Appearance Panel ============ */

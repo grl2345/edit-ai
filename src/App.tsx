@@ -6,8 +6,11 @@ import {
   Doc,
   DocsState,
   extractTitle,
+  firstDocId,
+  getDescendantIds,
   loadDocs,
   makeDoc,
+  makeFolder,
   saveDocs,
 } from './utils/storage';
 import {
@@ -69,7 +72,10 @@ export default function App() {
   }, [copyMenuOpen]);
 
   const active: Doc | undefined = useMemo(
-    () => state.docs.find((d) => d.id === state.activeId),
+    () =>
+      state.nodes.find(
+        (n) => n.id === state.activeId && n.type === 'doc'
+      ),
     [state]
   );
 
@@ -104,60 +110,102 @@ export default function App() {
     if (!active) return;
     setState((s) => ({
       ...s,
-      docs: s.docs.map((d) =>
-        d.id === active.id ? { ...d, content, updatedAt: Date.now() } : d
+      nodes: s.nodes.map((n) =>
+        n.id === active.id ? { ...n, content, updatedAt: Date.now() } : n
       ),
     }));
   }
 
-  function handleCreate() {
-    const doc = makeDoc('', '未命名文档');
-    setState((s) => ({ docs: [doc, ...s.docs], activeId: doc.id }));
+  function handleCreateDoc(parentId: string | null = null) {
+    const doc = makeDoc('', '未命名文档', parentId);
+    setState((s) => {
+      const nodes = parentId
+        ? s.nodes.map((n) =>
+            n.id === parentId ? { ...n, expanded: true } : n
+          )
+        : s.nodes;
+      return { nodes: [doc, ...nodes], activeId: doc.id };
+    });
     showToast('已新建文档');
   }
 
+  function handleCreateFolder(parentId: string | null = null) {
+    const folder = makeFolder('新建目录', parentId);
+    setState((s) => {
+      const nodes = parentId
+        ? s.nodes.map((n) =>
+            n.id === parentId ? { ...n, expanded: true } : n
+          )
+        : s.nodes;
+      return { nodes: [folder, ...nodes], activeId: s.activeId };
+    });
+    showToast('已新建目录');
+  }
+
   function handleSelect(id: string) {
-    setState((s) => ({ ...s, activeId: id }));
+    setState((s) => {
+      const target = s.nodes.find((n) => n.id === id);
+      if (!target || target.type !== 'doc') return s;
+      return { ...s, activeId: id };
+    });
   }
 
   function handleRename(id: string, title: string) {
     setState((s) => ({
       ...s,
-      docs: s.docs.map((d) => (d.id === id ? { ...d, title, updatedAt: Date.now() } : d)),
+      nodes: s.nodes.map((n) =>
+        n.id === id ? { ...n, title, updatedAt: Date.now() } : n
+      ),
+    }));
+  }
+
+  function handleToggleFolder(id: string) {
+    setState((s) => ({
+      ...s,
+      nodes: s.nodes.map((n) =>
+        n.id === id && n.type === 'folder'
+          ? { ...n, expanded: n.expanded === false ? true : false }
+          : n
+      ),
     }));
   }
 
   function handleDelete(id: string) {
     setState((s) => {
-      const idx = s.docs.findIndex((d) => d.id === id);
-      const next = s.docs.filter((d) => d.id !== id);
+      const target = s.nodes.find((n) => n.id === id);
+      if (!target) return s;
+      const toRemove = new Set<string>([id, ...getDescendantIds(s.nodes, id)]);
+      const next = s.nodes.filter((n) => !toRemove.has(n.id));
       let activeId = s.activeId;
-      if (activeId === id) {
-        if (next.length === 0) {
+      if (toRemove.has(activeId) || !next.find((n) => n.id === activeId)) {
+        const fallback = firstDocId(next);
+        if (fallback) {
+          activeId = fallback;
+        } else {
           const fresh = makeDoc('', '未命名文档');
-          return { docs: [fresh], activeId: fresh.id };
+          return { nodes: [fresh, ...next], activeId: fresh.id };
         }
-        activeId = next[Math.max(0, idx - 1)]?.id ?? next[0].id;
       }
-      return { docs: next, activeId };
+      return { nodes: next, activeId };
     });
     showToast('已删除');
   }
 
   function handleDuplicate(id: string) {
     setState((s) => {
-      const src = s.docs.find((d) => d.id === id);
-      if (!src) return s;
+      const src = s.nodes.find((n) => n.id === id);
+      if (!src || src.type !== 'doc') return s;
       const copy: Doc = {
         ...src,
         id: makeDoc().id,
         title: `${src.title} 副本`,
         updatedAt: Date.now(),
+        createdAt: Date.now(),
       };
-      const idx = s.docs.findIndex((d) => d.id === id);
-      const docs = [...s.docs];
-      docs.splice(idx + 1, 0, copy);
-      return { docs, activeId: copy.id };
+      const idx = s.nodes.findIndex((n) => n.id === id);
+      const nodes = [...s.nodes];
+      nodes.splice(idx + 1, 0, copy);
+      return { nodes, activeId: copy.id };
     });
     showToast('已复制副本');
   }
@@ -314,7 +362,7 @@ export default function App() {
 
       <div className="body">
         <Sidebar
-          docs={state.docs}
+          nodes={state.nodes}
           activeId={state.activeId}
           collapsed={sidebarCollapsed}
           appearance={{
@@ -326,10 +374,12 @@ export default function App() {
             onTheme: setTheme,
           }}
           onSelect={handleSelect}
-          onCreate={handleCreate}
+          onCreateDoc={handleCreateDoc}
+          onCreateFolder={handleCreateFolder}
           onRename={handleRename}
           onDelete={handleDelete}
           onDuplicate={handleDuplicate}
+          onToggleFolder={handleToggleFolder}
         />
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
@@ -352,7 +402,7 @@ export default function App() {
                 <span className="pane-title" title={active?.title}>
                   {active?.title || '未命名'}
                 </span>
-                <span>{active?.content.length ?? 0} 字</span>
+                <span>{active?.content?.length ?? 0} 字</span>
               </div>
               <textarea
                 className="editor"
