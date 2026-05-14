@@ -1,0 +1,2302 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Markdown AI · 10 套版式 Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   tokens.css —— 配色 (palette) + 字体 (font) + 主题 (theme)
+   切换方式：在 <html> 上设置
+     data-theme   = light | dark
+     data-palette = chushaa | qingmo | mohei | molan | liyuan
+     data-font    = wenkai | songti | kaiti | heiti
+   ============================================================ */
+
+/* ---------- 基础：朱砂 · 浅色（默认） ---------- */
+:root {
+  --ink: #1a1a1a;
+  --paper: #f6f3ed;
+  --accent: #c44b2b;
+  --accent-light: #e8694d;
+  --accent-glow: rgba(196, 75, 43, 0.12);
+
+  --gray-100: #f0ede7;
+  --gray-200: #e2ded6;
+  --gray-300: #c9c4ba;
+  --gray-400: #9e9890;
+  --gray-500: #6b665e;
+  --gray-600: #4a4640;
+
+  --terminal-bg: #0d1117;
+  --terminal-text: #c9d1d9;
+
+  --bg: var(--paper);
+  --surface: #ffffff;
+  --surface-2: #fbfaf7;
+  --border: var(--gray-200);
+  --text: var(--ink);
+  --text-muted: var(--gray-500);
+
+  --serif: 'LXGW WenKai TC', 'LXGW WenKai', 'Songti SC', 'STSongti', Georgia, serif;
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'WenQuanYi Micro Hei', sans-serif;
+  --mono: 'JetBrains Mono', 'Menlo', monospace;
+  --prose-font: var(--serif);
+  --prose-heading-font: var(--serif);
+}
+
+/* ---------- 基础：朱砂 · 深色 ---------- */
+:root[data-theme='dark'] {
+  --ink: #ececec;
+  --paper: #14181f;
+  --accent: #e8694d;
+  --accent-light: #ff8060;
+  --accent-glow: rgba(232, 105, 77, 0.18);
+
+  --gray-100: #1c2129;
+  --gray-200: #242a33;
+  --gray-300: #3a414c;
+  --gray-400: #6a7280;
+  --gray-500: #9aa3b0;
+  --gray-600: #c2c8d2;
+
+  --terminal-bg: #0a0d12;
+  --terminal-text: #d1d6dd;
+
+  --surface: #1a1f27;
+  --surface-2: #161b22;
+}
+
+/* ---------- Palette · 浅色 ---------- */
+:root[data-palette='qingmo'] {
+  --accent: #2e7d8a;
+  --accent-light: #43a3b0;
+  --accent-glow: rgba(46, 125, 138, 0.12);
+  --paper: #eef3f1;
+}
+:root[data-palette='mohei'] {
+  --accent: #262626;
+  --accent-light: #404040;
+  --accent-glow: rgba(38, 38, 38, 0.1);
+  --paper: #f3f1ec;
+}
+:root[data-palette='molan'] {
+  --accent: #1d4ed8;
+  --accent-light: #3b6ff5;
+  --accent-glow: rgba(29, 78, 216, 0.1);
+  --paper: #f4f6fb;
+}
+:root[data-palette='liyuan'] {
+  --accent: #7c2d12;
+  --accent-light: #a14123;
+  --accent-glow: rgba(124, 45, 18, 0.12);
+  --paper: #fbf5e9;
+}
+
+/* ---------- Palette · 深色 ---------- */
+:root[data-palette='qingmo'][data-theme='dark'] {
+  --accent: #5cb6c2;
+  --accent-light: #7fd0db;
+  --accent-glow: rgba(92, 182, 194, 0.18);
+  --paper: #101618;
+}
+:root[data-palette='mohei'][data-theme='dark'] {
+  --accent: #dadada;
+  --accent-light: #ffffff;
+  --accent-glow: rgba(218, 218, 218, 0.14);
+  --paper: #0e0e10;
+}
+:root[data-palette='molan'][data-theme='dark'] {
+  --accent: #7aa8ff;
+  --accent-light: #9dbeff;
+  --accent-glow: rgba(122, 168, 255, 0.16);
+  --paper: #0e1320;
+}
+:root[data-palette='liyuan'][data-theme='dark'] {
+  --accent: #d97757;
+  --accent-light: #ee9279;
+  --accent-glow: rgba(217, 119, 87, 0.18);
+  --paper: #1a120c;
+}
+
+/* ---------- 字体 ---------- */
+:root[data-font='songti'] {
+  --serif: 'Source Han Serif SC', 'Source Han Serif CN', 'Noto Serif SC', 'Songti SC',
+    'STSongti', Georgia, serif;
+  --prose-font: var(--serif);
+  --prose-heading-font: var(--serif);
+}
+:root[data-font='kaiti'] {
+  --serif: 'STKaiti', 'KaiTi', 'BiauKai', 'SimKai', serif;
+  --prose-font: var(--serif);
+  --prose-heading-font: var(--serif);
+}
+:root[data-font='heiti'] {
+  --serif: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei',
+    sans-serif;
+  --prose-font: var(--serif);
+  --prose-heading-font: var(--serif);
+}
+
+/* ---------- reset ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+.prose {
+  font-family: var(--prose-font);
+  font-size: 16.5px;
+  line-height: 1.85;
+  color: var(--text);
+  word-wrap: break-word;
+}
+.prose > *:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  border-top: none !important;
+}
+.prose p,
+.prose li,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  overflow-wrap: break-word;
+}
+.prose h1 {
+  font-family: var(--prose-heading-font);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  line-height: 1.3;
+  margin-top: 48px;
+  margin-bottom: 20px;
+}
+.prose h2 {
+  font-family: var(--prose-heading-font);
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 56px;
+  margin-bottom: 20px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  letter-spacing: -0.3px;
+}
+.prose h3 {
+  font-family: var(--prose-heading-font);
+  font-size: 19px;
+  font-weight: 700;
+  margin-top: 40px;
+  margin-bottom: 14px;
+}
+.prose h4 {
+  font-family: var(--prose-heading-font);
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 28px;
+  margin-bottom: 10px;
+}
+.prose p {
+  margin-bottom: 20px;
+}
+.prose strong {
+  font-weight: 600;
+  color: var(--text);
+}
+.prose em {
+  font-style: italic;
+}
+.prose ul,
+.prose ol {
+  margin-bottom: 20px;
+  padding-left: 24px;
+}
+.prose li {
+  margin-bottom: 8px;
+}
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 16px 24px;
+  margin: 28px 0;
+  background: var(--accent-glow);
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: var(--gray-600);
+}
+.prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 15px;
+}
+.prose th {
+  text-align: left;
+  padding: 12px 16px;
+  background: var(--gray-100);
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+  font-size: 14px;
+}
+.prose td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.prose tr:last-child td {
+  border-bottom: none;
+}
+.prose img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin: 28px 0;
+}
+.prose hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 48px 0;
+}
+.prose code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--gray-100);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--accent);
+}
+.prose pre {
+  background: var(--terminal-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 28px 0;
+  padding: 20px;
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--terminal-text);
+  overflow-x: auto;
+}
+.prose pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+/* highlight.js token colors (github-dark adapted to terminal palette) */
+.prose .hljs-keyword,
+.prose .hljs-selector-tag,
+.prose .hljs-built_in {
+  color: #ff7b72;
+}
+.prose .hljs-string,
+.prose .hljs-attr {
+  color: #a5d6ff;
+}
+.prose .hljs-number,
+.prose .hljs-literal {
+  color: #79c0ff;
+}
+.prose .hljs-comment,
+.prose .hljs-quote {
+  color: #8b949e;
+  font-style: italic;
+}
+.prose .hljs-title,
+.prose .hljs-function,
+.prose .hljs-name {
+  color: #d2a8ff;
+}
+.prose .hljs-variable,
+.prose .hljs-params {
+  color: #ffa657;
+}
+.prose .hljs-tag,
+.prose .hljs-meta {
+  color: #7ee787;
+}
+.prose .hljs-doctag,
+.prose .hljs-section {
+  color: #79c0ff;
+}
+
+@media (max-width: 900px) {
+  .prose {
+    font-size: 15px;
+    line-height: 1.78;
+  }
+  .prose p {
+    margin-bottom: 16px;
+  }
+  .prose h1 {
+    font-size: 22px;
+  }
+  .prose h2 {
+    font-size: 20px;
+    margin-top: 36px;
+    margin-bottom: 14px;
+    padding-top: 24px;
+  }
+  .prose h3 {
+    font-size: 17px;
+    margin-top: 28px;
+    margin-bottom: 10px;
+  }
+  .prose ul,
+  .prose ol {
+    padding-left: 20px;
+    margin-bottom: 16px;
+  }
+  .prose pre {
+    padding: 16px;
+    font-size: 12.5px;
+  }
+  .prose table {
+    font-size: 13px;
+    display: block;
+    overflow-x: auto;
+  }
+}
+/* ============================================================
+   晴野 · qingye —— 点阵网格 + 大胆 accent + 大引号卡
+   签名：dotted-grid 底纹 + h1 巨大 accent + blockquote 大引号卡
+   ============================================================ */
+
+.prose[data-template='qingye'] {
+  font-size: 16.5px;
+  line-height: 1.9;
+  background-image: radial-gradient(var(--gray-200) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-position: 0 0;
+  padding: 32px 28px 64px;
+  border-radius: 14px;
+  background-color: var(--surface);
+}
+
+.prose[data-template='qingye'] h1 {
+  font-family: var(--prose-font);
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.32;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+  margin: 4px 0 28px;
+  padding: 0;
+  border: none;
+}
+
+/* —— 核心：blockquote 大引号卡 —— */
+.prose[data-template='qingye'] blockquote {
+  border: none;
+  border-radius: 14px;
+  background: var(--accent-glow);
+  padding: 44px 28px 22px 28px;
+  margin: 28px 0;
+  font-style: normal;
+  color: var(--gray-600);
+  position: relative;
+}
+.prose[data-template='qingye'] blockquote::before {
+  content: '\201C';
+  position: absolute;
+  top: 8px;
+  left: 22px;
+  font-size: 56px;
+  line-height: 0.7;
+  color: var(--accent);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+}
+.prose[data-template='qingye'] blockquote p { margin-bottom: 8px; color: var(--gray-600); }
+.prose[data-template='qingye'] blockquote p:last-child { margin-bottom: 0; }
+
+/* —— h2 / h3 大胆 accent + 厚下划线 —— */
+.prose[data-template='qingye'] h2 {
+  font-family: var(--prose-font);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.4;
+  margin: 48px 0 18px;
+  padding: 0 0 10px;
+  color: var(--accent);
+  border: none;
+  border-bottom: 3px solid var(--accent);
+  letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.prose[data-template='qingye'] h2::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background: var(--accent);
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M3 5h18v3H3zm0 5h14v3H3zm0 5h18v3H3z'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M3 5h18v3H3zm0 5h14v3H3zm0 5h18v3H3z'/></svg>");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  flex-shrink: 0;
+}
+
+.prose[data-template='qingye'] h3 {
+  font-family: var(--prose-font);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 32px 0 12px;
+  color: var(--accent);
+}
+
+.prose[data-template='qingye'] h4 {
+  font-family: var(--prose-font);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 10px;
+  color: var(--gray-600);
+}
+
+/* hr 细蓝线 + 中点 */
+.prose[data-template='qingye'] hr {
+  border: none;
+  height: 2px;
+  background: var(--accent);
+  margin: 40px 0;
+  opacity: 0.7;
+}
+
+/* 强调与链接走 accent */
+.prose[data-template='qingye'] strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose[data-template='qingye'] em {
+  color: var(--accent);
+  font-style: italic;
+}
+.prose[data-template='qingye'] a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  font-weight: 500;
+}
+
+.prose[data-template='qingye'] ul,
+.prose[data-template='qingye'] ol {
+  padding-left: 4px;
+  list-style: none;
+}
+.prose[data-template='qingye'] ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.prose[data-template='qingye'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.7em;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform: rotate(45deg);
+}
+.prose[data-template='qingye'] ol { counter-reset: qingye-ol; }
+.prose[data-template='qingye'] ol > li {
+  counter-increment: qingye-ol;
+  position: relative;
+  padding-left: 32px;
+  margin-bottom: 10px;
+}
+.prose[data-template='qingye'] ol > li::before {
+  content: counter(qingye-ol);
+  position: absolute;
+  left: 0;
+  top: 0.05em;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prose[data-template='qingye'] code {
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-weight: 500;
+  border-radius: 3px;
+}
+.prose[data-template='qingye'] th {
+  background: var(--accent);
+  color: var(--paper);
+  border-bottom: none;
+}
+/* ============================================================
+   海报 · haibao —— h1 反白 hero + 大字号 + 粗 underline
+   签名：h1 整块反白 hero（accent 满底 + paper 字）
+   ============================================================ */
+
+.prose[data-template='haibao'] {
+  font-size: 16.5px;
+  line-height: 1.85;
+}
+
+/* —— 核心：h1 反白 hero —— */
+.prose[data-template='haibao'] h1 {
+  font-family: var(--prose-font);
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.25;
+  background: var(--accent);
+  color: var(--paper);
+  padding: 30px 28px;
+  margin: 0 -28px 32px;
+  letter-spacing: -0.5px;
+  border: none;
+  border-radius: 0;
+  position: relative;
+}
+.prose[data-template='haibao'] h1::after {
+  content: '';
+  position: absolute;
+  left: 28px;
+  bottom: 18px;
+  width: 36px;
+  height: 4px;
+  background: var(--paper);
+  opacity: 0.4;
+}
+
+.prose[data-template='haibao'] h2 {
+  font-family: var(--prose-font);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.4;
+  margin: 48px 0 18px;
+  padding: 0 0 6px;
+  border: none;
+  border-bottom: 4px solid var(--accent);
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  display: inline-block;
+}
+
+.prose[data-template='haibao'] h3 {
+  font-family: var(--prose-font);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 32px 0 12px;
+  padding-left: 14px;
+  position: relative;
+  color: var(--ink);
+}
+.prose[data-template='haibao'] h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.4em;
+  width: 6px;
+  height: 1em;
+  background: var(--accent);
+}
+
+.prose[data-template='haibao'] h4 {
+  font-family: var(--prose-font);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 10px;
+  color: var(--gray-600);
+}
+
+.prose[data-template='haibao'] blockquote {
+  border: none;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 22px 26px;
+  margin: 26px 0;
+  border-radius: 0;
+  font-style: normal;
+  font-weight: 500;
+  position: relative;
+}
+.prose[data-template='haibao'] blockquote::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--accent);
+}
+.prose[data-template='haibao'] blockquote p { color: var(--paper); margin-bottom: 8px; }
+.prose[data-template='haibao'] blockquote p:last-child { margin-bottom: 0; }
+
+.prose[data-template='haibao'] hr {
+  border: none;
+  height: 6px;
+  background: var(--accent);
+  margin: 44px 0;
+  width: 80px;
+  border-radius: 0;
+}
+
+.prose[data-template='haibao'] strong { color: var(--accent); font-weight: 700; }
+.prose[data-template='haibao'] a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  font-weight: 600;
+}
+
+.prose[data-template='haibao'] ul,
+.prose[data-template='haibao'] ol { padding-left: 4px; list-style: none; }
+.prose[data-template='haibao'] ul > li {
+  position: relative;
+  padding-left: 24px;
+}
+.prose[data-template='haibao'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 14px;
+  height: 4px;
+  background: var(--accent);
+}
+.prose[data-template='haibao'] ol { counter-reset: haibao-ol; }
+.prose[data-template='haibao'] ol > li {
+  counter-increment: haibao-ol;
+  position: relative;
+  padding-left: 38px;
+}
+.prose[data-template='haibao'] ol > li::before {
+  content: counter(haibao-ol, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: -2px;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.prose[data-template='haibao'] code {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.prose[data-template='haibao'] th {
+  background: var(--ink);
+  color: var(--paper);
+}
+/* ============================================================
+   柠檬 · ningmeng —— h2 实心高亮笔块
+   签名：h2 inline-block 实心 accent 底 + paper 字（海报感）
+   ============================================================ */
+
+.prose[data-template='ningmeng'] {
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+.prose[data-template='ningmeng'] h1 {
+  font-family: var(--prose-font);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 8px 0 12px;
+  padding-bottom: 16px;
+  border: none;
+  letter-spacing: -0.4px;
+  position: relative;
+}
+.prose[data-template='ningmeng'] h1::after {
+  content: '';
+  display: block;
+  width: 52px;
+  height: 5px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin-top: 14px;
+}
+
+/* —— 核心：h2 高亮笔块 —— */
+.prose[data-template='ningmeng'] h2 {
+  font-family: var(--prose-font);
+  display: inline-block;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 48px 0 22px;
+  padding: 6px 16px 7px;
+  background: var(--accent);
+  color: var(--paper);
+  border: none;
+  letter-spacing: 0.3px;
+  border-radius: 2px;
+}
+
+.prose[data-template='ningmeng'] h3 {
+  font-family: var(--prose-font);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 32px 0 14px;
+  padding-bottom: 6px;
+  display: inline-block;
+  border-bottom: 3px solid var(--accent);
+  letter-spacing: 0.2px;
+}
+.prose[data-template='ningmeng'] h4 {
+  font-family: var(--prose-font);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 10px;
+  color: var(--gray-600);
+}
+
+.prose[data-template='ningmeng'] blockquote {
+  border: none;
+  border-left: 5px solid var(--accent);
+  background: var(--surface-2);
+  padding: 16px 22px 16px 24px;
+  margin: 24px 0;
+  border-radius: 0 6px 6px 0;
+  color: var(--gray-600);
+  font-style: normal;
+  position: relative;
+}
+.prose[data-template='ningmeng'] blockquote::before {
+  content: '\201C';
+  position: absolute;
+  right: 16px;
+  top: 4px;
+  font-family: Georgia, serif;
+  font-size: 44px;
+  color: var(--accent);
+  opacity: 0.18;
+  line-height: 1;
+}
+.prose[data-template='ningmeng'] blockquote p { margin-bottom: 8px; }
+.prose[data-template='ningmeng'] blockquote p:last-child { margin-bottom: 0; }
+
+.prose[data-template='ningmeng'] hr {
+  border: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--accent);
+  width: 64px;
+  margin: 44px 0;
+}
+
+.prose[data-template='ningmeng'] ul,
+.prose[data-template='ningmeng'] ol { padding-left: 4px; list-style: none; }
+.prose[data-template='ningmeng'] ul > li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 10px;
+}
+.prose[data-template='ningmeng'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.7em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.prose[data-template='ningmeng'] ol { counter-reset: ningmeng-ol; }
+.prose[data-template='ningmeng'] ol > li {
+  counter-increment: ningmeng-ol;
+  position: relative;
+  padding-left: 34px;
+  margin-bottom: 12px;
+}
+.prose[data-template='ningmeng'] ol > li::before {
+  content: counter(ningmeng-ol);
+  position: absolute;
+  left: 0;
+  top: 0.12em;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prose[data-template='ningmeng'] strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose[data-template='ningmeng'] a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.prose[data-template='ningmeng'] code {
+  background: var(--accent);
+  color: var(--paper);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+.prose[data-template='ningmeng'] th {
+  background: var(--accent);
+  color: var(--paper);
+  border-bottom: none;
+}
+/* ============================================================
+   重影 · chongying —— h2 贴纸 chip 带 4px 偏移阴影
+   签名：h2 inline-block + accent 边框 + 4px 偏移到 ink 的硬阴影
+   ============================================================ */
+
+.prose[data-template='chongying'] {
+  font-size: 16.5px;
+  line-height: 1.9;
+}
+
+.prose[data-template='chongying'] h1 {
+  font-family: var(--prose-font);
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin: 12px 0 28px;
+  padding: 10px 18px 11px;
+  border: 2px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--accent);
+  display: inline-block;
+  background: var(--surface);
+  color: var(--ink);
+  letter-spacing: -0.4px;
+}
+
+/* —— 核心：h2 偏移阴影 chip —— */
+.prose[data-template='chongying'] h2 {
+  font-family: var(--prose-font);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 48px 0 22px;
+  padding: 6px 14px 7px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 2px solid var(--accent);
+  box-shadow: 4px 4px 0 var(--accent);
+  display: inline-block;
+  border-radius: 2px;
+  letter-spacing: 0.2px;
+}
+
+.prose[data-template='chongying'] h3 {
+  font-family: var(--prose-font);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 32px 0 14px;
+  padding-left: 10px;
+  position: relative;
+  color: var(--ink);
+}
+.prose[data-template='chongying'] h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.3em;
+  width: 4px;
+  height: 1.1em;
+  background: var(--accent);
+}
+.prose[data-template='chongying'] h4 {
+  font-family: var(--prose-font);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 10px;
+  color: var(--gray-600);
+}
+
+.prose[data-template='chongying'] blockquote {
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  background: var(--surface);
+  padding: 16px 20px;
+  margin: 24px 0;
+  box-shadow: 4px 4px 0 var(--accent);
+  font-style: normal;
+  color: var(--gray-600);
+  position: relative;
+}
+.prose[data-template='chongying'] blockquote p { margin-bottom: 8px; }
+.prose[data-template='chongying'] blockquote p:last-child { margin-bottom: 0; }
+
+.prose[data-template='chongying'] hr {
+  border: none;
+  height: 6px;
+  background:
+    linear-gradient(90deg, var(--accent) 0 25%, transparent 25% 50%, var(--ink) 50% 75%, transparent 75% 100%);
+  background-size: 16px 6px;
+  margin: 40px 0;
+  width: 100%;
+}
+
+.prose[data-template='chongying'] strong {
+  background: var(--accent);
+  color: var(--paper);
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-weight: 700;
+}
+.prose[data-template='chongying'] a {
+  color: var(--ink);
+  background: linear-gradient(transparent 60%, var(--accent-glow) 60%);
+  text-decoration: none;
+  padding: 0 2px;
+  font-weight: 600;
+}
+
+.prose[data-template='chongying'] ul,
+.prose[data-template='chongying'] ol { padding-left: 4px; list-style: none; }
+.prose[data-template='chongying'] ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.prose[data-template='chongying'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.65em;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border: 1.5px solid var(--ink);
+}
+.prose[data-template='chongying'] ol { counter-reset: chongying-ol; }
+.prose[data-template='chongying'] ol > li {
+  counter-increment: chongying-ol;
+  position: relative;
+  padding-left: 36px;
+  margin-bottom: 10px;
+}
+.prose[data-template='chongying'] ol > li::before {
+  content: counter(chongying-ol);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  border: 1.5px solid var(--ink);
+  background: var(--surface);
+  box-shadow: 2px 2px 0 var(--accent);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prose[data-template='chongying'] code {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 0 6px;
+  border-radius: 2px;
+}
+.prose[data-template='chongying'] th {
+  background: var(--ink);
+  color: var(--paper);
+  border-bottom: none;
+}
+/* ============================================================
+   画报 · huabao —— 杂志感首字下沉 + 居中 kicker + 全大写 h2
+   签名：h1 居中 + h2 全大写小号 + 首段 drop-cap accent 巨字
+   ============================================================ */
+
+.prose[data-template='huabao'] {
+  font-size: 17px;
+  line-height: 1.95;
+}
+
+.prose[data-template='huabao'] h1 {
+  font-family: var(--prose-font);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  margin: 8px 0 8px;
+  padding: 20px 0 0;
+  border: none;
+  letter-spacing: -0.4px;
+}
+.prose[data-template='huabao'] h1::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--accent);
+  margin: 0 auto 16px;
+}
+
+/* —— 核心：h2 小号居中 + 上下细线 + 字母间距 —— */
+.prose[data-template='huabao'] h2 {
+  font-family: var(--prose-font);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  margin: 56px 0 8px;
+  padding: 12px 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  letter-spacing: 6px;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+
+.prose[data-template='huabao'] h3 {
+  font-family: var(--prose-font);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 36px 0 12px;
+  color: var(--ink);
+  font-style: italic;
+  letter-spacing: 0.2px;
+}
+.prose[data-template='huabao'] h4 {
+  font-family: var(--prose-font);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  color: var(--gray-600);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* —— 首段首字下沉 —— */
+.prose[data-template='huabao'] h1 + p::first-letter,
+.prose[data-template='huabao'] h2 + p::first-letter {
+  font-size: 3.6em;
+  float: left;
+  line-height: 0.86;
+  padding: 8px 12px 0 0;
+  font-weight: 800;
+  color: var(--accent);
+  font-family: var(--prose-font);
+}
+
+.prose[data-template='huabao'] blockquote {
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-style: italic;
+  color: var(--ink);
+  padding: 14px 32px 18px;
+  margin: 36px 0;
+  font-size: 19px;
+  line-height: 1.7;
+  position: relative;
+}
+.prose[data-template='huabao'] blockquote::before {
+  content: '\201C';
+  display: block;
+  font-size: 56px;
+  color: var(--accent);
+  line-height: 0.6;
+  font-family: Georgia, 'Times New Roman', serif;
+  margin-bottom: 8px;
+  font-style: normal;
+}
+.prose[data-template='huabao'] blockquote::after {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+  margin: 14px auto 0;
+}
+.prose[data-template='huabao'] blockquote p { margin: 0 0 8px; }
+
+.prose[data-template='huabao'] hr {
+  border: none;
+  height: auto;
+  background: transparent;
+  text-align: center;
+  margin: 56px 0;
+  line-height: 1;
+}
+.prose[data-template='huabao'] hr::before {
+  content: '\2756';
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.prose[data-template='huabao'] ul,
+.prose[data-template='huabao'] ol { padding-left: 4px; list-style: none; }
+.prose[data-template='huabao'] ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.prose[data-template='huabao'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.78em;
+  width: 8px;
+  height: 1px;
+  background: var(--ink);
+}
+.prose[data-template='huabao'] ol { counter-reset: huabao-ol; }
+.prose[data-template='huabao'] ol > li {
+  counter-increment: huabao-ol;
+  position: relative;
+  padding-left: 32px;
+}
+.prose[data-template='huabao'] ol > li::before {
+  content: counter(huabao-ol);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.15em;
+  color: var(--accent);
+}
+
+.prose[data-template='huabao'] a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--accent);
+  text-decoration: none;
+}
+.prose[data-template='huabao'] strong {
+  color: var(--ink);
+  font-weight: 700;
+  border-bottom: 1px solid var(--accent);
+}
+/* ============================================================
+   印章 · yinzhang —— 中式朱印 / 古典
+   签名：h1 旁带朱砂方印（旋转方块 + 透明边框 + 朱印感），h2 前缀小方印
+   ============================================================ */
+
+.prose[data-template='yinzhang'] {
+  font-size: 16.5px;
+  line-height: 1.95;
+}
+
+.prose[data-template='yinzhang'] h1 {
+  font-family: var(--prose-font);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 16px 0 24px;
+  padding: 8px 70px 8px 0;
+  border: none;
+  letter-spacing: 1.5px;
+  color: var(--ink);
+  position: relative;
+  min-height: 56px;
+}
+/* —— 核心：h1 右侧朱砂方印 —— */
+.prose[data-template='yinzhang'] h1::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) rotate(-3deg);
+  width: 48px;
+  height: 48px;
+  background:
+    linear-gradient(var(--accent), var(--accent)),
+    radial-gradient(circle, transparent 0 8px, var(--accent) 9px 12px, transparent 13px);
+  background-blend-mode: normal;
+  background: var(--accent);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--accent);
+  opacity: 0.88;
+}
+
+/* —— h2 朱砂方印前缀 —— */
+.prose[data-template='yinzhang'] h2 {
+  font-family: var(--prose-font);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 44px 0 18px;
+  padding: 0 0 8px 0;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink);
+  letter-spacing: 0.8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.prose[data-template='yinzhang'] h2::before {
+  content: '';
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  background: var(--accent);
+  box-shadow: inset 0 0 0 2px var(--paper), inset 0 0 0 3px var(--accent);
+  border-radius: 3px;
+  flex-shrink: 0;
+  transform: rotate(-2deg);
+}
+
+.prose[data-template='yinzhang'] h3 {
+  font-family: var(--prose-font);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 32px 0 12px;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+  padding-left: 16px;
+  border-left: 2px solid var(--accent);
+}
+.prose[data-template='yinzhang'] h4 {
+  font-family: var(--prose-font);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 24px 0 8px;
+  color: var(--gray-600);
+}
+
+.prose[data-template='yinzhang'] blockquote {
+  border: none;
+  background: transparent;
+  padding: 12px 24px 12px 36px;
+  margin: 28px 0;
+  color: var(--gray-600);
+  font-family: 'STKaiti', 'KaiTi', var(--prose-font);
+  font-size: 17px;
+  line-height: 1.9;
+  position: relative;
+}
+.prose[data-template='yinzhang'] blockquote::before {
+  content: '\300C';
+  position: absolute;
+  left: 0;
+  top: -2px;
+  font-size: 28px;
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose[data-template='yinzhang'] blockquote::after {
+  content: '\300D';
+  display: inline;
+  font-size: 28px;
+  color: var(--accent);
+  margin-left: 4px;
+  vertical-align: bottom;
+  font-weight: 700;
+}
+.prose[data-template='yinzhang'] blockquote p { margin: 0 0 8px; display: inline; }
+
+.prose[data-template='yinzhang'] hr {
+  border: none;
+  height: auto;
+  background: transparent;
+  text-align: center;
+  margin: 48px 0;
+  line-height: 1;
+}
+.prose[data-template='yinzhang'] hr::before {
+  content: '\25C6';
+  color: var(--accent);
+  font-size: 12px;
+  letter-spacing: 18px;
+  padding-left: 18px;
+}
+
+.prose[data-template='yinzhang'] ul,
+.prose[data-template='yinzhang'] ol { padding-left: 0; list-style: none; }
+.prose[data-template='yinzhang'] ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.prose[data-template='yinzhang'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.65em;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  transform: rotate(45deg);
+}
+.prose[data-template='yinzhang'] ol { counter-reset: yinzhang-ol; }
+.prose[data-template='yinzhang'] ol > li {
+  counter-increment: yinzhang-ol;
+  position: relative;
+  padding-left: 36px;
+}
+.prose[data-template='yinzhang'] ol > li::before {
+  content: counter(yinzhang-ol, cjk-ideographic) '\3001';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.prose[data-template='yinzhang'] strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose[data-template='yinzhang'] a {
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent);
+  text-decoration: none;
+}
+.prose[data-template='yinzhang'] code {
+  background: var(--accent-glow);
+  color: var(--accent);
+  border-radius: 2px;
+}
+/* ============================================================
+   格栅 · geshan —— 极客 / 代码风
+   签名：点阵网格 + h2 用 [ ] 方括号包裹 + ol 用 01. 02. mono
+   ============================================================ */
+
+.prose[data-template='geshan'] {
+  font-size: 16px;
+  line-height: 1.85;
+  background-image:
+    linear-gradient(var(--gray-200) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gray-200) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+  background-color: var(--surface);
+  padding: 32px 28px 64px;
+  border: 1px solid var(--border);
+}
+
+.prose[data-template='geshan'] h1 {
+  font-family: var(--mono), var(--prose-font);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 4px 0 8px;
+  padding: 0;
+  border: none;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+.prose[data-template='geshan'] h1::before {
+  content: '# ';
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 700;
+}
+
+/* —— 核心：h2 [ ] mono 括号 —— */
+.prose[data-template='geshan'] h2 {
+  font-family: var(--mono), var(--prose-font);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 40px 0 18px;
+  padding: 8px 12px;
+  border: 1px dashed var(--accent);
+  background: var(--surface);
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  display: inline-block;
+}
+.prose[data-template='geshan'] h2::before {
+  content: '[ ';
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose[data-template='geshan'] h2::after {
+  content: ' ]';
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.prose[data-template='geshan'] h3 {
+  font-family: var(--mono), var(--prose-font);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 28px 0 12px;
+  color: var(--ink);
+}
+.prose[data-template='geshan'] h3::before {
+  content: '> ';
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose[data-template='geshan'] h4 {
+  font-family: var(--mono), var(--prose-font);
+  font-size: 15px;
+  font-weight: 600;
+  margin: 22px 0 8px;
+  color: var(--gray-600);
+}
+.prose[data-template='geshan'] h4::before { content: '// '; color: var(--gray-500); }
+
+.prose[data-template='geshan'] blockquote {
+  border: 1px solid var(--ink);
+  border-left: 4px solid var(--accent);
+  background: var(--surface);
+  padding: 14px 18px;
+  margin: 24px 0;
+  border-radius: 0;
+  color: var(--ink);
+  font-style: normal;
+  font-family: var(--mono), var(--prose-font);
+  font-size: 14px;
+  line-height: 1.75;
+}
+.prose[data-template='geshan'] blockquote p { margin-bottom: 6px; font-family: inherit; }
+.prose[data-template='geshan'] blockquote p::before { content: '> '; color: var(--accent); }
+.prose[data-template='geshan'] blockquote p:last-child { margin-bottom: 0; }
+
+.prose[data-template='geshan'] hr {
+  border: none;
+  height: 1px;
+  background: var(--ink);
+  margin: 40px 0;
+  position: relative;
+}
+.prose[data-template='geshan'] hr::after {
+  content: '/ / /';
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  transform: translateX(-50%);
+  background: var(--surface);
+  padding: 0 12px;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.prose[data-template='geshan'] ul,
+.prose[data-template='geshan'] ol { padding-left: 4px; list-style: none; }
+.prose[data-template='geshan'] ul > li {
+  position: relative;
+  padding-left: 22px;
+  font-family: var(--prose-font);
+}
+.prose[data-template='geshan'] ul > li::before {
+  content: '-';
+  position: absolute;
+  left: 4px;
+  top: 0;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 700;
+}
+.prose[data-template='geshan'] ol { counter-reset: geshan-ol; }
+.prose[data-template='geshan'] ol > li {
+  counter-increment: geshan-ol;
+  position: relative;
+  padding-left: 38px;
+}
+.prose[data-template='geshan'] ol > li::before {
+  content: counter(geshan-ol, decimal-leading-zero) '.';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.prose[data-template='geshan'] strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose[data-template='geshan'] em {
+  color: var(--gray-600);
+  font-style: italic;
+}
+.prose[data-template='geshan'] a {
+  color: var(--accent);
+  font-family: var(--mono);
+  text-decoration: underline;
+}
+.prose[data-template='geshan'] code {
+  background: var(--ink);
+  color: var(--accent);
+  border-radius: 0;
+  font-weight: 500;
+}
+/* ============================================================
+   手札 · shouzha —— 手记 / 手绘波浪线
+   签名：h2 下方手绘波浪 SVG underline + blockquote 旁线手写感
+   ============================================================ */
+
+.prose[data-template='shouzha'] {
+  font-size: 17px;
+  line-height: 1.95;
+  font-family: 'STKaiti', 'KaiTi', var(--prose-font);
+}
+
+.prose[data-template='shouzha'] h1 {
+  font-family: 'STKaiti', 'KaiTi', var(--prose-font);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 8px 0 24px;
+  padding-bottom: 12px;
+  border: none;
+  letter-spacing: 1px;
+  color: var(--ink);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'><path d='M0 8 Q15 1 30 8 T60 8 T90 8 T120 8' stroke='%23c44b2b' stroke-width='2.5' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 100% 8px;
+}
+
+/* —— 核心：h2 手绘波浪线 underline —— */
+.prose[data-template='shouzha'] h2 {
+  font-family: 'STKaiti', 'KaiTi', var(--prose-font);
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 44px 0 16px;
+  padding: 0 6px 12px;
+  border: none;
+  color: var(--ink);
+  letter-spacing: 1px;
+  display: inline-block;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 10' preserveAspectRatio='none'><path d='M0 6 Q10 1 20 6 T40 6 T60 6 T80 6' stroke='%23c44b2b' stroke-width='2.5' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 100% 7px;
+}
+
+.prose[data-template='shouzha'] h3 {
+  font-family: 'STKaiti', 'KaiTi', var(--prose-font);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 30px 0 12px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+.prose[data-template='shouzha'] h3::before {
+  content: '\270E  ';
+  color: var(--accent);
+  font-size: 0.85em;
+}
+.prose[data-template='shouzha'] h4 {
+  font-family: 'STKaiti', 'KaiTi', var(--prose-font);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 22px 0 8px;
+  color: var(--gray-600);
+  font-style: italic;
+}
+
+.prose[data-template='shouzha'] blockquote {
+  border: none;
+  background: transparent;
+  padding: 12px 18px 12px 26px;
+  margin: 24px 0;
+  color: var(--gray-600);
+  font-family: 'STKaiti', 'KaiTi', var(--prose-font);
+  font-size: 16.5px;
+  position: relative;
+}
+.prose[data-template='shouzha'] blockquote::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background-image: linear-gradient(var(--accent) 50%, transparent 50%);
+  background-size: 3px 6px;
+}
+.prose[data-template='shouzha'] blockquote p { margin-bottom: 6px; }
+.prose[data-template='shouzha'] blockquote p:last-child { margin-bottom: 0; }
+
+.prose[data-template='shouzha'] hr {
+  border: none;
+  height: 8px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q15 0 30 4 T60 4 T90 4 T120 4' stroke='%23c44b2b' stroke-width='2' fill='none' stroke-linecap='round' opacity='0.6'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 120px 8px;
+  margin: 36px 0;
+}
+
+.prose[data-template='shouzha'] ul,
+.prose[data-template='shouzha'] ol { padding-left: 4px; list-style: none; }
+.prose[data-template='shouzha'] ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.prose[data-template='shouzha'] ul > li::before {
+  content: '\2756';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-size: 0.7em;
+  top: 0.3em;
+}
+.prose[data-template='shouzha'] ol { counter-reset: shouzha-ol; }
+.prose[data-template='shouzha'] ol > li {
+  counter-increment: shouzha-ol;
+  position: relative;
+  padding-left: 32px;
+}
+.prose[data-template='shouzha'] ol > li::before {
+  content: counter(shouzha-ol) '.';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-weight: 700;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 1.1em;
+}
+
+.prose[data-template='shouzha'] strong {
+  color: var(--ink);
+  font-weight: 700;
+  background-image: linear-gradient(transparent 65%, var(--accent-glow) 65%);
+  padding: 0 2px;
+}
+.prose[data-template='shouzha'] em {
+  color: var(--accent);
+  font-style: italic;
+}
+.prose[data-template='shouzha'] a {
+  color: var(--accent);
+  text-decoration: underline wavy var(--accent);
+  text-underline-offset: 4px;
+}
+.prose[data-template='shouzha'] code {
+  background: var(--accent-glow);
+  color: var(--accent);
+  border-radius: 3px;
+}
+/* ============================================================
+   极光 · jiguang —— 渐变 / 现代 / 产品发布
+   签名：h1 左侧 accent → 透明 渐变粗条；h2 下渐变 underline
+   ============================================================ */
+
+.prose[data-template='jiguang'] {
+  font-size: 16.5px;
+  line-height: 1.9;
+}
+
+.prose[data-template='jiguang'] h1 {
+  font-family: var(--prose-font);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin: 8px 0 28px;
+  padding: 4px 0 4px 18px;
+  border: none;
+  border-left: 6px solid var(--accent);
+  background: linear-gradient(90deg, var(--accent-glow), transparent 60%);
+  letter-spacing: -0.4px;
+  color: var(--ink);
+}
+
+/* —— 核心：h2 渐变下划线 —— */
+.prose[data-template='jiguang'] h2 {
+  font-family: var(--prose-font);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 44px 0 18px;
+  padding: 0 0 8px;
+  border: none;
+  background-image: linear-gradient(90deg, var(--accent), transparent 80%);
+  background-repeat: no-repeat;
+  background-size: 100% 3px;
+  background-position: 0 100%;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+}
+
+.prose[data-template='jiguang'] h3 {
+  font-family: var(--prose-font);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 32px 0 12px;
+  padding-left: 14px;
+  color: var(--ink);
+  position: relative;
+}
+.prose[data-template='jiguang'] h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+}
+.prose[data-template='jiguang'] h4 {
+  font-family: var(--prose-font);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 10px;
+  color: var(--gray-600);
+}
+
+.prose[data-template='jiguang'] blockquote {
+  border: none;
+  background: linear-gradient(135deg, var(--accent-glow), transparent 70%);
+  padding: 16px 22px 16px 22px;
+  margin: 24px 0;
+  border-radius: 10px;
+  font-style: normal;
+  color: var(--gray-600);
+  position: relative;
+  border-left: 3px solid var(--accent);
+}
+.prose[data-template='jiguang'] blockquote p { margin-bottom: 8px; color: var(--gray-600); }
+.prose[data-template='jiguang'] blockquote p:last-child { margin-bottom: 0; }
+
+.prose[data-template='jiguang'] hr {
+  border: none;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), transparent 100%);
+  margin: 40px 0;
+  border-radius: 2px;
+}
+
+.prose[data-template='jiguang'] ul,
+.prose[data-template='jiguang'] ol { padding-left: 4px; list-style: none; }
+.prose[data-template='jiguang'] ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.prose[data-template='jiguang'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.7em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+}
+.prose[data-template='jiguang'] ol { counter-reset: jiguang-ol; }
+.prose[data-template='jiguang'] ol > li {
+  counter-increment: jiguang-ol;
+  position: relative;
+  padding-left: 34px;
+  margin-bottom: 10px;
+}
+.prose[data-template='jiguang'] ol > li::before {
+  content: counter(jiguang-ol);
+  position: absolute;
+  left: 0;
+  top: 0.05em;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prose[data-template='jiguang'] strong {
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+.prose[data-template='jiguang'] a {
+  color: var(--accent);
+  text-decoration: none;
+  background-image: linear-gradient(90deg, var(--accent), var(--accent-light));
+  background-repeat: no-repeat;
+  background-size: 100% 1.5px;
+  background-position: 0 100%;
+}
+.prose[data-template='jiguang'] code {
+  background: var(--accent-glow);
+  color: var(--accent);
+  border-radius: 4px;
+}
+.prose[data-template='jiguang'] th {
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  color: var(--paper);
+  border-bottom: none;
+}
+/* ============================================================
+   章页 · zhangye —— 书籍长文 / 罗马数字章节
+   签名：h1 居中 + 罗马 kicker，h2 大字号 Ⅰ Ⅱ 章节编号
+   ============================================================ */
+
+.prose[data-template='zhangye'] {
+  font-size: 17px;
+  line-height: 2.0;
+}
+
+.prose[data-template='zhangye'] h1 {
+  font-family: var(--prose-font);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  margin: 16px 0 36px;
+  padding: 28px 0 24px;
+  border: none;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  letter-spacing: 2px;
+  color: var(--ink);
+  position: relative;
+}
+.prose[data-template='zhangye'] h1::before {
+  content: 'CHAPTER';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  padding: 0 14px;
+  font-family: Georgia, serif;
+  font-size: 11px;
+  letter-spacing: 6px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* —— 核心：h2 罗马数字编号 —— */
+.prose[data-template='zhangye'] h2 {
+  font-family: var(--prose-font);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 56px 0 24px;
+  padding: 0;
+  border: none;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+  counter-increment: zhangye-h2;
+  position: relative;
+  padding-top: 56px;
+  text-align: center;
+}
+.prose[data-template='zhangye'] {
+  counter-reset: zhangye-h2;
+}
+.prose[data-template='zhangye'] h2::before {
+  content: counter(zhangye-h2, upper-roman);
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 2px;
+  font-style: italic;
+}
+.prose[data-template='zhangye'] h2::after {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--ink);
+  margin: 14px auto 0;
+}
+
+.prose[data-template='zhangye'] h3 {
+  font-family: var(--prose-font);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 36px 0 14px;
+  color: var(--ink);
+  font-style: italic;
+}
+.prose[data-template='zhangye'] h4 {
+  font-family: var(--prose-font);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  color: var(--gray-600);
+  font-style: italic;
+}
+
+/* —— 首段首字下沉 —— */
+.prose[data-template='zhangye'] h1 + p::first-letter,
+.prose[data-template='zhangye'] h2 + p::first-letter {
+  font-size: 3.4em;
+  float: left;
+  line-height: 0.88;
+  padding: 6px 12px 0 0;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: Georgia, var(--prose-font);
+}
+
+.prose[data-template='zhangye'] blockquote {
+  border: none;
+  background: transparent;
+  padding: 16px 36px;
+  margin: 32px 0;
+  color: var(--gray-600);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.85;
+  position: relative;
+  border-left: 1px solid var(--ink);
+}
+.prose[data-template='zhangye'] blockquote p { margin: 0 0 10px; }
+.prose[data-template='zhangye'] blockquote p:last-child { margin-bottom: 0; }
+
+.prose[data-template='zhangye'] hr {
+  border: none;
+  height: auto;
+  background: transparent;
+  text-align: center;
+  margin: 56px 0;
+  line-height: 1;
+}
+.prose[data-template='zhangye'] hr::before {
+  content: '\2766';
+  color: var(--accent);
+  font-size: 16px;
+}
+
+.prose[data-template='zhangye'] ul,
+.prose[data-template='zhangye'] ol { padding-left: 4px; list-style: none; }
+.prose[data-template='zhangye'] ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.prose[data-template='zhangye'] ul > li::before {
+  content: '\2014';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--ink);
+}
+.prose[data-template='zhangye'] ol { counter-reset: zhangye-ol; }
+.prose[data-template='zhangye'] ol > li {
+  counter-increment: zhangye-ol;
+  position: relative;
+  padding-left: 32px;
+}
+.prose[data-template='zhangye'] ol > li::before {
+  content: counter(zhangye-ol, lower-roman) '.';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 1.05em;
+}
+
+.prose[data-template='zhangye'] strong {
+  color: var(--ink);
+  font-weight: 700;
+  font-style: italic;
+}
+.prose[data-template='zhangye'] em {
+  color: var(--accent);
+  font-style: italic;
+}
+.prose[data-template='zhangye'] a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--accent);
+  text-decoration: none;
+}
+.prose[data-template='zhangye'] code {
+  background: var(--gray-100);
+  color: var(--ink);
+  font-style: normal;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+}
+
+/* ============ Gallery UI ============ */
+body {
+  margin: 0;
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+}
+.topbar-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+  letter-spacing: -0.3px;
+  margin-bottom: 12px;
+}
+.topbar-title .tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-left: 10px;
+  text-transform: uppercase;
+}
+.template-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.template-tabs button {
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  letter-spacing: 0.3px;
+}
+.template-tabs button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+.template-tabs button.active {
+  background: var(--accent);
+  color: var(--paper);
+  border-color: var(--accent);
+}
+.stage {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+.stage-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.stage-meta strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-title">Markdown AI · 10 套版式 Gallery <span class="tag">朱砂 · 文楷 · 浅色</span></div>
+  <div class="template-tabs" id="tabs">
+    <button data-t="qingye">晴野</button>
+    <button data-t="haibao">海报</button>
+    <button data-t="ningmeng">柠檬</button>
+    <button data-t="chongying">重影</button>
+    <button data-t="huabao">画报</button>
+    <button data-t="yinzhang">印章</button>
+    <button data-t="geshan">格栅</button>
+    <button data-t="shouzha">手札</button>
+    <button data-t="jiguang">极光</button>
+    <button data-t="zhangye">章页</button>
+  </div>
+</header>
+
+<div class="stage">
+  <div class="stage-meta">CURRENT · <strong id="current-name">晴野 qingye</strong></div>
+  <article class="prose" id="prose" data-template="qingye">
+
+<h1>新零售业务中仓储相关的业务场景</h1>
+
+<p>这是一段用于展示 <strong>10 套版式</strong> 的正文段落。每个模版有一个清晰的<em>视觉签名</em>，远看就能区分；近看克制不堆装饰。点上方任意标签切换看效果。</p>
+
+<p>这套工具的目标是：让 Markdown 写完，<a href="https://example.com">一键复制到公众号 / 飞书 / Notion</a>。版式的<strong>"signature 动作"</strong>会保留到目标平台，不会因为粘贴丢失。</p>
+
+<h2>一、模版要解决的问题</h2>
+
+<p>每个版式都要回答两个问题：<strong>它的独特动作是什么</strong>，以及<strong>它适合什么场景</strong>。如果两个问题都说不清，模版就没存在必要。</p>
+
+<h3>1.1 节奏与呼吸</h3>
+
+<ul>
+  <li>正文行距统一在 <strong>1.85 - 2.0</strong> 区间，让长段落不憋</li>
+  <li>段间距 16-20px，章节间距 40-56px，建立<em>清晰节奏</em></li>
+  <li>每个模版选用一种 accent 色应用方式 —— 不堆叠</li>
+</ul>
+
+<h3>1.2 装饰原则</h3>
+
+<ol>
+  <li>每个模版只有<strong>一个</strong>签名装饰，其它地方收敛</li>
+  <li>能用排印手法的，绝不上图标和渐变</li>
+  <li>装饰必须能在公众号粘贴后<strong>形不变</strong></li>
+</ol>
+
+<blockquote>
+  <p>设计模版不是堆装饰元素，是给读者一个"层级地图"。</p>
+  <p>—— 一个版式洁癖者的呓语</p>
+</blockquote>
+
+<h2>二、版式之间怎么对比</h2>
+
+<p>下表对比 10 套版式的"签名动作"和"适合场景"：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>模版</th>
+      <th>签名动作</th>
+      <th>适合场景</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>晴野</strong></td><td>点阵底纹 + 大引号卡</td><td>AI 现代博客</td></tr>
+    <tr><td><strong>海报</strong></td><td>h1 反白 hero</td><td>发布会 / 头条</td></tr>
+    <tr><td><strong>柠檬</strong></td><td>h2 高亮笔块</td><td>公众号海报</td></tr>
+    <tr><td><strong>重影</strong></td><td>偏移阴影贴纸</td><td>潮玩 / 灵感卡</td></tr>
+    <tr><td><strong>画报</strong></td><td>居中 + 首字下沉</td><td>三联 / 单读</td></tr>
+    <tr><td><strong>印章</strong></td><td>朱砂方印</td><td>中式 / 国风</td></tr>
+    <tr><td><strong>格栅</strong></td><td>[ ] mono 括号</td><td>tech / 极客</td></tr>
+    <tr><td><strong>手札</strong></td><td>波浪 underline</td><td>个人博客 / 笔记</td></tr>
+    <tr><td><strong>极光</strong></td><td>渐变下划线</td><td>产品 / 现代</td></tr>
+    <tr><td><strong>章页</strong></td><td>罗马 + CHAPTER</td><td>书籍 / 长文</td></tr>
+  </tbody>
+</table>
+
+<h3>1.3 代码也要好看</h3>
+
+<p>代码块统一保留 terminal-dark，跨模版一致。行内 <code>inline code</code> 在每个模版有不同处理 —— 有的反白，有的下划线，有的方框。</p>
+
+<pre><code>function applyTemplate(id, root, ctx) {
+  // 每个模版只做一件事：在 inline 复制时
+  // 把 ::before / counter() 等 CSS 装饰
+  // 替换成真实 DOM，让公众号能保留
+  return decorations[id](root, ctx);
+}</code></pre>
+
+<hr />
+
+<h2>三、看到这里就够了</h2>
+
+<p>每个模版都跟<strong>朱砂、青墨、墨黑、茉蓝、栗原</strong> 5 套配色正交，跟 <em>霞鹜文楷、思源宋、楷体、苹方</em> 4 套字体也正交。也就是说 10 × 5 × 4 × 2 = 400 种皮肤组合。</p>
+
+<h4>下一步要不要做</h4>
+
+<ul>
+  <li>把模版选择器做成更精致的卡片选择器</li>
+  <li>每个模版的公众号 inline 镜像做 case 测试</li>
+  <li>加 AI 起稿（用户自带 Key）</li>
+</ul>
+
+  </article>
+</div>
+
+<script>
+(function () {
+  var prose = document.getElementById('prose');
+  var current = document.getElementById('current-name');
+  var tabs = document.querySelectorAll('#tabs button');
+  var names = {
+    qingye: '晴野 qingye',
+    haibao: '海报 haibao',
+    ningmeng: '柠檬 ningmeng',
+    chongying: '重影 chongying',
+    huabao: '画报 huabao',
+    yinzhang: '印章 yinzhang',
+    geshan: '格栅 geshan',
+    shouzha: '手札 shouzha',
+    jiguang: '极光 jiguang',
+    zhangye: '章页 zhangye'
+  };
+  function activate(id) {
+    prose.setAttribute('data-template', id);
+    current.textContent = names[id];
+    tabs.forEach(function (t) {
+      t.classList.toggle('active', t.dataset.t === id);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { activate(t.dataset.t); });
+  });
+  activate('qingye');
+})();
+</script>
+</body>
+</html>
