@@ -17,6 +17,7 @@ import './styles/templates/zhangye.css';
 import './styles/templates/juanshou.css';
 import './styles/templates/jiekan.css';
 import './styles/templates/yuebao.css';
+import './styles/templates/hongbang.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

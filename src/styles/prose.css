@@ -129,6 +129,104 @@
   margin-top: 10px;
   line-height: 1.5;
 }
+
+/* ============ 自动元素：基线（每个版式可以单独覆盖） ============ */
+
+/* h3[data-chip] —— 末尾带 ：的 h3 自动变胶囊 */
+.prose h3[data-chip] {
+  display: inline-block;
+  padding: 5px 14px 6px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 28px 0 14px;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+}
+
+/* li[data-def] —— **粗体标题** + 描述段落 自动定义列表 */
+.prose li[data-def] {
+  list-style: none;
+  margin-left: -8px;
+  margin-bottom: 18px;
+  padding-left: 22px;
+  position: relative;
+}
+.prose li[data-def]::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.7em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.prose li[data-def] > [data-def-title] {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+.prose li[data-def] > [data-def-desc] {
+  color: var(--text-muted);
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+.prose li[data-def] > [data-def-desc] p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+
+/* ==highlight== via <mark> */
+.prose mark {
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-weight: 600;
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+
+/* GFM callouts */
+.prose [data-callout] {
+  border-left: 4px solid var(--accent);
+  background: var(--surface-2);
+  padding: 14px 18px;
+  margin: 24px 0;
+  border-radius: 0 8px 8px 0;
+  color: var(--gray-600);
+}
+.prose [data-callout-head] {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.prose [data-callout='warning'],
+.prose [data-callout='caution'] {
+  border-left-color: #d97706;
+}
+.prose [data-callout='warning'] [data-callout-head],
+.prose [data-callout='caution'] [data-callout-head] {
+  color: #d97706;
+}
+.prose [data-callout='tip'] {
+  border-left-color: #16a34a;
+}
+.prose [data-callout='tip'] [data-callout-head] {
+  color: #16a34a;
+}
+.prose [data-callout] p:last-child {
+  margin-bottom: 0;
+}
 .prose hr {
   border: none;
   height: 1px;
