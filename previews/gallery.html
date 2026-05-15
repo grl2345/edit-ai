@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Markdown AI · 10 套版式 Gallery</title>
+<title>Markdown AI · 13 套版式 Gallery</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
@@ -274,6 +274,23 @@ body {
   max-width: 100%;
   border-radius: 10px;
   margin: 28px 0;
+}
+.prose figure {
+  margin: 28px 0;
+  text-align: center;
+}
+.prose figure img {
+  margin: 0 auto;
+  display: block;
+}
+.prose figcaption {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.5;
 }
 .prose hr {
   border: none;
@@ -2078,92 +2095,860 @@ body {
   border-radius: 2px;
   border: 1px solid var(--border);
 }
+/* ============================================================
+   卷首 · juanshou —— 杂志开篇 / The New Yorker 风
+   签名：
+   - h1 大字 + accent kicker 短线
+   - h2 罗马数字悬挂式标号
+   - 首段 4-5 行高 drop-cap accent 巨字
+   - blockquote pull-quote：超大斜体居中 + 上下细线
+   - figure 配文：italic serif 居中
+   - table 编辑部数据表：大写表头 + hairline
+   ============================================================ */
+
+.prose[data-template='juanshou'] {
+  font-size: 17px;
+  line-height: 2;
+}
+
+/* —— h1：报刊开篇大字 —— */
+.prose[data-template='juanshou'] h1 {
+  font-family: var(--prose-font);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+  margin: 8px 0 28px;
+  padding: 0 0 16px;
+  border: none;
+  position: relative;
+  color: var(--ink);
+}
+.prose[data-template='juanshou'] h1::before {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 4px;
+  background: var(--accent);
+  margin: 0 0 18px;
+}
+
+/* —— h2：罗马数字悬挂 —— */
+.prose[data-template='juanshou'] {
+  counter-reset: juanshou-h2;
+}
+.prose[data-template='juanshou'] h2 {
+  font-family: var(--prose-font);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 56px 0 20px;
+  padding: 16px 0 0;
+  border: none;
+  border-top: 1px solid var(--ink);
+  counter-increment: juanshou-h2;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  position: relative;
+  padding-left: 70px;
+}
+.prose[data-template='juanshou'] h2::before {
+  content: counter(juanshou-h2, upper-roman) '.';
+  position: absolute;
+  left: 0;
+  top: 16px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 26px;
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 400;
+  width: 60px;
+}
+
+.prose[data-template='juanshou'] h3 {
+  font-family: var(--prose-font);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 36px 0 12px;
+  color: var(--ink);
+  font-style: italic;
+}
+
+.prose[data-template='juanshou'] h4 {
+  font-family: var(--prose-font);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* —— 首段巨型 drop cap —— */
+.prose[data-template='juanshou'] h1 + p::first-letter,
+.prose[data-template='juanshou'] h2 + p::first-letter {
+  font-size: 5.2em;
+  float: left;
+  line-height: 0.86;
+  padding: 10px 14px 0 0;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: Georgia, var(--prose-font);
+}
+
+/* —— 核心：超大 pull-quote —— */
+.prose[data-template='juanshou'] blockquote {
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-style: italic;
+  color: var(--ink);
+  padding: 28px 24px 24px;
+  margin: 44px 0;
+  font-size: 22px;
+  line-height: 1.5;
+  position: relative;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  font-family: Georgia, var(--prose-font);
+}
+.prose[data-template='juanshou'] blockquote::before {
+  content: '\201C';
+  display: block;
+  text-align: center;
+  font-size: 64px;
+  color: var(--accent);
+  line-height: 0.5;
+  font-family: Georgia, serif;
+  margin-bottom: 12px;
+  font-style: normal;
+  font-weight: 700;
+}
+.prose[data-template='juanshou'] blockquote p { margin: 0 0 8px; }
+
+/* —— figure 配图与图注 —— */
+.prose[data-template='juanshou'] figure {
+  margin: 36px 0;
+  text-align: center;
+}
+.prose[data-template='juanshou'] figure img {
+  max-width: 100%;
+  border-radius: 0;
+  margin: 0;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 10px;
+}
+.prose[data-template='juanshou'] figcaption {
+  font-family: Georgia, var(--prose-font);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--gray-600);
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.2px;
+}
+
+/* —— 编辑部数据表 —— */
+.prose[data-template='juanshou'] table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 32px 0;
+  font-size: 15px;
+}
+.prose[data-template='juanshou'] th {
+  background: transparent;
+  text-align: left;
+  padding: 8px 12px;
+  border: none;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--prose-font);
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ink);
+}
+.prose[data-template='juanshou'] td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-family: Georgia, var(--prose-font);
+}
+.prose[data-template='juanshou'] tbody tr:last-child td {
+  border-bottom: 2px solid var(--ink);
+}
+
+/* —— hr：fleuron 中点 + 两侧细线 —— */
+.prose[data-template='juanshou'] hr {
+  border: none;
+  height: auto;
+  background: transparent;
+  margin: 56px 0;
+  text-align: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.prose[data-template='juanshou'] hr::before {
+  content: '\2766';
+  color: var(--accent);
+  font-size: 18px;
+}
+
+/* —— 列表 —— */
+.prose[data-template='juanshou'] ul,
+.prose[data-template='juanshou'] ol {
+  padding-left: 4px;
+  list-style: none;
+}
+.prose[data-template='juanshou'] ul > li {
+  position: relative;
+  padding-left: 24px;
+}
+.prose[data-template='juanshou'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.85em;
+  width: 12px;
+  height: 1px;
+  background: var(--accent);
+}
+.prose[data-template='juanshou'] ol { counter-reset: juanshou-ol; }
+.prose[data-template='juanshou'] ol > li {
+  counter-increment: juanshou-ol;
+  position: relative;
+  padding-left: 32px;
+}
+.prose[data-template='juanshou'] ol > li::before {
+  content: counter(juanshou-ol) '.';
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+.prose[data-template='juanshou'] strong {
+  color: var(--ink);
+  font-weight: 700;
+  border-bottom: 2px solid var(--accent);
+}
+.prose[data-template='juanshou'] em {
+  font-style: italic;
+  color: var(--ink);
+}
+.prose[data-template='juanshou'] a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--accent);
+  text-decoration: none;
+  font-style: italic;
+}
+.prose[data-template='juanshou'] code {
+  font-family: Georgia, serif;
+  font-style: italic;
+  background: transparent;
+  color: var(--accent);
+  padding: 0;
+}
+.prose[data-template='juanshou'] code::before { content: '"'; }
+.prose[data-template='juanshou'] code::after { content: '"'; }
+.prose[data-template='juanshou'] pre code::before,
+.prose[data-template='juanshou'] pre code::after { content: none; }
+/* ============================================================
+   街刊 · jiekan —— Monocle / Wallpaper* 风
+   签名：
+   - h1 巨大粗黑体（无衬线），上方红色 SECTION 小钉
+   - h2 全大写小号粗体 + 4px 厚 accent 实色底条
+   - h2 自动编号 № 01 / № 02 chip 前缀
+   - blockquote 巨大斜体 + 左 5px accent 粗条 + 右下 author tag
+   - figure 全宽 / 配文 mono uppercase
+   - table 重黑表头 + 隔行 tint
+   ============================================================ */
+
+.prose[data-template='jiekan'] {
+  font-size: 16.5px;
+  line-height: 1.9;
+}
+
+/* h1：粗黑体大字 + 上方 accent 标 */
+.prose[data-template='jiekan'] h1 {
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', var(--prose-font), sans-serif;
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -1.5px;
+  margin: 4px 0 28px;
+  padding: 0;
+  border: none;
+  color: var(--ink);
+  position: relative;
+  padding-top: 30px;
+}
+.prose[data-template='jiekan'] h1::before {
+  content: 'COVER STORY';
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: var(--accent);
+  color: var(--paper);
+  padding: 4px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
+
+/* —— 核心：h2 编号 chip 前缀 —— */
+.prose[data-template='jiekan'] {
+  counter-reset: jiekan-h2;
+}
+.prose[data-template='jiekan'] h2 {
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', var(--prose-font), sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin: 48px 0 16px;
+  padding: 0 0 10px;
+  border: none;
+  border-bottom: 5px solid var(--ink);
+  counter-increment: jiekan-h2;
+  letter-spacing: -0.4px;
+  color: var(--ink);
+  display: block;
+  position: relative;
+}
+.prose[data-template='jiekan'] h2::before {
+  content: '№ ' counter(jiekan-h2, decimal-leading-zero);
+  display: inline-block;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 4px 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-right: 14px;
+  vertical-align: 4px;
+}
+
+.prose[data-template='jiekan'] h3 {
+  font-family: var(--prose-font);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 32px 0 12px;
+  font-style: italic;
+  color: var(--ink);
+}
+.prose[data-template='jiekan'] h3::before {
+  content: '— ';
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.prose[data-template='jiekan'] h4 {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* —— pull quote 巨大斜体 + 左粗 accent + 作者 tag —— */
+.prose[data-template='jiekan'] blockquote {
+  border: none;
+  border-left: 6px solid var(--accent);
+  background: transparent;
+  padding: 14px 0 14px 24px;
+  margin: 32px 0;
+  color: var(--ink);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.45;
+  font-weight: 600;
+  font-family: var(--prose-font);
+}
+.prose[data-template='jiekan'] blockquote p {
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+.prose[data-template='jiekan'] blockquote p:last-child {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--accent);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
+
+/* —— figure 全宽 + 配文 mono uppercase —— */
+.prose[data-template='jiekan'] figure {
+  margin: 32px 0;
+  position: relative;
+  border-bottom: 4px solid var(--ink);
+  padding-bottom: 14px;
+}
+.prose[data-template='jiekan'] figure img {
+  max-width: 100%;
+  width: 100%;
+  display: block;
+  border-radius: 0;
+  margin: 0;
+}
+.prose[data-template='jiekan'] figcaption {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  margin-top: 12px;
+  padding-left: 14px;
+  position: relative;
+}
+.prose[data-template='jiekan'] figcaption::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+}
+
+/* —— 杂志数据表 —— */
+.prose[data-template='jiekan'] table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 14px;
+  border-top: 4px solid var(--ink);
+  border-bottom: 4px solid var(--ink);
+}
+.prose[data-template='jiekan'] th {
+  background: var(--ink);
+  color: var(--paper);
+  text-align: left;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-bottom: none;
+}
+.prose[data-template='jiekan'] td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--prose-font);
+}
+.prose[data-template='jiekan'] tbody tr:nth-child(even) td {
+  background: var(--surface-2);
+}
+.prose[data-template='jiekan'] tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* —— hr：粗黑实条 + 中间小 accent 方 —— */
+.prose[data-template='jiekan'] hr {
+  border: none;
+  height: 4px;
+  background: var(--ink);
+  margin: 44px 0;
+  position: relative;
+  width: 100%;
+}
+.prose[data-template='jiekan'] hr::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
+}
+
+/* —— 列表 —— */
+.prose[data-template='jiekan'] ul,
+.prose[data-template='jiekan'] ol {
+  padding-left: 4px;
+  list-style: none;
+}
+.prose[data-template='jiekan'] ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.prose[data-template='jiekan'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.75em;
+  width: 12px;
+  height: 4px;
+  background: var(--accent);
+}
+.prose[data-template='jiekan'] ol { counter-reset: jiekan-ol; }
+.prose[data-template='jiekan'] ol > li {
+  counter-increment: jiekan-ol;
+  position: relative;
+  padding-left: 38px;
+  margin-bottom: 12px;
+}
+.prose[data-template='jiekan'] ol > li::before {
+  content: counter(jiekan-ol, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -1px;
+}
+
+.prose[data-template='jiekan'] strong {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 1px 5px;
+  font-weight: 700;
+}
+.prose[data-template='jiekan'] em {
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 600;
+}
+.prose[data-template='jiekan'] a {
+  color: var(--ink);
+  background: var(--accent-glow);
+  text-decoration: none;
+  padding: 0 4px;
+  font-weight: 600;
+}
+.prose[data-template='jiekan'] code {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 2px 7px;
+  border-radius: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+}
+/* ============================================================
+   月报 · yuebao —— Economist / NY Times Graphics 风
+   签名：
+   - h1 双横线 + 上方期次小标
+   - h2 编号 02 · 大标题（似经济学人栏目编号）
+   - h3 italic serif + 章节短线
+   - 表格：编辑级数据表，header bg 浅灰 + 数字右对齐 + 隔行细线
+   - figure：边框 1px 灰 + 阴影 + 紧凑图注 italic serif
+   - blockquote：浅 accent 卡 + 角标 NOTE 钉
+   - hr：双细线（emdash 风）
+   ============================================================ */
+
+.prose[data-template='yuebao'] {
+  font-size: 16.5px;
+  line-height: 1.85;
+}
+
+/* h1：双横线杂志大标 + 期号 kicker */
+.prose[data-template='yuebao'] h1 {
+  font-family: var(--prose-font);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 12px 0 28px;
+  padding: 22px 0 18px;
+  border: none;
+  border-top: 1px solid var(--ink);
+  border-bottom: 4px double var(--ink);
+  letter-spacing: -0.3px;
+  color: var(--ink);
+  position: relative;
+}
+.prose[data-template='yuebao'] h1::before {
+  content: 'MONTHLY REPORT';
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* —— 核心：h2 编号杂志栏目 —— */
+.prose[data-template='yuebao'] {
+  counter-reset: yuebao-h2;
+}
+.prose[data-template='yuebao'] h2 {
+  font-family: var(--prose-font);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 48px 0 18px;
+  padding: 0 0 8px;
+  border: none;
+  border-bottom: 1px solid var(--ink);
+  counter-increment: yuebao-h2;
+  color: var(--ink);
+  letter-spacing: -0.1px;
+  padding-left: 56px;
+  position: relative;
+}
+.prose[data-template='yuebao'] h2::before {
+  content: counter(yuebao-h2, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.prose[data-template='yuebao'] h3 {
+  font-family: var(--prose-font);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 32px 0 12px;
+  color: var(--ink);
+  font-style: italic;
+  padding-left: 12px;
+  border-left: 2px solid var(--accent);
+}
+
+.prose[data-template='yuebao'] h4 {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  color: var(--gray-500);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* —— blockquote 笺记卡 + NOTE 钉 —— */
+.prose[data-template='yuebao'] blockquote {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  background: var(--surface-2);
+  padding: 16px 20px 18px;
+  margin: 28px 0;
+  border-radius: 0;
+  font-style: normal;
+  color: var(--gray-600);
+  font-size: 15px;
+  line-height: 1.7;
+  position: relative;
+}
+.prose[data-template='yuebao'] blockquote::before {
+  content: 'NOTE';
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  background: var(--accent);
+  color: var(--paper);
+  padding: 2px 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.prose[data-template='yuebao'] blockquote p { margin-bottom: 8px; color: var(--gray-600); }
+.prose[data-template='yuebao'] blockquote p:last-child { margin-bottom: 0; }
+
+/* —— figure 杂志图 + 图注 italic serif —— */
+.prose[data-template='yuebao'] figure {
+  margin: 32px 0;
+  border: 1px solid var(--border);
+  padding: 12px 12px 0;
+  background: var(--surface);
+  box-shadow: 0 2px 0 var(--border);
+}
+.prose[data-template='yuebao'] figure img {
+  max-width: 100%;
+  margin: 0;
+  border-radius: 0;
+  display: block;
+}
+.prose[data-template='yuebao'] figcaption {
+  font-family: var(--prose-font);
+  font-style: italic;
+  font-size: 13.5px;
+  color: var(--gray-600);
+  padding: 10px 4px 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 10px;
+  line-height: 1.5;
+  position: relative;
+  padding-left: 26px;
+}
+.prose[data-template='yuebao'] figcaption::before {
+  content: 'FIG';
+  position: absolute;
+  left: 0;
+  top: 11px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+}
+
+/* —— Economist 风数据表 —— */
+.prose[data-template='yuebao'] table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 14px;
+  border-top: 3px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+.prose[data-template='yuebao'] th {
+  background: transparent;
+  text-align: left;
+  padding: 9px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent);
+  border: none;
+  border-bottom: 1px solid var(--ink);
+}
+.prose[data-template='yuebao'] th:not(:first-child),
+.prose[data-template='yuebao'] td:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.prose[data-template='yuebao'] td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--prose-font);
+}
+.prose[data-template='yuebao'] tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* —— hr：双细线 —— */
+.prose[data-template='yuebao'] hr {
+  border: none;
+  height: 4px;
+  background: linear-gradient(to bottom, var(--ink) 0 1px, transparent 1px 3px, var(--ink) 3px 4px);
+  margin: 44px 0;
+}
+
+/* —— 列表：右肩编号 / 项目符号 —— */
+.prose[data-template='yuebao'] ul,
+.prose[data-template='yuebao'] ol {
+  padding-left: 4px;
+  list-style: none;
+}
+.prose[data-template='yuebao'] ul > li {
+  position: relative;
+  padding-left: 26px;
+}
+.prose[data-template='yuebao'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.72em;
+  width: 14px;
+  height: 1px;
+  background: var(--ink);
+}
+.prose[data-template='yuebao'] ol { counter-reset: yuebao-ol; }
+.prose[data-template='yuebao'] ol > li {
+  counter-increment: yuebao-ol;
+  position: relative;
+  padding-left: 34px;
+}
+.prose[data-template='yuebao'] ol > li::before {
+  content: counter(yuebao-ol, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+
+.prose[data-template='yuebao'] strong {
+  color: var(--ink);
+  font-weight: 700;
+  font-style: italic;
+}
+.prose[data-template='yuebao'] em {
+  color: var(--accent);
+  font-style: italic;
+}
+.prose[data-template='yuebao'] a {
+  color: var(--ink);
+  border-bottom: 1px dotted var(--accent);
+  text-decoration: none;
+}
+.prose[data-template='yuebao'] code {
+  background: var(--gray-100);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
 
 /* ============ Gallery UI ============ */
-body {
-  margin: 0;
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
-}
+body { margin: 0; font-family: var(--sans); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
 .topbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   padding: 14px 20px;
 }
 .topbar-title {
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--ink);
-  letter-spacing: -0.3px;
-  margin-bottom: 12px;
+  font-family: var(--serif); font-weight: 700; font-size: 18px;
+  color: var(--ink); letter-spacing: -0.3px; margin-bottom: 12px;
 }
 .topbar-title .tag {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 1px;
-  color: var(--text-muted);
-  margin-left: 10px;
-  text-transform: uppercase;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+  color: var(--text-muted); margin-left: 10px; text-transform: uppercase;
 }
-.template-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
+.template-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
 .template-tabs button {
-  border: 1.5px solid var(--border);
-  background: var(--surface);
-  color: var(--ink);
-  padding: 7px 14px;
-  border-radius: 20px;
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.18s ease;
-  letter-spacing: 0.3px;
+  border: 1.5px solid var(--border); background: var(--surface); color: var(--ink);
+  padding: 7px 14px; border-radius: 20px;
+  font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all 0.18s ease; letter-spacing: 0.3px;
 }
-.template-tabs button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  transform: translateY(-1px);
-}
-.template-tabs button.active {
-  background: var(--accent);
-  color: var(--paper);
-  border-color: var(--accent);
-}
-.stage {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 32px 20px 80px;
-}
-.stage-meta {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 1px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  margin-bottom: 12px;
-  text-align: center;
-}
-.stage-meta strong {
-  color: var(--accent);
-  font-weight: 700;
-}
+.template-tabs button:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.template-tabs button.active { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+.stage { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
+.stage-meta { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; text-align: center; }
+.stage-meta strong { color: var(--accent); font-weight: 700; }
 </style>
 </head>
 <body>
 <header class="topbar">
-  <div class="topbar-title">Markdown AI · 10 套版式 Gallery <span class="tag">朱砂 · 文楷 · 浅色</span></div>
+  <div class="topbar-title">Markdown AI · 13 套版式 Gallery <span class="tag">朱砂 · 文楷 · 浅色</span></div>
   <div class="template-tabs" id="tabs">
     <button data-t="qingye">晴野</button>
     <button data-t="haibao">海报</button>
@@ -2175,6 +2960,9 @@ body {
     <button data-t="shouzha">手札</button>
     <button data-t="jiguang">极光</button>
     <button data-t="zhangye">章页</button>
+    <button data-t="juanshou">卷首 NEW</button>
+    <button data-t="jiekan">街刊 NEW</button>
+    <button data-t="yuebao">月报 NEW</button>
   </div>
 </header>
 
@@ -2184,7 +2972,7 @@ body {
 
 <h1>新零售业务中仓储相关的业务场景</h1>
 
-<p>这是一段用于展示 <strong>10 套版式</strong> 的正文段落。每个模版有一个清晰的<em>视觉签名</em>，远看就能区分；近看克制不堆装饰。点上方任意标签切换看效果。</p>
+<p>这是一段用于展示 <strong>13 套版式</strong> 的正文段落。每个模版有一个清晰的<em>视觉签名</em>，远看就能区分；近看克制不堆装饰。点上方任意标签切换效果。这次新加的<strong>卷首 / 街刊 / 月报</strong>是更杂志感的方向：strong typography、图注、数据表都精心处理。</p>
 
 <p>这套工具的目标是：让 Markdown 写完，<a href="https://example.com">一键复制到公众号 / 飞书 / Notion</a>。版式的<strong>"signature 动作"</strong>会保留到目标平台，不会因为粘贴丢失。</p>
 
@@ -2213,9 +3001,18 @@ body {
   <p>—— 一个版式洁癖者的呓语</p>
 </blockquote>
 
-<h2>二、版式之间怎么对比</h2>
+<h2>二、配图与图注</h2>
 
-<p>下表对比 10 套版式的"签名动作"和"适合场景"：</p>
+<p>这次给所有版式加了 <strong>figure + figcaption</strong>。markdown 里写 <code>![描述文字](url)</code>，如果 alt 不为空，会自动包成 <code>&lt;figure&gt;</code> + <code>&lt;figcaption&gt;</code>，每个模版有各自的杂志感图注样式。</p>
+
+<figure>
+  <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1200&q=80" alt="一张示例图：版式不同，图注样式也跟着变" />
+  <figcaption>一张示例图：版式不同，图注样式也跟着变</figcaption>
+</figure>
+
+<h3>2.1 杂志感数据表</h3>
+
+<p>下表对比已上线 13 套版式的"签名动作"。新版的<strong>卷首 / 街刊 / 月报</strong>对 <code>&lt;table&gt;</code> 做了重点设计，看上去更像 Economist / NY Times graphics。</p>
 
 <table>
   <thead>
@@ -2226,22 +3023,25 @@ body {
     </tr>
   </thead>
   <tbody>
-    <tr><td><strong>晴野</strong></td><td>点阵底纹 + 大引号卡</td><td>AI 现代博客</td></tr>
-    <tr><td><strong>海报</strong></td><td>h1 反白 hero</td><td>发布会 / 头条</td></tr>
-    <tr><td><strong>柠檬</strong></td><td>h2 高亮笔块</td><td>公众号海报</td></tr>
-    <tr><td><strong>重影</strong></td><td>偏移阴影贴纸</td><td>潮玩 / 灵感卡</td></tr>
-    <tr><td><strong>画报</strong></td><td>居中 + 首字下沉</td><td>三联 / 单读</td></tr>
-    <tr><td><strong>印章</strong></td><td>朱砂方印</td><td>中式 / 国风</td></tr>
-    <tr><td><strong>格栅</strong></td><td>[ ] mono 括号</td><td>tech / 极客</td></tr>
-    <tr><td><strong>手札</strong></td><td>波浪 underline</td><td>个人博客 / 笔记</td></tr>
-    <tr><td><strong>极光</strong></td><td>渐变下划线</td><td>产品 / 现代</td></tr>
-    <tr><td><strong>章页</strong></td><td>罗马 + CHAPTER</td><td>书籍 / 长文</td></tr>
+    <tr><td>晴野</td><td>点阵底纹 + 大引号卡</td><td>AI 现代博客</td></tr>
+    <tr><td>海报</td><td>h1 反白 hero</td><td>发布会 / 头条</td></tr>
+    <tr><td>柠檬</td><td>h2 高亮笔块</td><td>公众号海报</td></tr>
+    <tr><td>重影</td><td>偏移阴影贴纸</td><td>潮玩 / 灵感卡</td></tr>
+    <tr><td>画报</td><td>居中 + 首字下沉</td><td>三联 / 单读</td></tr>
+    <tr><td>印章</td><td>朱砂方印</td><td>中式 / 国风</td></tr>
+    <tr><td>格栅</td><td>[ ] mono 括号</td><td>tech / 极客</td></tr>
+    <tr><td>手札</td><td>波浪 underline</td><td>个人博客 / 笔记</td></tr>
+    <tr><td>极光</td><td>渐变下划线</td><td>产品 / 现代</td></tr>
+    <tr><td>章页</td><td>罗马 + CHAPTER</td><td>书籍 / 长文</td></tr>
+    <tr><td><strong>卷首</strong></td><td>罗马悬挂 + drop cap</td><td>The New Yorker</td></tr>
+    <tr><td><strong>街刊</strong></td><td>№ 01 chip + 黑下条</td><td>Monocle / Wallpaper</td></tr>
+    <tr><td><strong>月报</strong></td><td>大编号 + NOTE 卡 + 数据表</td><td>Economist / 周报</td></tr>
   </tbody>
 </table>
 
-<h3>1.3 代码也要好看</h3>
+<h3>2.2 代码也要好看</h3>
 
-<p>代码块统一保留 terminal-dark，跨模版一致。行内 <code>inline code</code> 在每个模版有不同处理 —— 有的反白，有的下划线，有的方框。</p>
+<p>代码块统一保留 terminal-dark，跨模版一致。行内 <code>inline code</code> 在每个模版有不同处理 —— 有的反白，有的下划线，有的方框，有的斜体引号。</p>
 
 <pre><code>function applyTemplate(id, root, ctx) {
   // 每个模版只做一件事：在 inline 复制时
@@ -2254,14 +3054,14 @@ body {
 
 <h2>三、看到这里就够了</h2>
 
-<p>每个模版都跟<strong>朱砂、青墨、墨黑、茉蓝、栗原</strong> 5 套配色正交，跟 <em>霞鹜文楷、思源宋、楷体、苹方</em> 4 套字体也正交。也就是说 10 × 5 × 4 × 2 = 400 种皮肤组合。</p>
+<p>每个模版都跟<strong>朱砂、青墨、墨黑、茉蓝、栗原</strong> 5 套配色正交，跟 <em>霞鹜文楷、思源宋、楷体、苹方</em> 4 套字体也正交。也就是说 13 × 5 × 4 × 2 = 520 种皮肤组合。</p>
 
 <h4>下一步要不要做</h4>
 
 <ul>
-  <li>把模版选择器做成更精致的卡片选择器</li>
-  <li>每个模版的公众号 inline 镜像做 case 测试</li>
-  <li>加 AI 起稿（用户自带 Key）</li>
+  <li>支持 <code>chart</code> 代码块 → 渲染 SVG 柱状图 / 折线图</li>
+  <li>AI 起稿（用户自带 Anthropic / OpenAI Key，纯前端）</li>
+  <li>更多配色（薄荷绿、绛紫、卡其等）</li>
 </ul>
 
   </article>
@@ -2273,29 +3073,20 @@ body {
   var current = document.getElementById('current-name');
   var tabs = document.querySelectorAll('#tabs button');
   var names = {
-    qingye: '晴野 qingye',
-    haibao: '海报 haibao',
-    ningmeng: '柠檬 ningmeng',
-    chongying: '重影 chongying',
-    huabao: '画报 huabao',
-    yinzhang: '印章 yinzhang',
-    geshan: '格栅 geshan',
-    shouzha: '手札 shouzha',
-    jiguang: '极光 jiguang',
-    zhangye: '章页 zhangye'
+    qingye: '晴野 qingye', haibao: '海报 haibao', ningmeng: '柠檬 ningmeng',
+    chongying: '重影 chongying', huabao: '画报 huabao', yinzhang: '印章 yinzhang',
+    geshan: '格栅 geshan', shouzha: '手札 shouzha', jiguang: '极光 jiguang',
+    zhangye: '章页 zhangye',
+    juanshou: '卷首 juanshou', jiekan: '街刊 jiekan', yuebao: '月报 yuebao'
   };
   function activate(id) {
     prose.setAttribute('data-template', id);
     current.textContent = names[id];
-    tabs.forEach(function (t) {
-      t.classList.toggle('active', t.dataset.t === id);
-    });
+    tabs.forEach(function (t) { t.classList.toggle('active', t.dataset.t === id); });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  tabs.forEach(function (t) {
-    t.addEventListener('click', function () { activate(t.dataset.t); });
-  });
-  activate('qingye');
+  tabs.forEach(function (t) { t.addEventListener('click', function () { activate(t.dataset.t); }); });
+  activate('juanshou'); // 默认进入时直接展示新做的
 })();
 </script>
 </body>

@@ -14,6 +14,9 @@ import './styles/templates/geshan.css';
 import './styles/templates/shouzha.css';
 import './styles/templates/jiguang.css';
 import './styles/templates/zhangye.css';
+import './styles/templates/juanshou.css';
+import './styles/templates/jiekan.css';
+import './styles/templates/yuebao.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

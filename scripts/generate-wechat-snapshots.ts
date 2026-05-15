@@ -19,26 +19,8 @@ const dom = new JSDOM('<!doctype html><html><body></body></html>');
 (globalThis as any).HTMLDivElement = dom.window.HTMLDivElement;
 (globalThis as any).Node = dom.window.Node;
 
-// 避免引 markdown.ts（里面 ?raw 的 CSS import 在 tsx 下不支持），就地构一个 marked 实例
-const { Marked } = await import('marked');
-const { markedHighlight } = await import('marked-highlight');
-const hljs = (await import('highlight.js/lib/common')).default;
-const marked = new Marked(
-  markedHighlight({
-    langPrefix: 'hljs language-',
-    highlight(code: string, lang: string) {
-      const language = lang && hljs.getLanguage(lang) ? lang : 'plaintext';
-      try {
-        return hljs.highlight(code, { language, ignoreIllegals: true }).value;
-      } catch {
-        return code;
-      }
-    },
-  })
-);
-marked.setOptions({ gfm: true, breaks: false });
-const renderMarkdown = (src: string) => marked.parse(src) as string;
-
+// render.ts 不引 ?raw CSS，tsx 可直接 import
+const { renderMarkdown } = await import('../src/utils/render.ts');
 const { toWeChatHTML } = await import('../src/utils/copyAdapters.ts');
 const { TEMPLATES } = await import('../src/utils/themes.ts');
 const { SAMPLE_MD } = await import('../src/utils/sample.ts');

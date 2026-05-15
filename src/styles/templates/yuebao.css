@@ -1,0 +1,269 @@
+/* ============================================================
+   月报 · yuebao —— Economist / NY Times Graphics 风
+   签名：
+   - h1 双横线 + 上方期次小标
+   - h2 编号 02 · 大标题（似经济学人栏目编号）
+   - h3 italic serif + 章节短线
+   - 表格：编辑级数据表，header bg 浅灰 + 数字右对齐 + 隔行细线
+   - figure：边框 1px 灰 + 阴影 + 紧凑图注 italic serif
+   - blockquote：浅 accent 卡 + 角标 NOTE 钉
+   - hr：双细线（emdash 风）
+   ============================================================ */
+
+.prose[data-template='yuebao'] {
+  font-size: 16.5px;
+  line-height: 1.85;
+}
+
+/* h1：双横线杂志大标 + 期号 kicker */
+.prose[data-template='yuebao'] h1 {
+  font-family: var(--prose-font);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 12px 0 28px;
+  padding: 22px 0 18px;
+  border: none;
+  border-top: 1px solid var(--ink);
+  border-bottom: 4px double var(--ink);
+  letter-spacing: -0.3px;
+  color: var(--ink);
+  position: relative;
+}
+.prose[data-template='yuebao'] h1::before {
+  content: 'MONTHLY REPORT';
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* —— 核心：h2 编号杂志栏目 —— */
+.prose[data-template='yuebao'] {
+  counter-reset: yuebao-h2;
+}
+.prose[data-template='yuebao'] h2 {
+  font-family: var(--prose-font);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 48px 0 18px;
+  padding: 0 0 8px;
+  border: none;
+  border-bottom: 1px solid var(--ink);
+  counter-increment: yuebao-h2;
+  color: var(--ink);
+  letter-spacing: -0.1px;
+  padding-left: 56px;
+  position: relative;
+}
+.prose[data-template='yuebao'] h2::before {
+  content: counter(yuebao-h2, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.prose[data-template='yuebao'] h3 {
+  font-family: var(--prose-font);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 32px 0 12px;
+  color: var(--ink);
+  font-style: italic;
+  padding-left: 12px;
+  border-left: 2px solid var(--accent);
+}
+
+.prose[data-template='yuebao'] h4 {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  color: var(--gray-500);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* —— blockquote 笺记卡 + NOTE 钉 —— */
+.prose[data-template='yuebao'] blockquote {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  background: var(--surface-2);
+  padding: 16px 20px 18px;
+  margin: 28px 0;
+  border-radius: 0;
+  font-style: normal;
+  color: var(--gray-600);
+  font-size: 15px;
+  line-height: 1.7;
+  position: relative;
+}
+.prose[data-template='yuebao'] blockquote::before {
+  content: 'NOTE';
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  background: var(--accent);
+  color: var(--paper);
+  padding: 2px 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.prose[data-template='yuebao'] blockquote p { margin-bottom: 8px; color: var(--gray-600); }
+.prose[data-template='yuebao'] blockquote p:last-child { margin-bottom: 0; }
+
+/* —— figure 杂志图 + 图注 italic serif —— */
+.prose[data-template='yuebao'] figure {
+  margin: 32px 0;
+  border: 1px solid var(--border);
+  padding: 12px 12px 0;
+  background: var(--surface);
+  box-shadow: 0 2px 0 var(--border);
+}
+.prose[data-template='yuebao'] figure img {
+  max-width: 100%;
+  margin: 0;
+  border-radius: 0;
+  display: block;
+}
+.prose[data-template='yuebao'] figcaption {
+  font-family: var(--prose-font);
+  font-style: italic;
+  font-size: 13.5px;
+  color: var(--gray-600);
+  padding: 10px 4px 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 10px;
+  line-height: 1.5;
+  position: relative;
+  padding-left: 26px;
+}
+.prose[data-template='yuebao'] figcaption::before {
+  content: 'FIG';
+  position: absolute;
+  left: 0;
+  top: 11px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+}
+
+/* —— Economist 风数据表 —— */
+.prose[data-template='yuebao'] table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 28px 0;
+  font-size: 14px;
+  border-top: 3px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+.prose[data-template='yuebao'] th {
+  background: transparent;
+  text-align: left;
+  padding: 9px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent);
+  border: none;
+  border-bottom: 1px solid var(--ink);
+}
+.prose[data-template='yuebao'] th:not(:first-child),
+.prose[data-template='yuebao'] td:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.prose[data-template='yuebao'] td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--prose-font);
+}
+.prose[data-template='yuebao'] tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* —— hr：双细线 —— */
+.prose[data-template='yuebao'] hr {
+  border: none;
+  height: 4px;
+  background: linear-gradient(to bottom, var(--ink) 0 1px, transparent 1px 3px, var(--ink) 3px 4px);
+  margin: 44px 0;
+}
+
+/* —— 列表：右肩编号 / 项目符号 —— */
+.prose[data-template='yuebao'] ul,
+.prose[data-template='yuebao'] ol {
+  padding-left: 4px;
+  list-style: none;
+}
+.prose[data-template='yuebao'] ul > li {
+  position: relative;
+  padding-left: 26px;
+}
+.prose[data-template='yuebao'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.72em;
+  width: 14px;
+  height: 1px;
+  background: var(--ink);
+}
+.prose[data-template='yuebao'] ol { counter-reset: yuebao-ol; }
+.prose[data-template='yuebao'] ol > li {
+  counter-increment: yuebao-ol;
+  position: relative;
+  padding-left: 34px;
+}
+.prose[data-template='yuebao'] ol > li::before {
+  content: counter(yuebao-ol, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+
+.prose[data-template='yuebao'] strong {
+  color: var(--ink);
+  font-weight: 700;
+  font-style: italic;
+}
+.prose[data-template='yuebao'] em {
+  color: var(--accent);
+  font-style: italic;
+}
+.prose[data-template='yuebao'] a {
+  color: var(--ink);
+  border-bottom: 1px dotted var(--accent);
+  text-decoration: none;
+}
+.prose[data-template='yuebao'] code {
+  background: var(--gray-100);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}

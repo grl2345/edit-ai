@@ -1,0 +1,266 @@
+/* ============================================================
+   卷首 · juanshou —— 杂志开篇 / The New Yorker 风
+   签名：
+   - h1 大字 + accent kicker 短线
+   - h2 罗马数字悬挂式标号
+   - 首段 4-5 行高 drop-cap accent 巨字
+   - blockquote pull-quote：超大斜体居中 + 上下细线
+   - figure 配文：italic serif 居中
+   - table 编辑部数据表：大写表头 + hairline
+   ============================================================ */
+
+.prose[data-template='juanshou'] {
+  font-size: 17px;
+  line-height: 2;
+}
+
+/* —— h1：报刊开篇大字 —— */
+.prose[data-template='juanshou'] h1 {
+  font-family: var(--prose-font);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+  margin: 8px 0 28px;
+  padding: 0 0 16px;
+  border: none;
+  position: relative;
+  color: var(--ink);
+}
+.prose[data-template='juanshou'] h1::before {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 4px;
+  background: var(--accent);
+  margin: 0 0 18px;
+}
+
+/* —— h2：罗马数字悬挂 —— */
+.prose[data-template='juanshou'] {
+  counter-reset: juanshou-h2;
+}
+.prose[data-template='juanshou'] h2 {
+  font-family: var(--prose-font);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 56px 0 20px;
+  padding: 16px 0 0;
+  border: none;
+  border-top: 1px solid var(--ink);
+  counter-increment: juanshou-h2;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  position: relative;
+  padding-left: 70px;
+}
+.prose[data-template='juanshou'] h2::before {
+  content: counter(juanshou-h2, upper-roman) '.';
+  position: absolute;
+  left: 0;
+  top: 16px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 26px;
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 400;
+  width: 60px;
+}
+
+.prose[data-template='juanshou'] h3 {
+  font-family: var(--prose-font);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 36px 0 12px;
+  color: var(--ink);
+  font-style: italic;
+}
+
+.prose[data-template='juanshou'] h4 {
+  font-family: var(--prose-font);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* —— 首段巨型 drop cap —— */
+.prose[data-template='juanshou'] h1 + p::first-letter,
+.prose[data-template='juanshou'] h2 + p::first-letter {
+  font-size: 5.2em;
+  float: left;
+  line-height: 0.86;
+  padding: 10px 14px 0 0;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: Georgia, var(--prose-font);
+}
+
+/* —— 核心：超大 pull-quote —— */
+.prose[data-template='juanshou'] blockquote {
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-style: italic;
+  color: var(--ink);
+  padding: 28px 24px 24px;
+  margin: 44px 0;
+  font-size: 22px;
+  line-height: 1.5;
+  position: relative;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  font-family: Georgia, var(--prose-font);
+}
+.prose[data-template='juanshou'] blockquote::before {
+  content: '\201C';
+  display: block;
+  text-align: center;
+  font-size: 64px;
+  color: var(--accent);
+  line-height: 0.5;
+  font-family: Georgia, serif;
+  margin-bottom: 12px;
+  font-style: normal;
+  font-weight: 700;
+}
+.prose[data-template='juanshou'] blockquote p { margin: 0 0 8px; }
+
+/* —— figure 配图与图注 —— */
+.prose[data-template='juanshou'] figure {
+  margin: 36px 0;
+  text-align: center;
+}
+.prose[data-template='juanshou'] figure img {
+  max-width: 100%;
+  border-radius: 0;
+  margin: 0;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 10px;
+}
+.prose[data-template='juanshou'] figcaption {
+  font-family: Georgia, var(--prose-font);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--gray-600);
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.2px;
+}
+
+/* —— 编辑部数据表 —— */
+.prose[data-template='juanshou'] table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 32px 0;
+  font-size: 15px;
+}
+.prose[data-template='juanshou'] th {
+  background: transparent;
+  text-align: left;
+  padding: 8px 12px;
+  border: none;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--prose-font);
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ink);
+}
+.prose[data-template='juanshou'] td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-family: Georgia, var(--prose-font);
+}
+.prose[data-template='juanshou'] tbody tr:last-child td {
+  border-bottom: 2px solid var(--ink);
+}
+
+/* —— hr：fleuron 中点 + 两侧细线 —— */
+.prose[data-template='juanshou'] hr {
+  border: none;
+  height: auto;
+  background: transparent;
+  margin: 56px 0;
+  text-align: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.prose[data-template='juanshou'] hr::before {
+  content: '\2766';
+  color: var(--accent);
+  font-size: 18px;
+}
+
+/* —— 列表 —— */
+.prose[data-template='juanshou'] ul,
+.prose[data-template='juanshou'] ol {
+  padding-left: 4px;
+  list-style: none;
+}
+.prose[data-template='juanshou'] ul > li {
+  position: relative;
+  padding-left: 24px;
+}
+.prose[data-template='juanshou'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.85em;
+  width: 12px;
+  height: 1px;
+  background: var(--accent);
+}
+.prose[data-template='juanshou'] ol { counter-reset: juanshou-ol; }
+.prose[data-template='juanshou'] ol > li {
+  counter-increment: juanshou-ol;
+  position: relative;
+  padding-left: 32px;
+}
+.prose[data-template='juanshou'] ol > li::before {
+  content: counter(juanshou-ol) '.';
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+.prose[data-template='juanshou'] strong {
+  color: var(--ink);
+  font-weight: 700;
+  border-bottom: 2px solid var(--accent);
+}
+.prose[data-template='juanshou'] em {
+  font-style: italic;
+  color: var(--ink);
+}
+.prose[data-template='juanshou'] a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--accent);
+  text-decoration: none;
+  font-style: italic;
+}
+.prose[data-template='juanshou'] code {
+  font-family: Georgia, serif;
+  font-style: italic;
+  background: transparent;
+  color: var(--accent);
+  padding: 0;
+}
+.prose[data-template='juanshou'] code::before { content: '"'; }
+.prose[data-template='juanshou'] code::after { content: '"'; }
+.prose[data-template='juanshou'] pre code::before,
+.prose[data-template='juanshou'] pre code::after { content: none; }
