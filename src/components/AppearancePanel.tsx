@@ -316,6 +316,21 @@ function TemplateThumb({ id }: { id: TemplateId }) {
           <rect x="37" y="49" width="6" height="4.5" fill="var(--accent)" />
         </svg>
       );
+    case 'hongbang':
+      // 巨大 01 + 黑体粗标 + 暗胶囊 chip + 灰描述
+      return (
+        <svg className="template-thumb" viewBox="0 0 80 56" aria-hidden>
+          <text x="6" y="22" fontSize="18" fontWeight="900" fill="var(--accent)" letterSpacing="-1.5" fontFamily="PingFang SC,sans-serif">01</text>
+          <rect x="6" y="26" width="40" height="3.4" fill="currentColor" />
+          <rect x="6" y="33" width="22" height="6" rx="3" fill="currentColor" />
+          <text x="9" y="37.5" fontSize="3.5" fill="white" fontWeight="700" fontFamily="PingFang SC,sans-serif">三大核心：</text>
+          <circle cx="9" cy="44" r="1.2" fill="currentColor" />
+          <rect x="14" y="42.5" width="20" height="2" fill="currentColor" />
+          <rect x="14" y="46.5" width="48" height="1" fill="currentColor" opacity="0.4" />
+          <circle cx="9" cy="52" r="1.2" fill="currentColor" />
+          <rect x="14" y="50.5" width="18" height="2" fill="currentColor" />
+        </svg>
+      );
     case 'yuebao':
       // MONTHLY REPORT 小钉 + 大编号 02 + 双细线 hr + 数据表迹象
       return (

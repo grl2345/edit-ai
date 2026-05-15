@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "gen:wechat-snapshots": "tsx scripts/generate-wechat-snapshots.ts"
+    "gen:wechat-snapshots": "tsx scripts/generate-wechat-snapshots.ts",
+    "gen:gallery": "tsx scripts/generate-gallery.ts",
+    "gen:previews": "npm run gen:wechat-snapshots && npm run gen:gallery"
   },
   "dependencies": {
     "highlight.js": "^11.10.0",

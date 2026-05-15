@@ -170,6 +170,10 @@ function applyShared(root: ParentNode, ctx: InlineCtx) {
   mergeStyle(root, 'figure img', `max-width:100%;display:block;margin:0 auto;border-radius:6px`);
   mergeStyle(root, 'figcaption', `font-family:${ctx.prose};font-style:italic;font-size:13.5px;color:${ctx.gray500};text-align:center;margin-top:10px;line-height:1.5`);
   mergeStyle(root, 'ul,ol', `margin:0 0 16px;padding-left:24px`);
+  // ==highlight== via <mark>
+  mergeStyle(root, 'mark', `background:${ctx.accentGlow};color:${ctx.accent};font-weight:600;padding:1px 3px;border-radius:2px`);
+  // 自动元素：chip / def-list / callout 的 inline 基线（每个版式可以再覆盖）
+  applyAutoElementBase(root, ctx);
   mergeStyle(root, 'li', `margin:0 0 8px;line-height:1.85;color:${ctx.ink};font-family:${ctx.prose};font-size:16px`);
   mergeStyle(root, 'img', `max-width:100%;border-radius:8px;margin:18px 0;display:block`);
   mergeStyle(root, 'table', `width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;font-family:${ctx.prose}`);
@@ -184,6 +188,84 @@ function applyShared(root: ParentNode, ctx: InlineCtx) {
   mergeStyle(root, '.hljs-title,.hljs-function,.hljs-name', `color:#d2a8ff`);
   mergeStyle(root, '.hljs-variable,.hljs-params', `color:#ffa657`);
   mergeStyle(root, '.hljs-tag,.hljs-meta', `color:#7ee787`);
+}
+
+/* ============================================================
+   自动元素 inline 基线
+   ============================================================ */
+function applyAutoElementBase(root: ParentNode, ctx: InlineCtx) {
+  // chip h3：暗胶囊
+  mergeStyle(
+    root,
+    'h3[data-chip]',
+    `display:inline-block;padding:5px 14px 6px;background:${ctx.ink};color:${ctx.paper};border:none;border-radius:6px;font-size:14px;font-weight:600;line-height:1.4;letter-spacing:.5px;font-family:${ctx.prose};margin:24px 0 12px`
+  );
+
+  // 定义列表 li[data-def]
+  mergeStyle(
+    root,
+    'li[data-def]',
+    `list-style:none;margin-bottom:18px;padding-left:22px;position:relative`
+  );
+  mergeStyle(
+    root,
+    'li[data-def] [data-def-title]',
+    `font-weight:700;font-size:16px;color:${ctx.ink};margin-bottom:4px;line-height:1.4`
+  );
+  mergeStyle(
+    root,
+    'li[data-def] [data-def-desc]',
+    `color:${ctx.gray500};font-size:14.5px;line-height:1.7`
+  );
+  mergeStyle(
+    root,
+    'li[data-def] [data-def-desc] p',
+    `color:${ctx.gray500};font-size:14.5px;line-height:1.7;margin:0`
+  );
+  // li[data-def] 前置项目符号：注入真实 span（不能用 ::before）
+  root.querySelectorAll('li[data-def]').forEach((li) => {
+    if ((li as HTMLElement).querySelector(':scope > [data-def-bullet]')) return;
+    const bullet = span('', `display:inline-block;width:6px;height:6px;border-radius:50%;background:${ctx.accent};margin-right:12px;vertical-align:1px`);
+    bullet.setAttribute('data-def-bullet', '1');
+    const title = (li as HTMLElement).querySelector(':scope > [data-def-title]');
+    if (title) title.insertBefore(bullet, title.firstChild);
+  });
+
+  // GFM callout
+  mergeStyle(
+    root,
+    '[data-callout]',
+    `border-left:4px solid ${ctx.accent};background:${ctx.surface2};padding:14px 18px;margin:24px 0;border-radius:0 8px 8px 0;color:${ctx.gray600}`
+  );
+  mergeStyle(
+    root,
+    '[data-callout-head]',
+    `font-family:${MONO};font-size:11px;font-weight:700;letter-spacing:1.5px;color:${ctx.accent};margin-bottom:6px;text-transform:uppercase`
+  );
+  mergeStyle(
+    root,
+    '[data-callout] p',
+    `color:${ctx.gray600};margin:0 0 6px`
+  );
+  mergeStyle(root, '[data-callout] p:last-child', `margin-bottom:0`);
+  // warning / caution = 橙黄
+  root.querySelectorAll('[data-callout="warning"],[data-callout="caution"]').forEach((c) => {
+    const prev = (c as HTMLElement).getAttribute('style') ?? '';
+    (c as HTMLElement).setAttribute('style', `${prev};border-left-color:#d97706`);
+  });
+  root.querySelectorAll('[data-callout="warning"] [data-callout-head],[data-callout="caution"] [data-callout-head]').forEach((c) => {
+    const prev = (c as HTMLElement).getAttribute('style') ?? '';
+    (c as HTMLElement).setAttribute('style', `${prev};color:#d97706`);
+  });
+  // tip = 绿
+  root.querySelectorAll('[data-callout="tip"]').forEach((c) => {
+    const prev = (c as HTMLElement).getAttribute('style') ?? '';
+    (c as HTMLElement).setAttribute('style', `${prev};border-left-color:#16a34a`);
+  });
+  root.querySelectorAll('[data-callout="tip"] [data-callout-head]').forEach((c) => {
+    const prev = (c as HTMLElement).getAttribute('style') ?? '';
+    (c as HTMLElement).setAttribute('style', `${prev};color:#16a34a`);
+  });
 }
 
 function dispatchTemplate(root: ParentNode, ctx: InlineCtx, template: TemplateId) {
@@ -201,6 +283,7 @@ function dispatchTemplate(root: ParentNode, ctx: InlineCtx, template: TemplateId
     case 'juanshou': return applyJuanshou(root, ctx);
     case 'jiekan': return applyJiekan(root, ctx);
     case 'yuebao': return applyYuebao(root, ctx);
+    case 'hongbang': return applyHongbang(root, ctx);
   }
 }
 
@@ -802,6 +885,72 @@ function applyYuebao(root: ParentNode, ctx: InlineCtx) {
     (_li, n) => span(pad2(n), `color:${ctx.accent};font-family:${MONO};font-size:13px;font-weight:700;margin-right:12px;letter-spacing:-.5px`)
   );
   setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 16px`);
+}
+
+/* ============================================================
+   14. 红榜 hongbang —— 大红数字 + 黑体粗 + 暗胶囊
+   ============================================================ */
+function applyHongbang(root: ParentNode, ctx: InlineCtx) {
+  const SANS = `'PingFang SC','Hiragino Sans GB','Microsoft YaHei',${ctx.prose},sans-serif`;
+
+  setStyle(root, 'h1', `font-family:${SANS};font-size:28px;font-weight:800;line-height:1.3;margin:8px 0 24px;padding:0;border:none;letter-spacing:-.4px;color:${ctx.ink}`);
+
+  // h2：大红数字编号 + 标题（用 div 块包裹数字）
+  let hbI = 0;
+  root.querySelectorAll('h2').forEach((h) => {
+    hbI++;
+    (h as HTMLElement).setAttribute('style', `font-family:${SANS};font-size:22px;font-weight:800;line-height:1.3;margin:48px 0 16px;padding:0;border:none;letter-spacing:-.3px;color:${ctx.ink}`);
+    const num = div(`font-family:${SANS};font-size:52px;font-weight:900;color:${ctx.accent};letter-spacing:-3px;line-height:.95;margin-bottom:6px`, pad2(hbI));
+    (h as HTMLElement).parentNode?.insertBefore(num, h);
+  });
+
+  // h3 普通 + chip 强样式
+  root.querySelectorAll('h3:not([data-chip])').forEach((h) => {
+    (h as HTMLElement).setAttribute('style', `font-family:${SANS};font-size:18px;font-weight:700;line-height:1.4;margin:28px 0 12px;color:${ctx.ink}`);
+  });
+  setStyle(root, 'h3[data-chip]', `display:inline-block;background:${ctx.ink};color:${ctx.paper};padding:7px 16px 8px;font-size:14.5px;font-weight:700;border-radius:24px;margin:24px 0 16px;letter-spacing:.5px;font-family:${SANS}`);
+  setStyle(root, 'h4', `font-family:${SANS};font-size:15.5px;font-weight:700;margin:22px 0 8px;color:${ctx.gray600}`);
+
+  // 定义列表（覆盖基线，更黑更粗）
+  setStyle(root, 'li[data-def]', `list-style:none;padding:0 0 0 24px;margin-bottom:20px;position:relative`);
+  setStyle(root, 'li[data-def] [data-def-title]', `font-weight:800;font-size:17px;color:${ctx.ink};margin-bottom:6px;line-height:1.4;letter-spacing:-.1px;font-family:${SANS}`);
+  setStyle(root, 'li[data-def] [data-def-desc]', `color:${ctx.gray500};font-size:14.5px;line-height:1.75;font-family:${SANS}`);
+  setStyle(root, 'li[data-def] [data-def-desc] p', `color:${ctx.gray500};font-size:14.5px;line-height:1.75;margin:0;font-family:${SANS}`);
+  // 让定义列表的 bullet 改为黑色（覆盖基线 accent）
+  root.querySelectorAll('li[data-def] [data-def-bullet]').forEach((b) => {
+    (b as HTMLElement).setAttribute('style', `display:inline-block;width:8px;height:8px;border-radius:50%;background:${ctx.ink};margin-right:14px;vertical-align:1px`);
+  });
+
+  // 普通 ul / ol
+  setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 16px`);
+  injectListMarkers(root,
+    () => span('', `display:inline-block;width:6px;height:6px;border-radius:50%;background:${ctx.ink};margin-right:10px;vertical-align:middle`),
+    (_li, n) => span(String(n), `display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:${ctx.accent};color:${ctx.paper};border-radius:50%;font-family:${SANS};font-size:12px;font-weight:800;margin-right:10px;vertical-align:middle`)
+  );
+
+  // blockquote / callout
+  setStyle(root, 'blockquote', `border:none;border-left:4px solid ${ctx.accent};background:${ctx.surface2};padding:14px 20px;margin:22px 0;border-radius:0 8px 8px 0;color:${ctx.gray600};font-style:normal`);
+  setStyle(root, 'blockquote p', `color:${ctx.gray600};margin:0 0 8px`);
+
+  // hr：accent 短粗块
+  replaceHr(root, () => div(`height:4px;background:${ctx.accent};width:54px;margin:40px 0;border-radius:2px`));
+
+  // figure
+  setStyle(root, 'figure', `margin:28px 0;text-align:center`);
+  setStyle(root, 'figure img', `max-width:100%;display:block;margin:0 auto;border-radius:8px;box-shadow:0 4px 18px rgba(0,0,0,0.06)`);
+  setStyle(root, 'figcaption', `font-family:${SANS};font-style:normal;font-size:13px;color:${ctx.gray500};text-align:center;margin-top:12px;letter-spacing:.3px`);
+
+  // table 黑表头
+  setStyle(root, 'table', `width:100%;border-collapse:collapse;margin:22px 0;font-size:14.5px`);
+  setStyle(root, 'th', `background:${ctx.ink};color:${ctx.paper};text-align:left;padding:10px 14px;font-family:${SANS};font-weight:700;font-size:13.5px;border-bottom:none;letter-spacing:.3px`);
+  setStyle(root, 'td', `padding:10px 14px;border-bottom:1px solid ${ctx.border};font-family:${SANS}`);
+
+  // 强调
+  setStyle(root, 'strong', `color:${ctx.accent};font-weight:800`);
+  setStyle(root, 'em', `color:${ctx.ink};font-style:italic;border-bottom:2px dotted ${ctx.accent};padding-bottom:1px`);
+  setStyle(root, 'mark', `background:${ctx.accentGlow};color:${ctx.accent};font-weight:700;padding:1px 4px;border-radius:2px`);
+  setStyle(root, 'a', `color:${ctx.ink};text-decoration:none;border-bottom:2px solid ${ctx.accent};font-weight:600`);
+  setStyle(root, 'code', `background:${ctx.gray100};color:${ctx.accent};padding:2px 7px;border-radius:4px;font-family:${MONO};font-size:13.5px;font-weight:600`);
 }
 
 /* ---------------- 推特 / X：清理后的纯文本 ---------------- */
