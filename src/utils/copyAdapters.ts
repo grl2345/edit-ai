@@ -157,13 +157,9 @@ export function toWeChatHTML(
   return section.outerHTML;
 }
 
-function wrapperStyleFor(template: TemplateId, ctx: InlineCtx): string {
-  if (template === 'qingye') {
-    return `background-image:radial-gradient(${ctx.border} 1px,transparent 1px);background-size:22px 22px;background-color:${ctx.surface};padding:24px 20px 40px;border-radius:12px`;
-  }
-  if (template === 'geshan') {
-    return `background-image:linear-gradient(${ctx.border} 1px,transparent 1px),linear-gradient(90deg,${ctx.border} 1px,transparent 1px);background-size:32px 32px;background-color:${ctx.surface};padding:24px 20px 40px;border:1px solid ${ctx.border}`;
-  }
+function wrapperStyleFor(_template: TemplateId, _ctx: InlineCtx): string {
+  // 公众号编辑器会把 wrapper section 上的 background-image (radial/linear-gradient)
+  // 大概率 strip 掉，所以这里不再下发底纹。底纹只在 app 内预览展示。
   return '';
 }
 
@@ -216,8 +212,9 @@ function applyQingye(root: ParentNode, ctx: InlineCtx) {
   setStyle(root, 'h4', `font-family:${ctx.prose};font-size:16px;font-weight:700;margin:22px 0 8px;color:${ctx.gray600}`);
 
   root.querySelectorAll('blockquote').forEach((b) => {
-    (b as HTMLElement).setAttribute('style', `border:none;border-radius:12px;background:${ctx.accentGlow};padding:42px 24px 18px;margin:24px 0;color:${ctx.gray600};font-style:normal;position:relative`);
-    const q = span('"', `position:absolute;top:6px;left:18px;font-size:52px;line-height:.7;color:${ctx.accent};font-family:${SERIF};font-weight:700`);
+    (b as HTMLElement).setAttribute('style', `border:none;border-radius:12px;background:${ctx.accentGlow};padding:18px 24px 20px;margin:24px 0;color:${ctx.gray600};font-style:normal`);
+    // 引号改为 block 元素放在最前，避开 absolute（公众号不稳定）
+    const q = div(`font-size:42px;line-height:.7;color:${ctx.accent};font-family:${SERIF};font-weight:700;margin-bottom:6px`, '"');
     b.insertBefore(q, b.firstChild);
   });
   setStyle(root, 'blockquote p', `margin:0 0 8px;color:${ctx.gray600}`);
@@ -230,7 +227,7 @@ function applyQingye(root: ParentNode, ctx: InlineCtx) {
   setStyle(root, 'th', `text-align:left;padding:10px 14px;background:${ctx.accent};color:${ctx.paper};font-weight:600;border-bottom:none`);
 
   injectListMarkers(root,
-    () => span('', `display:inline-block;width:8px;height:8px;background:${ctx.accent};transform:rotate(45deg);margin-right:10px;vertical-align:middle`),
+    () => span('◆', `color:${ctx.accent};font-size:.7em;margin-right:10px;vertical-align:middle`),
     (_li, n) => span(String(n), `display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:${ctx.accent};color:${ctx.paper};border-radius:6px;font-family:${MONO};font-size:12px;font-weight:700;margin-right:10px;vertical-align:middle`)
   );
   setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 16px`);
@@ -320,7 +317,15 @@ function applyChongying(root: ParentNode, ctx: InlineCtx) {
   });
   setStyle(root, 'blockquote p', `margin:0 0 8px;color:${ctx.gray600}`);
 
-  replaceHr(root, () => div(`height:6px;background:repeating-linear-gradient(90deg,${ctx.accent} 0 8px,transparent 8px 16px);margin:36px 0`));
+  // 公众号对 repeating-linear-gradient 支持有限，改用一行短条排列：用三段 inline-block 短块拼接
+  replaceHr(root, () => {
+    const wrap = div(`margin:36px 0;text-align:left;line-height:0;font-size:0`);
+    const make = (color: string) => span('', `display:inline-block;width:18px;height:6px;background:${color};margin-right:6px;vertical-align:middle`);
+    wrap.appendChild(make(ctx.accent));
+    wrap.appendChild(make(ctx.ink));
+    wrap.appendChild(make(ctx.accent));
+    return wrap;
+  });
 
   setStyle(root, 'strong', `background:${ctx.accent};color:${ctx.paper};padding:1px 5px;border-radius:2px;font-weight:700`);
   setStyle(root, 'a', `color:${ctx.ink};font-weight:600;text-decoration:none;background:linear-gradient(transparent 60%,${ctx.accentGlow} 60%);padding:0 2px`);
@@ -375,22 +380,29 @@ function applyHuabao(root: ParentNode, ctx: InlineCtx) {
 function applyYinzhang(root: ParentNode, ctx: InlineCtx) {
   root.querySelectorAll('h1').forEach((h) => {
     (h as HTMLElement).setAttribute('style', `font-family:${ctx.prose};font-size:28px;font-weight:700;line-height:1.4;margin:14px 0 22px;padding:0;border:none;letter-spacing:1.5px;color:${ctx.ink};display:flex;align-items:center;gap:18px`);
-    const seal = span('印', `display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:${ctx.accent};color:${ctx.paper};font-family:${KAITI},${ctx.prose};font-weight:700;font-size:22px;box-shadow:inset 0 0 0 2px ${ctx.paper},inset 0 0 0 3px ${ctx.accent};transform:rotate(-3deg);flex-shrink:0`);
+    // 朱印外层：accent 实心方块；内层：paper 边框模拟"印章透气"；不用 transform / inset shadow
+    const seal = div(`width:46px;height:46px;background:${ctx.accent};padding:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center`);
+    const inner = span('印', `display:flex;align-items:center;justify-content:center;width:100%;height:100%;border:1.5px solid ${ctx.paper};color:${ctx.paper};font-family:${KAITI},${ctx.prose};font-weight:700;font-size:20px`);
+    seal.appendChild(inner);
     h.appendChild(seal);
   });
   root.querySelectorAll('h2').forEach((h) => {
     (h as HTMLElement).setAttribute('style', `font-family:${ctx.prose};font-size:22px;font-weight:700;line-height:1.5;margin:40px 0 16px;padding:0 0 8px;border:none;border-bottom:1px solid ${ctx.border};color:${ctx.ink};letter-spacing:.8px;display:flex;align-items:center;gap:12px`);
-    const sq = span('', `display:inline-block;width:18px;height:18px;background:${ctx.accent};box-shadow:inset 0 0 0 2px ${ctx.paper},inset 0 0 0 3px ${ctx.accent};transform:rotate(-2deg);flex-shrink:0`);
+    // 小方印：accent 外块 + paper 内框（border 模拟），无 rotate
+    const sq = div(`width:20px;height:20px;background:${ctx.accent};padding:2px;flex-shrink:0;box-sizing:border-box`);
+    const inner = div(`width:100%;height:100%;border:1px solid ${ctx.paper}`);
+    sq.appendChild(inner);
     h.insertBefore(sq, h.firstChild);
   });
   setStyle(root, 'h3', `font-family:${ctx.prose};font-size:18px;font-weight:700;line-height:1.5;margin:28px 0 12px;color:${ctx.ink};letter-spacing:.5px;padding-left:14px;border-left:2px solid ${ctx.accent}`);
   setStyle(root, 'h4', `font-family:${ctx.prose};font-size:16px;font-weight:600;margin:22px 0 8px;color:${ctx.gray600}`);
 
   root.querySelectorAll('blockquote').forEach((b) => {
-    (b as HTMLElement).setAttribute('style', `border:none;background:transparent;padding:8px 24px 8px 32px;margin:24px 0;color:${ctx.gray600};font-family:${KAITI},${ctx.prose};font-size:16.5px;line-height:1.9;position:relative`);
-    const open = span('「', `position:absolute;left:0;top:-4px;font-size:26px;color:${ctx.accent};font-weight:700`);
+    // 「」 改成内嵌行内 span，不用 position:absolute（公众号常吞 absolute）
+    (b as HTMLElement).setAttribute('style', `border:none;background:transparent;padding:8px 20px;margin:24px 0;color:${ctx.gray600};font-family:${KAITI},${ctx.prose};font-size:16.5px;line-height:1.9`);
+    const open = span('「', `font-size:24px;color:${ctx.accent};font-weight:700;margin-right:4px;vertical-align:-2px`);
     b.insertBefore(open, b.firstChild);
-    const close = span('」', `font-size:26px;color:${ctx.accent};margin-left:4px;font-weight:700`);
+    const close = span('」', `font-size:24px;color:${ctx.accent};font-weight:700;margin-left:4px;vertical-align:-2px`);
     b.appendChild(close);
   });
   setStyle(root, 'blockquote p', `margin:0 0 6px;color:${ctx.gray600};display:inline`);
@@ -402,7 +414,7 @@ function applyYinzhang(root: ParentNode, ctx: InlineCtx) {
   setStyle(root, 'code', `background:${ctx.accentGlow};color:${ctx.accent};padding:2px 6px;border-radius:2px;font-family:${MONO};font-size:13.5px`);
 
   injectListMarkers(root,
-    () => span('', `display:inline-block;width:8px;height:8px;background:${ctx.accent};transform:rotate(45deg);margin-right:10px;vertical-align:middle`),
+    () => span('◆', `color:${ctx.accent};font-size:.7em;margin-right:10px;vertical-align:middle`),
     (_li, n) => span(toCjk(n) + '、', `color:${ctx.accent};font-weight:700;margin-right:6px`)
   );
   setStyle(root, 'ul,ol', `padding-left:0;list-style:none;margin:0 0 16px`);
@@ -441,9 +453,14 @@ function applyGeshan(root: ParentNode, ctx: InlineCtx) {
   });
 
   replaceHr(root, () => {
-    const wrap = div(`text-align:center;margin:36px 0;line-height:1`);
-    const inner = span('/ / /', `display:inline-block;padding:0 12px;background:${ctx.surface};color:${ctx.accent};font-family:${MONO};font-size:12px;letter-spacing:2px;border-top:1px solid ${ctx.ink};position:relative;top:-7px`);
-    wrap.appendChild(inner);
+    // flex 三段：横线 - / / / - 横线，避开 absolute / negative top
+    const wrap = div(`display:flex;align-items:center;gap:12px;margin:36px 0`);
+    const lineL = div(`flex:1;height:1px;background:${ctx.ink}`);
+    const text = span('/ / /', `color:${ctx.accent};font-family:${MONO};font-size:12px;letter-spacing:2px;flex-shrink:0`);
+    const lineR = div(`flex:1;height:1px;background:${ctx.ink}`);
+    wrap.appendChild(lineL);
+    wrap.appendChild(text);
+    wrap.appendChild(lineR);
     return wrap;
   });
 
@@ -463,24 +480,24 @@ function applyGeshan(root: ParentNode, ctx: InlineCtx) {
    8. 手札 shouzha
    ============================================================ */
 function applyShouzha(root: ParentNode, ctx: InlineCtx) {
-  const wave = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 10' preserveAspectRatio='none'><path d='M0 6 Q10 1 20 6 T40 6 T60 6 T80 6' stroke='${encodeURIComponent(ctx.accent)}' stroke-width='2.5' fill='none' stroke-linecap='round'/></svg>`;
-  setStyle(root, 'h1', `font-family:${KAITI},${ctx.prose};font-size:30px;font-weight:700;line-height:1.3;margin:8px 0 22px;padding-bottom:14px;border:none;letter-spacing:1px;color:${ctx.ink};background-image:url("${wave}");background-repeat:no-repeat;background-position:left bottom;background-size:100% 8px`);
-  setStyle(root, 'h2', `font-family:${KAITI},${ctx.prose};font-size:22px;font-weight:700;line-height:1.4;margin:36px 0 14px;padding:0 6px 12px;border:none;color:${ctx.ink};letter-spacing:1px;display:inline-block;background-image:url("${wave}");background-repeat:no-repeat;background-position:left bottom;background-size:100% 7px`);
+  // 公众号不可靠：SVG data: URL / absolute / linear-gradient 50%/50%（虚线 trick）
+  // 替代方案：CSS text-decoration: underline wavy 或粗实色 border-bottom；blockquote 用 dashed border-left
+  setStyle(root, 'h1', `font-family:${KAITI},${ctx.prose};font-size:30px;font-weight:700;line-height:1.3;margin:8px 0 22px;padding:0 0 8px;border:none;border-bottom:3px solid ${ctx.accent};letter-spacing:1px;color:${ctx.ink}`);
+  setStyle(root, 'h2', `font-family:${KAITI},${ctx.prose};font-size:22px;font-weight:700;line-height:1.4;margin:36px 0 14px;padding:0 6px 6px;border:none;border-bottom:3px solid ${ctx.accent};color:${ctx.ink};letter-spacing:1px;display:inline-block`);
   root.querySelectorAll('h3').forEach((h) => {
     (h as HTMLElement).setAttribute('style', `font-family:${KAITI},${ctx.prose};font-size:18px;font-weight:700;line-height:1.5;margin:26px 0 10px;color:${ctx.accent};letter-spacing:.5px`);
     h.insertBefore(span('✎ ', `color:${ctx.accent};font-size:.85em`), h.firstChild);
   });
   setStyle(root, 'h4', `font-family:${KAITI},${ctx.prose};font-size:15px;font-weight:600;margin:20px 0 8px;color:${ctx.gray600};font-style:italic`);
 
+  // blockquote 旁线改 border-left dashed（公众号原生支持），不再用 absolute + linear-gradient
   root.querySelectorAll('blockquote').forEach((b) => {
-    (b as HTMLElement).setAttribute('style', `border:none;background:transparent;padding:10px 16px 10px 24px;margin:20px 0;color:${ctx.gray600};font-family:${KAITI},${ctx.prose};font-size:16.5px;position:relative`);
-    const dash = div(`position:absolute;left:6px;top:6px;bottom:6px;width:3px;background-image:linear-gradient(${ctx.accent} 50%,transparent 50%);background-size:3px 6px`);
-    b.insertBefore(dash, b.firstChild);
+    (b as HTMLElement).setAttribute('style', `border:none;border-left:3px dashed ${ctx.accent};background:transparent;padding:8px 16px 8px 18px;margin:20px 0;color:${ctx.gray600};font-family:${KAITI},${ctx.prose};font-size:16.5px`);
   });
   setStyle(root, 'blockquote p', `margin:0 0 6px;color:${ctx.gray600};font-family:inherit`);
 
-  const waveBg = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'><path d='M0 4 Q15 0 30 4 T60 4 T90 4 T120 4' stroke='${encodeURIComponent(ctx.accent)}' stroke-width='2' fill='none' stroke-linecap='round' opacity='0.6'/></svg>`;
-  replaceHr(root, () => div(`height:8px;background-image:url("${waveBg}");background-repeat:repeat-x;background-size:120px 8px;margin:32px 0`));
+  // hr 用虚线 border-top（公众号原生支持）
+  replaceHr(root, () => div(`border:none;border-top:2px dotted ${ctx.accent};opacity:.7;margin:32px 0;height:0`));
 
   setStyle(root, 'strong', `color:${ctx.ink};font-weight:700;background:linear-gradient(transparent 65%,${ctx.accentGlow} 65%);padding:0 2px`);
   setStyle(root, 'em', `color:${ctx.accent};font-style:italic`);
