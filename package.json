@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "gen:wechat-snapshots": "tsx scripts/generate-wechat-snapshots.ts"
   },
   "dependencies": {
     "highlight.js": "^11.10.0",
@@ -16,9 +17,12 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@types/jsdom": "^28.0.3",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^29.1.1",
+    "tsx": "^4.22.0",
     "typescript": "^5.6.3",
     "vite": "^5.4.10"
   }
