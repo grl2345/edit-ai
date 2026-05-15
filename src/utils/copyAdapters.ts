@@ -73,11 +73,49 @@ function span(text: string, css: string): HTMLSpanElement {
   return s;
 }
 
-function div(css: string, text = ''): HTMLDivElement {
-  const d = document.createElement('div');
+function div(css: string, text = ''): HTMLElement {
+  // 实际用 <section>：WeChat 对 div font-size 经常 strip，section 保留率最高
+  const d = document.createElement('section');
   d.setAttribute('style', css);
   if (text) d.textContent = text;
   return d;
+}
+
+/**
+ * Drop cap：把指定段落的第一个字符抠出来包成一个真实 <span>，
+ * 让首字下沉效果可以在 WeChat 复制后存活（::first-letter 是 CSS 伪元素，不复制）。
+ */
+function injectDropCap(p: HTMLElement, css: string) {
+  if (p.querySelector(':scope > [data-dropcap]')) return;
+  // 找第一个文本节点
+  const walker = document.createTreeWalker(p, /* SHOW_TEXT */ 4);
+  const firstText = walker.nextNode() as Text | null;
+  if (!firstText || !firstText.nodeValue) return;
+  const raw = firstText.nodeValue;
+  // 跳过前导空白
+  let i = 0;
+  while (i < raw.length && /\s/.test(raw[i])) i++;
+  if (i >= raw.length) return;
+  const ch = raw[i];
+  const before = raw.slice(0, i);
+  const after = raw.slice(i + 1);
+  // 拆成 [before-text][span][after-text]
+  const span = document.createElement('span');
+  span.setAttribute('style', css);
+  span.setAttribute('data-dropcap', '1');
+  span.textContent = ch;
+  const parent = firstText.parentNode!;
+  if (before) parent.insertBefore(document.createTextNode(before), firstText);
+  parent.insertBefore(span, firstText);
+  if (after) parent.insertBefore(document.createTextNode(after), firstText);
+  parent.removeChild(firstText);
+}
+
+/** 把第一段（紧跟 h1/h2 的 <p>）应用 drop cap */
+function applyDropCap(root: ParentNode, css: string) {
+  root.querySelectorAll('h1 + p, h2 + p').forEach((p) => {
+    injectDropCap(p as HTMLElement, css);
+  });
 }
 
 function replaceHr(root: ParentNode, build: () => HTMLElement) {
@@ -157,10 +195,27 @@ export function toWeChatHTML(
   return section.outerHTML;
 }
 
-function wrapperStyleFor(_template: TemplateId, _ctx: InlineCtx): string {
-  // 公众号编辑器会把 wrapper section 上的 background-image (radial/linear-gradient)
-  // 大概率 strip 掉，所以这里不再下发底纹。底纹只在 app 内预览展示。
-  return '';
+function wrapperStyleFor(template: TemplateId, ctx: InlineCtx): string {
+  // 编辑器的"paper / 卡片"背景下发到公众号。
+  // background-image / gradient / radial 公众号会 strip，所以只用 solid color。
+  // padding 让正文不贴边。每个版式可以微调底色。
+  const bg: Record<TemplateId, string> = {
+    qingye: ctx.surface,      // 点阵网格降级为纯色卡
+    haibao: ctx.paper,
+    ningmeng: ctx.paper,
+    chongying: ctx.paper,
+    huabao: ctx.paper,
+    yinzhang: ctx.surface,    // 米色卡
+    geshan: ctx.paper,
+    shouzha: ctx.surface,     // 信笺
+    jiguang: ctx.paper,
+    zhangye: ctx.surface,     // 章页 cream
+    juanshou: ctx.paper,
+    jiekan: ctx.paper,
+    yuebao: ctx.paper,
+    hongbang: ctx.paper,
+  };
+  return `background:${bg[template]};padding:28px 22px;border-radius:10px;`;
 }
 
 function applyShared(root: ParentNode, ctx: InlineCtx) {
@@ -461,6 +516,9 @@ function applyHuabao(root: ParentNode, ctx: InlineCtx) {
     (_li, n) => span(String(n), `color:${ctx.accent};font-family:${SERIF};font-style:italic;font-weight:700;font-size:18px;margin-right:12px;vertical-align:baseline`)
   );
   setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 16px`);
+
+  // Drop cap：画报风
+  applyDropCap(root, `font-size:3.6em;float:left;line-height:.86;padding:8px 12px 0 0;font-weight:800;color:${ctx.accent};font-family:${ctx.prose}`);
 }
 
 /* ============================================================
@@ -672,6 +730,9 @@ function applyZhangye(root: ParentNode, ctx: InlineCtx) {
     (_li, n) => span(toRoman(n).toLowerCase() + '.', `color:${ctx.accent};font-family:${SERIF};font-style:italic;font-weight:700;margin-right:10px`)
   );
   setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 16px`);
+
+  // Drop cap：首段第一个字符
+  applyDropCap(root, `font-size:3.4em;float:left;line-height:.88;padding:6px 12px 0 0;font-weight:700;color:${ctx.accent};font-family:Georgia,${ctx.prose};font-style:italic`);
 }
 
 /* ============================================================
@@ -725,6 +786,9 @@ function applyJuanshou(root: ParentNode, ctx: InlineCtx) {
     (_li, n) => span(n + '.', `color:${ctx.accent};font-family:${SERIF};font-style:italic;font-weight:700;font-size:1.1em;margin-right:10px`)
   );
   setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 16px`);
+
+  // Drop cap：The New Yorker 风
+  applyDropCap(root, `font-size:5.2em;float:left;line-height:.86;padding:10px 14px 0 0;font-weight:700;color:${ctx.accent};font-family:Georgia,${ctx.prose}`);
 }
 
 /* ============================================================
