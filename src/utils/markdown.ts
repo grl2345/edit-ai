@@ -12,15 +12,28 @@ import {
   getFontStack,
   getPaletteVars,
 } from './themes';
-import yuanbaoCss from '../styles/templates/yuanbao.css?raw';
-import kapianCss from '../styles/templates/kapian.css?raw';
-import moyinCss from '../styles/templates/moyin.css?raw';
+import qingyeCss from '../styles/templates/qingye.css?raw';
+import haibaoCss from '../styles/templates/haibao.css?raw';
+import ningmengCss from '../styles/templates/ningmeng.css?raw';
+import chongyingCss from '../styles/templates/chongying.css?raw';
+import huabaoCss from '../styles/templates/huabao.css?raw';
+import yinzhangCss from '../styles/templates/yinzhang.css?raw';
+import geshanCss from '../styles/templates/geshan.css?raw';
+import shouzhaCss from '../styles/templates/shouzha.css?raw';
+import jiguangCss from '../styles/templates/jiguang.css?raw';
+import zhangyeCss from '../styles/templates/zhangye.css?raw';
 
 const TEMPLATE_CSS: Record<TemplateId, string> = {
-  suijian: '',
-  yuanbao: yuanbaoCss,
-  kapian: kapianCss,
-  moyin: moyinCss,
+  qingye: qingyeCss,
+  haibao: haibaoCss,
+  ningmeng: ningmengCss,
+  chongying: chongyingCss,
+  huabao: huabaoCss,
+  yinzhang: yinzhangCss,
+  geshan: geshanCss,
+  shouzha: shouzhaCss,
+  jiguang: jiguangCss,
+  zhangye: zhangyeCss,
 };
 
 const marked = new Marked(

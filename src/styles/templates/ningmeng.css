@@ -1,0 +1,165 @@
+/* ============================================================
+   柠檬 · ningmeng —— h2 实心高亮笔块
+   签名：h2 inline-block 实心 accent 底 + paper 字（海报感）
+   ============================================================ */
+
+.prose[data-template='ningmeng'] {
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+.prose[data-template='ningmeng'] h1 {
+  font-family: var(--prose-font);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 8px 0 12px;
+  padding-bottom: 16px;
+  border: none;
+  letter-spacing: -0.4px;
+  position: relative;
+}
+.prose[data-template='ningmeng'] h1::after {
+  content: '';
+  display: block;
+  width: 52px;
+  height: 5px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin-top: 14px;
+}
+
+/* —— 核心：h2 高亮笔块 —— */
+.prose[data-template='ningmeng'] h2 {
+  font-family: var(--prose-font);
+  display: inline-block;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 48px 0 22px;
+  padding: 6px 16px 7px;
+  background: var(--accent);
+  color: var(--paper);
+  border: none;
+  letter-spacing: 0.3px;
+  border-radius: 2px;
+}
+
+.prose[data-template='ningmeng'] h3 {
+  font-family: var(--prose-font);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 32px 0 14px;
+  padding-bottom: 6px;
+  display: inline-block;
+  border-bottom: 3px solid var(--accent);
+  letter-spacing: 0.2px;
+}
+.prose[data-template='ningmeng'] h4 {
+  font-family: var(--prose-font);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 10px;
+  color: var(--gray-600);
+}
+
+.prose[data-template='ningmeng'] blockquote {
+  border: none;
+  border-left: 5px solid var(--accent);
+  background: var(--surface-2);
+  padding: 16px 22px 16px 24px;
+  margin: 24px 0;
+  border-radius: 0 6px 6px 0;
+  color: var(--gray-600);
+  font-style: normal;
+  position: relative;
+}
+.prose[data-template='ningmeng'] blockquote::before {
+  content: '\201C';
+  position: absolute;
+  right: 16px;
+  top: 4px;
+  font-family: Georgia, serif;
+  font-size: 44px;
+  color: var(--accent);
+  opacity: 0.18;
+  line-height: 1;
+}
+.prose[data-template='ningmeng'] blockquote p { margin-bottom: 8px; }
+.prose[data-template='ningmeng'] blockquote p:last-child { margin-bottom: 0; }
+
+.prose[data-template='ningmeng'] hr {
+  border: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--accent);
+  width: 64px;
+  margin: 44px 0;
+}
+
+.prose[data-template='ningmeng'] ul,
+.prose[data-template='ningmeng'] ol { padding-left: 4px; list-style: none; }
+.prose[data-template='ningmeng'] ul > li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 10px;
+}
+.prose[data-template='ningmeng'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.7em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.prose[data-template='ningmeng'] ol { counter-reset: ningmeng-ol; }
+.prose[data-template='ningmeng'] ol > li {
+  counter-increment: ningmeng-ol;
+  position: relative;
+  padding-left: 34px;
+  margin-bottom: 12px;
+}
+.prose[data-template='ningmeng'] ol > li::before {
+  content: counter(ningmeng-ol);
+  position: absolute;
+  left: 0;
+  top: 0.12em;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prose[data-template='ningmeng'] strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+.prose[data-template='ningmeng'] a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.prose[data-template='ningmeng'] code {
+  background: var(--accent);
+  color: var(--paper);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+.prose[data-template='ningmeng'] th {
+  background: var(--accent);
+  color: var(--paper);
+  border-bottom: none;
+}
