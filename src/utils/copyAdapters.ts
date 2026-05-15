@@ -166,6 +166,9 @@ function wrapperStyleFor(_template: TemplateId, _ctx: InlineCtx): string {
 function applyShared(root: ParentNode, ctx: InlineCtx) {
   mergeStyle(root, 'p', `font-family:${ctx.prose};font-size:16px;line-height:1.85;margin:0 0 16px;color:${ctx.ink}`);
   mergeStyle(root, 'em', `font-style:italic`);
+  mergeStyle(root, 'figure', `margin:28px 0;text-align:center`);
+  mergeStyle(root, 'figure img', `max-width:100%;display:block;margin:0 auto;border-radius:6px`);
+  mergeStyle(root, 'figcaption', `font-family:${ctx.prose};font-style:italic;font-size:13.5px;color:${ctx.gray500};text-align:center;margin-top:10px;line-height:1.5`);
   mergeStyle(root, 'ul,ol', `margin:0 0 16px;padding-left:24px`);
   mergeStyle(root, 'li', `margin:0 0 8px;line-height:1.85;color:${ctx.ink};font-family:${ctx.prose};font-size:16px`);
   mergeStyle(root, 'img', `max-width:100%;border-radius:8px;margin:18px 0;display:block`);
@@ -195,6 +198,9 @@ function dispatchTemplate(root: ParentNode, ctx: InlineCtx, template: TemplateId
     case 'shouzha': return applyShouzha(root, ctx);
     case 'jiguang': return applyJiguang(root, ctx);
     case 'zhangye': return applyZhangye(root, ctx);
+    case 'juanshou': return applyJuanshou(root, ctx);
+    case 'jiekan': return applyJiekan(root, ctx);
+    case 'yuebao': return applyYuebao(root, ctx);
   }
 }
 
@@ -581,6 +587,219 @@ function applyZhangye(root: ParentNode, ctx: InlineCtx) {
   injectListMarkers(root,
     () => span('— ', `color:${ctx.ink};margin-right:6px`),
     (_li, n) => span(toRoman(n).toLowerCase() + '.', `color:${ctx.accent};font-family:${SERIF};font-style:italic;font-weight:700;margin-right:10px`)
+  );
+  setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 16px`);
+}
+
+/* ============================================================
+   11. 卷首 juanshou —— The New Yorker
+   ============================================================ */
+function applyJuanshou(root: ParentNode, ctx: InlineCtx) {
+  // h1：上方 accent 短条 + 大字
+  root.querySelectorAll('h1').forEach((h) => {
+    (h as HTMLElement).setAttribute('style', `font-family:${ctx.prose};font-size:34px;font-weight:700;line-height:1.2;letter-spacing:-.4px;margin:8px 0 24px;padding:0 0 14px;border:none;color:${ctx.ink}`);
+    const bar = div(`width:54px;height:4px;background:${ctx.accent};margin-bottom:16px`);
+    h.insertBefore(bar, h.firstChild);
+  });
+  // h2：罗马数字悬挂（flex 替代 absolute）
+  let jsI = 0;
+  root.querySelectorAll('h2').forEach((h) => {
+    jsI++;
+    (h as HTMLElement).setAttribute('style', `font-family:${ctx.prose};font-size:24px;font-weight:700;line-height:1.3;margin:48px 0 18px;padding:14px 0 0;border-top:1px solid ${ctx.ink};border-bottom:none;color:${ctx.ink};letter-spacing:-.2px;display:flex;align-items:baseline;gap:18px`);
+    const r = span(toRoman(jsI) + '.', `font-family:${SERIF};font-size:24px;color:${ctx.accent};font-style:italic;font-weight:400;flex-shrink:0;min-width:42px`);
+    h.insertBefore(r, h.firstChild);
+  });
+  setStyle(root, 'h3', `font-family:${ctx.prose};font-size:19px;font-weight:700;line-height:1.4;margin:32px 0 12px;color:${ctx.ink};font-style:italic`);
+  setStyle(root, 'h4', `font-family:${ctx.prose};font-size:14px;font-weight:700;margin:22px 0 8px;color:${ctx.gray600};text-transform:uppercase;letter-spacing:1.5px`);
+
+  // pull-quote：上下细线 + 大字斜体居中
+  root.querySelectorAll('blockquote').forEach((b) => {
+    (b as HTMLElement).setAttribute('style', `border:none;border-top:1px solid ${ctx.ink};border-bottom:1px solid ${ctx.ink};background:transparent;text-align:center;font-style:italic;color:${ctx.ink};padding:22px 24px;margin:36px 0;font-size:20px;line-height:1.5;font-family:${SERIF}`);
+    const q = div(`text-align:center;font-size:52px;color:${ctx.accent};line-height:.5;font-family:${SERIF};margin-bottom:10px;font-style:normal;font-weight:700`, '"');
+    b.insertBefore(q, b.firstChild);
+  });
+  setStyle(root, 'blockquote p', `margin:0 0 8px;color:${ctx.ink}`);
+
+  // figure：底部细线 + italic 图注
+  setStyle(root, 'figure', `margin:32px 0;text-align:center`);
+  setStyle(root, 'figure img', `max-width:100%;display:block;margin:0 auto;border-radius:0;padding-bottom:8px;border-bottom:1px solid ${ctx.ink}`);
+  setStyle(root, 'figcaption', `font-family:${SERIF};font-style:italic;font-size:13.5px;color:${ctx.gray600};text-align:center;margin-top:10px;line-height:1.5`);
+
+  // table 编辑级
+  setStyle(root, 'table', `width:100%;border-collapse:collapse;margin:28px 0;font-size:14.5px`);
+  setStyle(root, 'th', `background:transparent;text-align:left;padding:8px 12px;border:none;border-top:2px solid ${ctx.ink};border-bottom:1px solid ${ctx.ink};font-family:${ctx.prose};font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:${ctx.ink}`);
+  setStyle(root, 'td', `padding:9px 12px;border-bottom:1px solid ${ctx.border};font-family:${SERIF}`);
+
+  replaceHr(root, () => div(`text-align:center;color:${ctx.accent};font-size:18px;margin:48px 0;line-height:1`, '❦'));
+
+  setStyle(root, 'strong', `color:${ctx.ink};font-weight:700;border-bottom:2px solid ${ctx.accent}`);
+  setStyle(root, 'em', `color:${ctx.ink};font-style:italic`);
+  setStyle(root, 'a', `color:${ctx.ink};border-bottom:1px solid ${ctx.accent};text-decoration:none;font-style:italic`);
+  setStyle(root, 'code', `font-family:${SERIF};font-style:italic;background:transparent;color:${ctx.accent};padding:0`);
+
+  injectListMarkers(root,
+    () => span('', `display:inline-block;width:12px;height:1px;background:${ctx.accent};margin-right:10px;vertical-align:middle`),
+    (_li, n) => span(n + '.', `color:${ctx.accent};font-family:${SERIF};font-style:italic;font-weight:700;font-size:1.1em;margin-right:10px`)
+  );
+  setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 16px`);
+}
+
+/* ============================================================
+   12. 街刊 jiekan —— Monocle / Wallpaper*
+   ============================================================ */
+function applyJiekan(root: ParentNode, ctx: InlineCtx) {
+  // h1：上方 COVER STORY 标 + 巨大粗黑体
+  root.querySelectorAll('h1').forEach((h) => {
+    (h as HTMLElement).setAttribute('style', `font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',${ctx.prose},sans-serif;font-size:36px;font-weight:900;line-height:1.1;letter-spacing:-1px;margin:4px 0 26px;padding:0;border:none;color:${ctx.ink}`);
+    const tag = div(`background:${ctx.accent};color:${ctx.paper};padding:4px 10px;font-family:${MONO};font-size:10px;letter-spacing:3px;font-weight:700;display:inline-block;margin-bottom:14px`, 'COVER STORY');
+    h.insertBefore(tag, h.firstChild);
+  });
+  // h2：№ 01 chip 前缀
+  let jkI = 0;
+  root.querySelectorAll('h2').forEach((h) => {
+    jkI++;
+    (h as HTMLElement).setAttribute('style', `font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',${ctx.prose},sans-serif;font-size:22px;font-weight:800;line-height:1.3;margin:44px 0 16px;padding:0 0 10px;border:none;border-bottom:5px solid ${ctx.ink};letter-spacing:-.3px;color:${ctx.ink}`);
+    const chip = span('№ ' + pad2(jkI), `display:inline-block;background:${ctx.ink};color:${ctx.paper};padding:3px 9px;font-family:${MONO};font-size:11px;font-weight:700;letter-spacing:1.5px;margin-right:12px;vertical-align:3px`);
+    h.insertBefore(chip, h.firstChild);
+  });
+  root.querySelectorAll('h3').forEach((h) => {
+    (h as HTMLElement).setAttribute('style', `font-family:${ctx.prose};font-size:18px;font-weight:700;line-height:1.4;margin:30px 0 12px;font-style:italic;color:${ctx.ink}`);
+    h.insertBefore(span('— ', `color:${ctx.accent};font-weight:700`), h.firstChild);
+  });
+  setStyle(root, 'h4', `font-family:${MONO};font-size:11px;font-weight:700;margin:22px 0 8px;color:${ctx.accent};letter-spacing:2px;text-transform:uppercase`);
+
+  // pull-quote：左 6px accent 粗条 + 大斜体
+  root.querySelectorAll('blockquote').forEach((b) => {
+    (b as HTMLElement).setAttribute('style', `border:none;border-left:6px solid ${ctx.accent};background:transparent;padding:12px 0 12px 22px;margin:28px 0;color:${ctx.ink};font-style:italic;font-size:20px;line-height:1.45;font-weight:600;font-family:${ctx.prose}`);
+    // 最后一段当作 attribution，特殊样式
+    const ps = b.querySelectorAll('p');
+    if (ps.length > 1) {
+      const last = ps[ps.length - 1] as HTMLElement;
+      const prev = last.getAttribute('style') ?? '';
+      last.setAttribute('style', `${prev};font-size:11px;font-style:normal;font-weight:700;letter-spacing:2px;color:${ctx.accent};font-family:${MONO};text-transform:uppercase;margin:8px 0 0`);
+    }
+  });
+  setStyle(root, 'blockquote p', `margin:0 0 8px;color:${ctx.ink}`);
+
+  // figure：全宽 + 厚黑下边线 + mono uppercase 图注 + accent 方块
+  setStyle(root, 'figure', `margin:30px 0;padding-bottom:12px;border-bottom:4px solid ${ctx.ink}`);
+  setStyle(root, 'figure img', `max-width:100%;width:100%;display:block;border-radius:0;margin:0`);
+  setStyle(root, 'figcaption', `font-family:${MONO};font-size:11px;letter-spacing:1.5px;color:${ctx.gray500};text-transform:uppercase;margin-top:12px;display:flex;align-items:center;gap:8px`);
+  root.querySelectorAll('figcaption').forEach((fc) => {
+    const dot = span('', `display:inline-block;width:8px;height:8px;background:${ctx.accent};flex-shrink:0`);
+    fc.insertBefore(dot, fc.firstChild);
+  });
+
+  // table：重黑表头 + 隔行 tint
+  setStyle(root, 'table', `width:100%;border-collapse:collapse;margin:26px 0;font-size:14px;border-top:4px solid ${ctx.ink};border-bottom:4px solid ${ctx.ink}`);
+  setStyle(root, 'th', `background:${ctx.ink};color:${ctx.paper};text-align:left;padding:9px 13px;font-family:${MONO};font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;border-bottom:none`);
+  setStyle(root, 'td', `padding:10px 13px;border-bottom:1px solid ${ctx.border};font-family:${ctx.prose}`);
+  // 隔行 tint
+  root.querySelectorAll('tbody tr').forEach((tr, i) => {
+    if (i % 2 === 1) {
+      tr.querySelectorAll('td').forEach((td) => {
+        const prev = (td as HTMLElement).getAttribute('style') ?? '';
+        (td as HTMLElement).setAttribute('style', `${prev};background:${ctx.surface2}`);
+      });
+    }
+  });
+
+  // hr：粗黑实条 + 中间 accent 方块
+  replaceHr(root, () => {
+    const wrap = div(`position:relative;height:4px;background:${ctx.ink};margin:40px 0;display:flex;align-items:center;justify-content:center`);
+    const sq = div(`width:14px;height:14px;background:${ctx.accent}`);
+    wrap.appendChild(sq);
+    return wrap;
+  });
+
+  setStyle(root, 'strong', `background:${ctx.ink};color:${ctx.paper};padding:1px 5px;font-weight:700`);
+  setStyle(root, 'em', `color:${ctx.accent};font-style:italic;font-weight:600`);
+  setStyle(root, 'a', `color:${ctx.ink};background:${ctx.accentGlow};text-decoration:none;padding:0 4px;font-weight:600`);
+  setStyle(root, 'code', `background:${ctx.ink};color:${ctx.paper};padding:2px 7px;border-radius:0;font-family:${MONO};font-size:13px;font-weight:500`);
+
+  injectListMarkers(root,
+    () => span('', `display:inline-block;width:14px;height:4px;background:${ctx.accent};margin-right:12px;vertical-align:middle`),
+    (_li, n) => span(pad2(n), `color:${ctx.ink};font-family:${MONO};font-size:18px;font-weight:800;margin-right:12px;letter-spacing:-1px`)
+  );
+  setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 16px`);
+}
+
+/* ============================================================
+   13. 月报 yuebao —— Economist / NY Times Graphics
+   ============================================================ */
+function applyYuebao(root: ParentNode, ctx: InlineCtx) {
+  // h1：上方 MONTHLY REPORT kicker + 双横线
+  root.querySelectorAll('h1').forEach((h) => {
+    (h as HTMLElement).setAttribute('style', `font-family:${ctx.prose};font-size:30px;font-weight:700;line-height:1.25;margin:12px 0 24px;padding:18px 0 14px;border:none;border-top:1px solid ${ctx.ink};letter-spacing:-.2px;color:${ctx.ink}`);
+    const kicker = div(`font-family:${MONO};font-size:10px;letter-spacing:4px;color:${ctx.accent};font-weight:700;margin-bottom:12px`, 'MONTHLY REPORT');
+    h.insertBefore(kicker, h.firstChild);
+    const dbl = div(`height:4px;border-top:1px solid ${ctx.ink};border-bottom:1px solid ${ctx.ink};margin-top:14px`);
+    h.appendChild(dbl);
+  });
+  // h2：大编号 01 02 03（flex 替代 absolute）
+  let ybI = 0;
+  root.querySelectorAll('h2').forEach((h) => {
+    ybI++;
+    (h as HTMLElement).setAttribute('style', `font-family:${ctx.prose};font-size:21px;font-weight:700;line-height:1.4;margin:40px 0 16px;padding:0 0 8px;border:none;border-bottom:1px solid ${ctx.ink};color:${ctx.ink};letter-spacing:-.1px;display:flex;align-items:flex-end;gap:14px`);
+    const num = span(pad2(ybI), `font-family:${MONO};font-size:26px;font-weight:800;color:${ctx.accent};letter-spacing:-2px;line-height:1;flex-shrink:0`);
+    h.insertBefore(num, h.firstChild);
+  });
+  setStyle(root, 'h3', `font-family:${ctx.prose};font-size:17px;font-weight:700;line-height:1.4;margin:28px 0 12px;color:${ctx.ink};font-style:italic;padding-left:10px;border-left:2px solid ${ctx.accent}`);
+  setStyle(root, 'h4', `font-family:${MONO};font-size:11px;font-weight:700;margin:22px 0 8px;color:${ctx.gray500};letter-spacing:2px;text-transform:uppercase`);
+
+  // NOTE 卡片
+  root.querySelectorAll('blockquote').forEach((b) => {
+    (b as HTMLElement).setAttribute('style', `border:1px solid ${ctx.border};border-left:4px solid ${ctx.accent};background:${ctx.surface2};padding:18px 18px 14px;margin:28px 0;border-radius:0;color:${ctx.gray600};font-size:14.5px;line-height:1.7;position:relative`);
+    const tag = div(`display:inline-block;background:${ctx.accent};color:${ctx.paper};padding:2px 8px;font-family:${MONO};font-size:10px;font-weight:700;letter-spacing:2px;margin-bottom:8px`, 'NOTE');
+    b.insertBefore(tag, b.firstChild);
+  });
+  setStyle(root, 'blockquote p', `margin:0 0 6px;color:${ctx.gray600}`);
+
+  // figure：bordered 杂志图 + FIG 图注（flex，无 absolute）
+  setStyle(root, 'figure', `margin:30px 0;border:1px solid ${ctx.border};padding:10px 10px 0;background:${ctx.surface}`);
+  setStyle(root, 'figure img', `max-width:100%;display:block;border-radius:0;margin:0`);
+  setStyle(root, 'figcaption', `font-family:${ctx.prose};font-style:italic;font-size:13px;color:${ctx.gray600};padding:10px 4px 12px;border-top:1px solid ${ctx.border};margin-top:10px;line-height:1.5;display:flex;align-items:baseline;gap:8px`);
+  root.querySelectorAll('figcaption').forEach((fc) => {
+    const tag = span('FIG', `font-family:${MONO};font-size:10px;font-weight:700;letter-spacing:1.5px;color:${ctx.accent};font-style:normal;flex-shrink:0`);
+    fc.insertBefore(tag, fc.firstChild);
+  });
+
+  // table：Economist 风
+  setStyle(root, 'table', `width:100%;border-collapse:collapse;margin:26px 0;font-size:14px;border-top:3px solid ${ctx.ink};border-bottom:2px solid ${ctx.ink}`);
+  setStyle(root, 'th', `background:transparent;text-align:left;padding:8px 13px;font-family:${MONO};font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:${ctx.accent};border:none;border-bottom:1px solid ${ctx.ink}`);
+  setStyle(root, 'td', `padding:8px 13px;border-bottom:1px solid ${ctx.border};font-family:${ctx.prose}`);
+  // 数字列右对齐：把非首列的 th/td 都右对齐
+  root.querySelectorAll('table').forEach((tbl) => {
+    const headRow = tbl.querySelector('thead tr') || tbl.querySelector('tr');
+    if (!headRow) return;
+    const cells = headRow.children;
+    for (let i = 1; i < cells.length; i++) {
+      const idx = i + 1;
+      tbl.querySelectorAll(`th:nth-child(${idx}),td:nth-child(${idx})`).forEach((c) => {
+        const prev = (c as HTMLElement).getAttribute('style') ?? '';
+        (c as HTMLElement).setAttribute('style', `${prev};text-align:right;font-variant-numeric:tabular-nums`);
+      });
+    }
+  });
+
+  // hr：双细线
+  replaceHr(root, () => {
+    const wrap = div(`margin:40px 0`);
+    const a = div(`height:1px;background:${ctx.ink};margin-bottom:2px`);
+    const b = div(`height:1px;background:${ctx.ink}`);
+    wrap.appendChild(a);
+    wrap.appendChild(b);
+    return wrap;
+  });
+
+  setStyle(root, 'strong', `color:${ctx.ink};font-weight:700;font-style:italic`);
+  setStyle(root, 'em', `color:${ctx.accent};font-style:italic`);
+  setStyle(root, 'a', `color:${ctx.ink};border-bottom:1px dotted ${ctx.accent};text-decoration:none`);
+  setStyle(root, 'code', `background:${ctx.gray100};color:${ctx.ink};font-family:${MONO};font-size:13px;padding:1px 6px;border:1px solid ${ctx.border};border-radius:2px`);
+
+  injectListMarkers(root,
+    () => span('', `display:inline-block;width:14px;height:1px;background:${ctx.ink};margin-right:10px;vertical-align:middle`),
+    (_li, n) => span(pad2(n), `color:${ctx.accent};font-family:${MONO};font-size:13px;font-weight:700;margin-right:12px;letter-spacing:-.5px`)
   );
   setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 16px`);
 }

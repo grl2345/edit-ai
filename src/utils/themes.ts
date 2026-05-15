@@ -11,7 +11,10 @@ export type TemplateId =
   | 'geshan'
   | 'shouzha'
   | 'jiguang'
-  | 'zhangye';
+  | 'zhangye'
+  | 'juanshou'
+  | 'jiekan'
+  | 'yuebao';
 
 export interface PaletteMeta {
   id: PaletteId;
@@ -58,6 +61,9 @@ export const TEMPLATES: TemplateMeta[] = [
   { id: 'shouzha', name: '手札', desc: '波浪 · 手记' },
   { id: 'jiguang', name: '极光', desc: '渐变 · 现代' },
   { id: 'zhangye', name: '章页', desc: '书籍 · 罗马' },
+  { id: 'juanshou', name: '卷首', desc: '杂志 · 大首字' },
+  { id: 'jiekan', name: '街刊', desc: '杂志 · Monocle' },
+  { id: 'yuebao', name: '月报', desc: '杂志 · 数据感' },
 ];
 
 export const DEFAULT_PALETTE: PaletteId = 'chushaa';

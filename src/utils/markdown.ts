@@ -1,6 +1,3 @@
-import { Marked } from 'marked';
-import { markedHighlight } from 'marked-highlight';
-import hljs from 'highlight.js/lib/common';
 import {
   DEFAULT_FONT,
   DEFAULT_PALETTE,
@@ -12,6 +9,8 @@ import {
   getFontStack,
   getPaletteVars,
 } from './themes';
+import { renderMarkdown } from './render';
+export { renderMarkdown };
 import qingyeCss from '../styles/templates/qingye.css?raw';
 import haibaoCss from '../styles/templates/haibao.css?raw';
 import ningmengCss from '../styles/templates/ningmeng.css?raw';
@@ -22,6 +21,9 @@ import geshanCss from '../styles/templates/geshan.css?raw';
 import shouzhaCss from '../styles/templates/shouzha.css?raw';
 import jiguangCss from '../styles/templates/jiguang.css?raw';
 import zhangyeCss from '../styles/templates/zhangye.css?raw';
+import juanshouCss from '../styles/templates/juanshou.css?raw';
+import jiekanCss from '../styles/templates/jiekan.css?raw';
+import yuebaoCss from '../styles/templates/yuebao.css?raw';
 
 const TEMPLATE_CSS: Record<TemplateId, string> = {
   qingye: qingyeCss,
@@ -34,30 +36,10 @@ const TEMPLATE_CSS: Record<TemplateId, string> = {
   shouzha: shouzhaCss,
   jiguang: jiguangCss,
   zhangye: zhangyeCss,
+  juanshou: juanshouCss,
+  jiekan: jiekanCss,
+  yuebao: yuebaoCss,
 };
-
-const marked = new Marked(
-  markedHighlight({
-    langPrefix: 'hljs language-',
-    highlight(code, lang) {
-      const language = lang && hljs.getLanguage(lang) ? lang : 'plaintext';
-      try {
-        return hljs.highlight(code, { language, ignoreIllegals: true }).value;
-      } catch {
-        return code;
-      }
-    },
-  })
-);
-
-marked.setOptions({
-  gfm: true,
-  breaks: false,
-});
-
-export function renderMarkdown(src: string): string {
-  return marked.parse(src) as string;
-}
 
 const FONT_STACK_SANS =
   "system-ui,-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','WenQuanYi Micro Hei',sans-serif";

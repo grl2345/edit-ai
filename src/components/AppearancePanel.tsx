@@ -284,6 +284,59 @@ function TemplateThumb({ id }: { id: TemplateId }) {
           <text x="40" y="53" fontSize="3" fill="var(--accent)" textAnchor="middle">❦</text>
         </svg>
       );
+    case 'juanshou':
+      // accent 短条 + 罗马数字悬挂 h2 + 上下细线 pull quote
+      return (
+        <svg className="template-thumb" viewBox="0 0 80 56" aria-hidden>
+          <rect x="8" y="6" width="14" height="2.4" fill="var(--accent)" />
+          <rect x="8" y="11" width="44" height="3" fill="currentColor" />
+          <text x="8" y="24" fontSize="5" fill="var(--accent)" fontFamily="Georgia" fontStyle="italic" fontWeight="700">I.</text>
+          <line x1="8" y1="22" x2="72" y2="22" stroke="currentColor" strokeWidth="0.5" />
+          <rect x="16" y="22" width="24" height="2.4" fill="currentColor" />
+          <line x1="14" y1="32" x2="66" y2="32" stroke="currentColor" strokeWidth="0.5" />
+          <text x="40" y="40" fontSize="6" fill="var(--accent)" textAnchor="middle" fontFamily="Georgia">"</text>
+          <line x1="14" y1="44" x2="66" y2="44" stroke="currentColor" strokeWidth="0.5" />
+          <rect x="14" y="48" width="44" height="1" fill="currentColor" opacity="0.4" />
+        </svg>
+      );
+    case 'jiekan':
+      // COVER STORY 红钉 + 巨大粗黑标 + № 01 chip + 厚黑下条
+      return (
+        <svg className="template-thumb" viewBox="0 0 80 56" aria-hidden>
+          <rect x="8" y="6" width="22" height="4" fill="var(--accent)" />
+          <text x="9" y="9.5" fontSize="3" fill="white" fontFamily="monospace" fontWeight="700" letterSpacing="0.4">COVER</text>
+          <rect x="8" y="13" width="50" height="5.5" fill="currentColor" />
+          <rect x="8" y="28" width="13" height="5" fill="currentColor" />
+          <text x="9" y="32" fontSize="3" fill="white" fontFamily="monospace" fontWeight="700">№ 01</text>
+          <rect x="24" y="28" width="34" height="5" fill="currentColor" opacity="0.8" />
+          <rect x="8" y="35" width="64" height="1.6" fill="currentColor" />
+          <rect x="8" y="42" width="56" height="1.2" fill="currentColor" opacity="0.4" />
+          <rect x="8" y="46" width="48" height="1.2" fill="currentColor" opacity="0.4" />
+          <rect x="8" y="50" width="64" height="2.5" fill="currentColor" />
+          <rect x="37" y="49" width="6" height="4.5" fill="var(--accent)" />
+        </svg>
+      );
+    case 'yuebao':
+      // MONTHLY REPORT 小钉 + 大编号 02 + 双细线 hr + 数据表迹象
+      return (
+        <svg className="template-thumb" viewBox="0 0 80 56" aria-hidden>
+          <text x="8" y="9" fontSize="2.5" fill="var(--accent)" fontFamily="monospace" fontWeight="700" letterSpacing="1">MONTHLY REPORT</text>
+          <line x1="8" y1="11" x2="72" y2="11" stroke="currentColor" strokeWidth="0.6" />
+          <rect x="8" y="13" width="44" height="3.5" fill="currentColor" />
+          <line x1="8" y1="19" x2="72" y2="19" stroke="currentColor" strokeWidth="0.6" />
+          <line x1="8" y1="20.5" x2="72" y2="20.5" stroke="currentColor" strokeWidth="0.6" />
+          <text x="8" y="32" fontSize="7" fill="var(--accent)" fontFamily="monospace" fontWeight="800">01</text>
+          <rect x="20" y="28" width="32" height="2.5" fill="currentColor" />
+          <line x1="20" y1="34" x2="72" y2="34" stroke="currentColor" strokeWidth="0.5" />
+          <rect x="20" y="38" width="14" height="1.5" fill="var(--accent)" />
+          <rect x="44" y="38" width="6" height="1.5" fill="currentColor" opacity="0.5" />
+          <rect x="56" y="38" width="10" height="1.5" fill="currentColor" opacity="0.5" />
+          <line x1="20" y1="42" x2="72" y2="42" stroke="currentColor" strokeWidth="0.3" />
+          <rect x="20" y="45" width="14" height="1.5" fill="currentColor" opacity="0.4" />
+          <rect x="44" y="45" width="6" height="1.5" fill="currentColor" opacity="0.4" />
+          <rect x="56" y="45" width="10" height="1.5" fill="currentColor" opacity="0.4" />
+        </svg>
+      );
   }
 }
 
