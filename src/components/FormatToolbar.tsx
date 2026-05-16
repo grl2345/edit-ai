@@ -1,18 +1,11 @@
 import { CSSProperties } from 'react';
+import { PALETTES } from '../utils/themes';
 
 export type FormatAction =
   | { type: 'color'; value: string }
   | { type: 'clearColor' }
   | { type: 'bold' }
   | { type: 'highlight' };
-
-const COLORS = [
-  { id: 'red', value: '#d83b3b', label: '红' },
-  { id: 'orange', value: '#e07a3c', label: '橙' },
-  { id: 'blue', value: '#2f6ed8', label: '蓝' },
-  { id: 'green', value: '#2e8b57', label: '绿' },
-  { id: 'gray', value: '#666666', label: '灰' },
-];
 
 export interface FormatToolbarProps {
   style: CSSProperties;
@@ -30,14 +23,14 @@ export default function FormatToolbar({ style, onAction }: FormatToolbarProps) {
 
   return (
     <div className="format-toolbar" style={style} onMouseDown={stop}>
-      {COLORS.map((c) => (
+      {PALETTES.map((p) => (
         <button
-          key={c.id}
+          key={p.id}
           className="format-toolbar-swatch"
-          title={`${c.label}色`}
-          onClick={() => onAction({ type: 'color', value: c.value })}
+          title={p.name}
+          onClick={() => onAction({ type: 'color', value: p.swatch })}
         >
-          <span style={{ background: c.value }} />
+          <span style={{ background: p.swatch }} />
         </button>
       ))}
       <button
