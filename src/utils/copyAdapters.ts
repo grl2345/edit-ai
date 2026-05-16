@@ -213,9 +213,14 @@ function wrapperStyleFor(template: TemplateId, ctx: InlineCtx): string {
     juanshou: ctx.paper,
     jiekan: ctx.paper,
     yuebao: ctx.paper,
-    hongbang: ctx.paper,
+    hongbang: 'transparent',  // 红榜走"无卡片裸排"——h1/h2/数字编号本身已经够强，再套底色反而干扰
   };
-  return `background:${bg[template]};padding:28px 22px;border-radius:10px;`;
+  const bgValue = bg[template];
+  // transparent 时不输出 background / border-radius，公众号编辑器里就完全不画矩形
+  if (bgValue === 'transparent') {
+    return `padding:8px 0;`;
+  }
+  return `background:${bgValue};padding:28px 22px;border-radius:10px;`;
 }
 
 function applyShared(root: ParentNode, ctx: InlineCtx) {
@@ -797,7 +802,7 @@ function applyJuanshou(root: ParentNode, ctx: InlineCtx) {
 function applyJiekan(root: ParentNode, ctx: InlineCtx) {
   // h1：上方 COVER STORY 标 + 巨大粗黑体
   root.querySelectorAll('h1').forEach((h) => {
-    (h as HTMLElement).setAttribute('style', `font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',${ctx.prose},sans-serif;font-size:36px;font-weight:900;line-height:1.1;letter-spacing:-1px;margin:4px 0 26px;padding:0;border:none;color:${ctx.ink}`);
+    (h as HTMLElement).setAttribute('style', `font-family:${ctx.prose},'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;font-size:36px;font-weight:900;line-height:1.1;letter-spacing:-1px;margin:4px 0 26px;padding:0;border:none;color:${ctx.ink}`);
     const tag = div(`background:${ctx.accent};color:${ctx.paper};padding:4px 10px;font-family:${MONO};font-size:10px;letter-spacing:3px;font-weight:700;display:inline-block;margin-bottom:14px`, 'COVER STORY');
     h.insertBefore(tag, h.firstChild);
   });
@@ -805,7 +810,7 @@ function applyJiekan(root: ParentNode, ctx: InlineCtx) {
   let jkI = 0;
   root.querySelectorAll('h2').forEach((h) => {
     jkI++;
-    (h as HTMLElement).setAttribute('style', `font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',${ctx.prose},sans-serif;font-size:22px;font-weight:800;line-height:1.3;margin:44px 0 16px;padding:0 0 10px;border:none;border-bottom:5px solid ${ctx.ink};letter-spacing:-.3px;color:${ctx.ink}`);
+    (h as HTMLElement).setAttribute('style', `font-family:${ctx.prose},'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;font-size:22px;font-weight:800;line-height:1.3;margin:44px 0 16px;padding:0 0 10px;border:none;border-bottom:5px solid ${ctx.ink};letter-spacing:-.3px;color:${ctx.ink}`);
     const chip = span('№ ' + pad2(jkI), `display:inline-block;background:${ctx.ink};color:${ctx.paper};padding:3px 9px;font-family:${MONO};font-size:11px;font-weight:700;letter-spacing:1.5px;margin-right:12px;vertical-align:3px`);
     h.insertBefore(chip, h.firstChild);
   });
@@ -955,7 +960,7 @@ function applyYuebao(root: ParentNode, ctx: InlineCtx) {
    14. 红榜 hongbang —— 大红数字 + 黑体粗 + 暗胶囊
    ============================================================ */
 function applyHongbang(root: ParentNode, ctx: InlineCtx) {
-  const SANS = `'PingFang SC','Hiragino Sans GB','Microsoft YaHei',${ctx.prose},sans-serif`;
+  const SANS = `${ctx.prose},'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif`;
 
   setStyle(root, 'h1', `font-family:${SANS};font-size:28px;font-weight:800;line-height:1.3;margin:8px 0 24px;padding:0;border:none;letter-spacing:-.4px;color:${ctx.ink}`);
 
