@@ -8,8 +8,7 @@ import { getCaretCoordinates } from './utils/textareaCaret';
 import { findOpenFormatting } from './utils/formatSplit';
 import { ensureCache } from './utils/imageStore';
 import { renderMarkdown, buildStandaloneHTML } from './utils/markdown';
-import { toWeChatHTML, toZhihuHTML } from './utils/copyAdapters';
-import { copyOrDownloadPreviewImage } from './utils/longImage';
+import { toTwitterText, toWeChatHTML, toZhihuHTML } from './utils/copyAdapters';
 import { AIConfig, loadAIConfig } from './utils/aiClient';
 import { imagesFromDataTransfer, insertImagesAtCaret } from './utils/imageUpload';
 import {
@@ -86,7 +85,11 @@ export default function App() {
   const [dragOver, setDragOver] = useState(false);
   // 图片仓库异步加载完成后 bump 一下，让预览 useMemo 重新跑、把图填上
   const [imagesVersion, setImagesVersion] = useState(0);
-  const [zhihuTransfer, setZhihuTransfer] = useState<TransferImage[] | null>(null);
+  const [imageTransfer, setImageTransfer] = useState<{
+    images: TransferImage[];
+    title: string;
+    hint: string;
+  } | null>(null);
   const [formatToolbar, setFormatToolbar] = useState<{
     top: number;
     left: number;
@@ -317,7 +320,11 @@ export default function App() {
       );
       return;
     }
-    setZhihuTransfer(images);
+    setImageTransfer({
+      images,
+      title: '知乎图片转移',
+      hint: '正文已复制 · 到知乎粘贴正文后，按顺序逐张点「复制」→ 在知乎 Cmd+V，会自动建图片块',
+    });
     showToast(
       ok
         ? `正文已复制，含 ${images.length} 张图需逐张转移`
@@ -327,24 +334,36 @@ export default function App() {
 
   async function handleCopyTwitter() {
     setCopyMenuOpen(false);
+    if (!active) return;
     const node = previewRef.current;
-    if (!node || !active) return;
-    showToast('正在生成长图，请稍候…');
-    try {
-      const title = active.title || 'tweet';
-      const fname = `${sanitizeFilename(title)}.png`;
-      const result = await copyOrDownloadPreviewImage(node, fname);
-      if (result === 'copied') {
-        showToast('长图已复制，到推特撰文框粘贴即可');
-      } else if (result === 'downloaded') {
-        showToast('长图已下载，可拖入推特媒体附件');
-      } else {
-        showToast('长图生成失败');
-      }
-    } catch (e) {
-      console.error(e);
-      showToast('长图生成失败：' + (e instanceof Error ? e.message : ''));
+    const { text, chars, tweets } = toTwitterText(active.content ?? '');
+    // 从预览 DOM 拿到已解引用的图片列表（src 是真实 data URL）
+    const images: TransferImage[] = [];
+    if (node) {
+      node.querySelectorAll('img').forEach((img) => {
+        const src = img.getAttribute('src') ?? '';
+        const alt = img.getAttribute('alt') ?? '';
+        if (src) images.push({ src, alt });
+      });
     }
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      showToast('复制失败');
+      return;
+    }
+    const threadHint =
+      tweets > 1 ? `（${chars} 字 · 约 ${tweets} 条 thread）` : `（${chars} 字）`;
+    if (images.length === 0) {
+      showToast(`已复制推特文字 ${threadHint}`);
+      return;
+    }
+    setImageTransfer({
+      images,
+      title: '推特图片转移',
+      hint: '正文已复制 · 到推特撰文框 Cmd+V 粘贴 · 然后回这里挨张点「复制」→ 切回推特 Cmd+V，会作为媒体附件附上',
+    });
+    showToast(`已复制推特文字 ${threadHint}，含 ${images.length} 张图需逐张转移`);
   }
 
   function handleExportHTML() {
@@ -571,8 +590,8 @@ export default function App() {
                   <span className="menu-desc">通用富文本</span>
                 </button>
                 <button onClick={handleCopyTwitter} role="menuitem">
-                  <span className="menu-title">推特 / X · 长图</span>
-                  <span className="menu-desc">整篇排版截成长图 · 含全部图片 · 粘贴即附媒体</span>
+                  <span className="menu-title">推特 / X</span>
+                  <span className="menu-desc">精炼文本 + thread 分条 · 图片单独转移粘贴</span>
                 </button>
                 <button onClick={handleCopyMarkdown} role="menuitem">
                   <span className="menu-title">Markdown 源码</span>
@@ -743,11 +762,13 @@ export default function App() {
 
       <div className={`toast ${toast ? 'show' : ''}`}>{toast}</div>
 
-      {zhihuTransfer && (
+      {imageTransfer && (
         <ImageTransferPanel
-          images={zhihuTransfer}
+          images={imageTransfer.images}
+          title={imageTransfer.title}
+          hint={imageTransfer.hint}
           onToast={showToast}
-          onClose={() => setZhihuTransfer(null)}
+          onClose={() => setImageTransfer(null)}
         />
       )}
 
