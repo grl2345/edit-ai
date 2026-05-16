@@ -382,6 +382,7 @@ export default function App() {
             font,
             theme,
             template,
+            content: active?.content ?? '',
             onPalette: setPalette,
             onFont: setFont,
             onTheme: setTheme,

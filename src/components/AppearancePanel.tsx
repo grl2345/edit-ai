@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import {
   FONTS,
   FontId,
@@ -7,12 +8,15 @@ import {
   TemplateId,
   ThemeMode,
 } from '../utils/themes';
+import { recommend, Recommendation } from '../utils/aiRecommend';
 
 export interface AppearancePanelProps {
   palette: PaletteId;
   font: FontId;
   theme: ThemeMode;
   template: TemplateId;
+  /** 当前文档 markdown，用于 AI 推荐版式选型 */
+  content?: string;
   onPalette(id: PaletteId): void;
   onFont(id: FontId): void;
   onTheme(t: ThemeMode): void;
@@ -24,28 +28,75 @@ export default function AppearancePanel({
   font,
   theme,
   template,
+  content,
   onPalette,
   onFont,
   onTheme,
   onTemplate,
 }: AppearancePanelProps) {
+  const [recommendations, setRecommendations] = useState<Recommendation[] | null>(null);
+
+  const topThree = useMemo(() => {
+    if (!recommendations) return null;
+    return recommendations.slice(0, 3).filter((r) => r.score > 0);
+  }, [recommendations]);
+
+  const rankOf = (id: TemplateId): number | null => {
+    if (!topThree) return null;
+    const idx = topThree.findIndex((r) => r.templateId === id);
+    return idx === -1 ? null : idx + 1;
+  };
+
+  const handleRecommend = () => {
+    const result = recommend(content ?? '');
+    setRecommendations(result);
+  };
+
+  const handleClear = () => setRecommendations(null);
+
   return (
     <div className="appearance">
       <div className="appearance-row">
-        <span className="appearance-label">版式</span>
-        <div className="template-grid">
-          {TEMPLATES.map((t) => (
-            <button
-              key={t.id}
-              className={`template-chip ${template === t.id ? 'active' : ''}`}
-              onClick={() => onTemplate(t.id)}
-              title={`${t.name} · ${t.desc}`}
-            >
-              <TemplateThumb id={t.id} />
-              <span className="template-chip-name">{t.name}</span>
-              <span className="template-chip-desc">{t.desc}</span>
+        <div className="appearance-label-row">
+          <span className="appearance-label">版式</span>
+          {topThree ? (
+            <button className="ai-recommend-btn active" onClick={handleClear} title="清除推荐标记">
+              <SparkleIcon />
+              已推荐 · 清除
             </button>
-          ))}
+          ) : (
+            <button className="ai-recommend-btn" onClick={handleRecommend} title="按当前正文内容推荐最合适的 3 套版式">
+              <SparkleIcon />
+              AI 推荐
+            </button>
+          )}
+        </div>
+        {topThree && topThree.length > 0 && (
+          <div className="ai-recommend-banner">
+            建议 <strong>{nameOf(topThree[0].templateId)}</strong>
+            {topThree[0].reasons.length > 0 && (
+              <span className="ai-recommend-why"> · {topThree[0].reasons.join(' · ')}</span>
+            )}
+          </div>
+        )}
+        <div className="template-grid">
+          {TEMPLATES.map((t) => {
+            const rank = rankOf(t.id);
+            return (
+              <button
+                key={t.id}
+                className={`template-chip ${template === t.id ? 'active' : ''} ${rank ? 'recommended' : ''}`}
+                onClick={() => onTemplate(t.id)}
+                title={`${t.name} · ${t.desc}`}
+                data-rank={rank ?? undefined}
+              >
+                {rank && <span className="template-chip-rank">AI #{rank}</span>}
+                <TemplateThumb id={t.id} />
+                <span className="template-chip-name">{t.name}</span>
+                <span className="template-chip-desc">{t.desc}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -353,6 +404,18 @@ function TemplateThumb({ id }: { id: TemplateId }) {
         </svg>
       );
   }
+}
+
+function SparkleIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2zM19 14l.9 2.6L22 17.5l-2.1.9L19 21l-.9-2.6L16 17.5l2.1-.9L19 14z" />
+    </svg>
+  );
+}
+
+function nameOf(id: TemplateId): string {
+  return TEMPLATES.find((t) => t.id === id)?.name ?? id;
 }
 
 function SunIcon() {
