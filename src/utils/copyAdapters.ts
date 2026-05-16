@@ -1055,22 +1055,58 @@ export interface TwitterStats {
 const TWEET_LIMIT = 280;
 
 export function toTwitterText(md: string): TwitterStats {
-  const text = md
-    .replace(/```\w*\n?/g, '```\n')
+  let text = md;
+
+  // 1. 剥掉编辑器里残留的内联 HTML（颜色 span / 强调 / 行内换行等）
+  //    白名单覆盖 markdown 里可能出现的 tag，避免误删源码 < > 用法
+  text = text.replace(
+    /<\/?(?:span|strong|em|b|i|u|s|del|mark|sup|sub|small|br|div|p|a|code|kbd|figure|figcaption|img)(?:\s[^>]*)?\/?>/gi,
+    ''
+  );
+
+  // 2. 代码围栏 / 行内代码：保留内容，去掉标记
+  text = text
+    .replace(/```\w*\n?/g, '')
+    .replace(/```/g, '')
+    .replace(/`([^`\n]+)`/g, '$1');
+
+  // 3. 标题前缀
+  text = text
     .replace(/^######\s+(.+)$/gm, '▸ $1')
     .replace(/^#####\s+(.+)$/gm, '▸ $1')
     .replace(/^####\s+(.+)$/gm, '◇ $1')
     .replace(/^###\s+(.+)$/gm, '◇ $1')
     .replace(/^##\s+(.+)$/gm, '◆ $1')
-    .replace(/^#\s+(.+)$/gm, '◉ $1')
-    .replace(/\*\*\*(.+?)\*\*\*/g, '$1')
-    .replace(/\*\*(.+?)\*\*/g, '$1')
-    .replace(/(?<!\*)\*([^*\n]+?)\*(?!\*)/g, '$1')
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_m, alt) => (alt ? `[图片: ${alt}]` : '[图片]'))
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1 $2')
+    .replace(/^#\s+(.+)$/gm, '◉ $1');
+
+  // 4. 加粗 / 斜体 / 高亮：用 [\s\S] 让它跨段落匹配，对应"按回车自动断开
+  //    格式"那条路径产生的 **a,\n\nb;** 形态
+  text = text
+    .replace(/\*\*\*([\s\S]+?)\*\*\*/g, '$1')
+    .replace(/\*\*([\s\S]+?)\*\*/g, '$1')
+    .replace(/(?<![*\w])\*([^*\n]+?)\*(?![*\w])/g, '$1')
+    .replace(/__([\s\S]+?)__/g, '$1')
+    .replace(/==([\s\S]+?)==/g, '$1');
+
+  // 5. 防御性兜底：跨段格式配对不全时残留的孤儿标记
+  text = text.replace(/\*\*/g, '').replace(/==/g, '');
+
+  // 6. 图片 / 链接
+  text = text
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_m, alt) =>
+      alt ? `[图片: ${alt}]` : '[图片]'
+    )
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1 $2');
+
+  // 7. 列表 / 引用 / 分割线
+  text = text
     .replace(/^[\s]*[-*+]\s+/gm, '• ')
     .replace(/^>\s?/gm, '“ ')
-    .replace(/^---+$/gm, '— — — —')
+    .replace(/^---+$/gm, '— — — —');
+
+  // 8. 空白收敛：每行右侧空白去掉、3+ 连续换行收成 1 个空行
+  text = text
+    .replace(/[ \t]+$/gm, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
