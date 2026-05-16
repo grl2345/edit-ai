@@ -1189,6 +1189,74 @@
 .editor-wrap.drag-over .editor {
   background: var(--accent-glow);
 }
+.format-toolbar {
+  position: absolute;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.06);
+  font-family: var(--sans);
+}
+.format-toolbar-swatch {
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+.format-toolbar-swatch:hover {
+  transform: scale(1.12);
+  border-color: var(--accent);
+}
+.format-toolbar-swatch > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.format-toolbar-btn {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  transition: all 0.12s ease;
+}
+.format-toolbar-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.format-toolbar-btn.bold {
+  font-family: Georgia, serif;
+  font-style: italic;
+}
+.format-toolbar-btn.hl {
+  background: linear-gradient(transparent 55%, var(--accent-glow) 55%);
+}
+.format-toolbar-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+  margin: 0 2px;
+}
+
 .editor-drop-hint {
   position: absolute;
   inset: 12px;

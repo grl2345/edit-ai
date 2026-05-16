@@ -16,7 +16,7 @@
 
 /* h1：粗黑体大字 + 上方 accent 标 */
 .prose[data-template='jiekan'] h1 {
-  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', var(--prose-font), sans-serif;
+  font-family: var(--prose-font), 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   font-size: 42px;
   font-weight: 900;
   line-height: 1.08;
@@ -47,7 +47,7 @@
   counter-reset: jiekan-h2;
 }
 .prose[data-template='jiekan'] h2 {
-  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', var(--prose-font), sans-serif;
+  font-family: var(--prose-font), 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   font-size: 24px;
   font-weight: 800;
   line-height: 1.3;

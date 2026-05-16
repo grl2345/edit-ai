@@ -11,7 +11,7 @@
    ============================================================ */
 
 .prose[data-template='hongbang'] {
-  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', var(--prose-font), sans-serif;
+  font-family: var(--prose-font), 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   font-size: 16.5px;
   line-height: 1.85;
   color: var(--ink);

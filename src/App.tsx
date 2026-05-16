@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import AISettingsDialog from './components/AISettingsDialog';
 import BeautifyDialog from './components/BeautifyDialog';
+import FormatToolbar, { FormatAction } from './components/FormatToolbar';
+import { getCaretCoordinates } from './utils/textareaCaret';
 import { renderMarkdown, buildStandaloneHTML } from './utils/markdown';
 import { toTwitterText, toWeChatHTML } from './utils/copyAdapters';
 import { AIConfig, loadAIConfig } from './utils/aiClient';
@@ -78,6 +80,12 @@ export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toastTimer = useRef<number>();
   const [dragOver, setDragOver] = useState(false);
+  const [formatToolbar, setFormatToolbar] = useState<{
+    top: number;
+    left: number;
+    start: number;
+    end: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!copyMenuOpen) return;
@@ -364,6 +372,72 @@ export default function App() {
     await insertImageFiles(files);
   }
 
+  function handleEditorSelect(e: React.SyntheticEvent<HTMLTextAreaElement>) {
+    const ta = e.currentTarget;
+    const { selectionStart: start, selectionEnd: end } = ta;
+    if (start === end) {
+      setFormatToolbar(null);
+      return;
+    }
+    // 用 selectionStart 算坐标，工具栏放在选区起点的上方
+    const caret = getCaretCoordinates(ta, start);
+    const top = caret.top - ta.scrollTop - 38;
+    const left = caret.left - ta.scrollLeft;
+    setFormatToolbar({ top, left, start, end });
+  }
+
+  function applyFormat(action: FormatAction) {
+    if (!active || !formatToolbar) return;
+    const { start, end } = formatToolbar;
+    const src = active.content ?? '';
+    const before = src.slice(0, start);
+    const selected = src.slice(start, end);
+    const after = src.slice(end);
+    if (!selected) return;
+
+    let replaced = selected;
+    switch (action.type) {
+      case 'color': {
+        // 选区已经被颜色 span 完整包住时，直接换色，避免嵌套
+        const wrap = /^<span style="color:[^"]*">([\s\S]*)<\/span>$/;
+        const m = selected.match(wrap);
+        const inner = m ? m[1] : selected;
+        replaced = `<span style="color:${action.value}">${inner}</span>`;
+        break;
+      }
+      case 'clearColor': {
+        replaced = selected
+          .replace(/<span\s+style="color:[^"]*">/g, '')
+          .replace(/<\/span>/g, '');
+        break;
+      }
+      case 'bold': {
+        const wrap = /^\*\*([\s\S]+)\*\*$/;
+        const m = selected.match(wrap);
+        replaced = m ? m[1] : `**${selected}**`;
+        break;
+      }
+      case 'highlight': {
+        const wrap = /^==([\s\S]+)==$/;
+        const m = selected.match(wrap);
+        replaced = m ? m[1] : `==${selected}==`;
+        break;
+      }
+    }
+
+    const nextValue = before + replaced + after;
+    const newEnd = before.length + replaced.length;
+    updateContent(nextValue);
+    setFormatToolbar(null);
+    const ta = editorRef.current;
+    if (ta) {
+      requestAnimationFrame(() => {
+        ta.focus();
+        ta.setSelectionRange(before.length, newEnd);
+      });
+    }
+  }
+
   async function handleEditorPaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
     const files = imagesFromDataTransfer(e.clipboardData);
     if (files.length === 0) return;
@@ -539,11 +613,29 @@ export default function App() {
                   ref={editorRef}
                   className="editor"
                   value={active?.content ?? ''}
-                  onChange={(e) => updateContent(e.target.value)}
+                  onChange={(e) => {
+                    updateContent(e.target.value);
+                    setFormatToolbar(null);
+                  }}
                   onPaste={handleEditorPaste}
+                  onSelect={handleEditorSelect}
+                  onBlur={() => {
+                    // 不要立刻关，给工具栏按钮一次 onMouseDown 拦截的机会
+                    window.setTimeout(() => setFormatToolbar(null), 120);
+                  }}
+                  onScroll={() => setFormatToolbar(null)}
                   spellCheck={false}
                   placeholder="在这里写 Markdown…（可直接拖拽 / 粘贴图片）"
                 />
+                {formatToolbar && (
+                  <FormatToolbar
+                    style={{
+                      top: Math.max(4, formatToolbar.top),
+                      left: Math.max(8, formatToolbar.left),
+                    }}
+                    onAction={applyFormat}
+                  />
+                )}
                 {dragOver && (
                   <div className="editor-drop-hint">松开即可插入图片</div>
                 )}
