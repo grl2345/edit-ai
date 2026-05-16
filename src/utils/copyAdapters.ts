@@ -963,8 +963,10 @@ function applyHongbang(root: ParentNode, ctx: InlineCtx) {
   let hbI = 0;
   root.querySelectorAll('h2').forEach((h) => {
     hbI++;
-    (h as HTMLElement).setAttribute('style', `font-family:${SANS};font-size:22px;font-weight:800;line-height:1.3;margin:48px 0 16px;padding:0;border:none;letter-spacing:-.3px;color:${ctx.ink}`);
-    const num = div(`font-family:${SANS};font-size:52px;font-weight:900;color:${ctx.accent};letter-spacing:-3px;line-height:.95;margin-bottom:6px`, pad2(hbI));
+    // h2 紧贴 num（margin-top:0），与下文保持 14px
+    (h as HTMLElement).setAttribute('style', `font-family:${SANS};font-size:22px;font-weight:800;line-height:1.3;margin:0 0 14px;padding:0;border:none;letter-spacing:-.3px;color:${ctx.ink}`);
+    // 数字章节钉：上方 44px 间隔，下方紧贴 h2（margin-bottom:2px）
+    const num = div(`font-family:${SANS};font-size:52px;font-weight:900;color:${ctx.accent};letter-spacing:-3px;line-height:1;margin:44px 0 2px;padding:0`, pad2(hbI));
     (h as HTMLElement).parentNode?.insertBefore(num, h);
   });
 
