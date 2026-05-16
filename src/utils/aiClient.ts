@@ -48,6 +48,7 @@ export const PROVIDER_PRESETS: AIProviderPreset[] = [
   { id: 'moonshot', name: 'Moonshot · Kimi', baseUrl: 'https://api.moonshot.cn/v1', defaultModel: 'moonshot-v1-8k' },
   { id: 'qwen', name: '通义千问 · DashScope', baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1', defaultModel: 'qwen-plus' },
   { id: 'zhipu', name: '智谱 GLM', baseUrl: 'https://open.bigmodel.cn/api/paas/v4', defaultModel: 'glm-4-flash' },
+  { id: 'volcengine', name: '火山方舟 · 豆包', baseUrl: 'https://ark.cn-beijing.volces.com/api/v3', defaultModel: 'ep-20240611073937-xxxxx', hint: 'Model 填火山控制台的 endpoint ID（ep-...）' },
   { id: 'openrouter', name: 'OpenRouter', baseUrl: 'https://openrouter.ai/api/v1', defaultModel: 'anthropic/claude-3.5-sonnet' },
   { id: 'ollama', name: 'Ollama · 本地', baseUrl: 'http://localhost:11434/v1', defaultModel: 'qwen2.5:7b', hint: '本地无需 key，随便填' },
   { id: 'custom', name: '自定义', baseUrl: '', defaultModel: '' },
