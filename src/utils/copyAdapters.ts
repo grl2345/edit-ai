@@ -1104,10 +1104,12 @@ export function toTwitterText(md: string): TwitterStats {
     .replace(/^>\s?/gm, '“ ')
     .replace(/^---+$/gm, '— — — —');
 
-  // 8. 空白收敛：每行右侧空白去掉、3+ 连续换行收成 1 个空行
+  // 8. 空白收敛：每行右侧空白去掉、所有"≥2 个连续换行"都压成单个换行。
+  //    推特正文里 \n\n 渲染出来就有一个空行，肉眼会觉得段落间距过大；改成
+  //    \n 之后所有段落紧贴成一块，视觉最紧凑。用户想要分段时可以自己加。
   text = text
     .replace(/[ \t]+$/gm, '')
-    .replace(/\n{3,}/g, '\n\n')
+    .replace(/\n{2,}/g, '\n')
     .trim();
 
   return {
