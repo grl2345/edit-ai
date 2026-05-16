@@ -5,6 +5,7 @@ import BeautifyDialog from './components/BeautifyDialog';
 import { renderMarkdown, buildStandaloneHTML } from './utils/markdown';
 import { toTwitterText, toWeChatHTML } from './utils/copyAdapters';
 import { AIConfig, loadAIConfig } from './utils/aiClient';
+import { imagesFromDataTransfer, insertImagesAtCaret } from './utils/imageUpload';
 import {
   Doc,
   DocsState,
@@ -73,7 +74,10 @@ export default function App() {
   const [aiCfg, setAICfg] = useState<AIConfig | null>(() => loadAIConfig());
   const previewRef = useRef<HTMLDivElement>(null);
   const copyWrapRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const toastTimer = useRef<number>();
+  const [dragOver, setDragOver] = useState(false);
 
   useEffect(() => {
     if (!copyMenuOpen) return;
@@ -302,6 +306,71 @@ export default function App() {
     showToast('HTML 已下载');
   }
 
+  async function insertImageFiles(files: File[]) {
+    if (!active || files.length === 0) return;
+    const ta = editorRef.current;
+    const source = active.content ?? '';
+    const caret = ta ? ta.selectionStart : source.length;
+    const result = await insertImagesAtCaret(source, caret, files);
+    if (!result.ok || result.nextValue === undefined) {
+      showToast(result.message);
+      return;
+    }
+    updateContent(result.nextValue);
+    showToast(result.message);
+    if (ta && result.nextCaret !== undefined) {
+      const pos = result.nextCaret;
+      requestAnimationFrame(() => {
+        ta.focus();
+        ta.setSelectionRange(pos, pos);
+      });
+    }
+  }
+
+  function handleImagePick() {
+    if (!active) {
+      showToast('请先选择一个文档');
+      return;
+    }
+    fileInputRef.current?.click();
+  }
+
+  async function handleFileInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []).filter((f) => f.type.startsWith('image/'));
+    e.target.value = '';
+    await insertImageFiles(files);
+  }
+
+  function handleEditorDragOver(e: React.DragEvent<HTMLDivElement>) {
+    if (!e.dataTransfer?.types.includes('Files')) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    setDragOver(true);
+  }
+
+  function handleEditorDragLeave(e: React.DragEvent<HTMLDivElement>) {
+    if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+    setDragOver(false);
+  }
+
+  async function handleEditorDrop(e: React.DragEvent<HTMLDivElement>) {
+    const files = imagesFromDataTransfer(e.dataTransfer);
+    if (files.length === 0) {
+      setDragOver(false);
+      return;
+    }
+    e.preventDefault();
+    setDragOver(false);
+    await insertImageFiles(files);
+  }
+
+  async function handleEditorPaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const files = imagesFromDataTransfer(e.clipboardData);
+    if (files.length === 0) return;
+    e.preventDefault();
+    await insertImageFiles(files);
+  }
+
   async function handleCopyMarkdown() {
     setCopyMenuOpen(false);
     if (!active) return;
@@ -426,6 +495,14 @@ export default function App() {
                 <span>{active?.content?.length ?? 0} 字</span>
                 <div style={{ flex: 1 }} />
                 <button
+                  className="pane-action-icon"
+                  onClick={handleImagePick}
+                  title="插入图片（也可拖拽 / 粘贴）"
+                  aria-label="插入图片"
+                >
+                  <ImageIcon />
+                </button>
+                <button
                   className="pane-action"
                   onClick={() => {
                     if (!active?.content?.trim()) {
@@ -452,13 +529,33 @@ export default function App() {
                   ⚙
                 </button>
               </div>
-              <textarea
-                className="editor"
-                value={active?.content ?? ''}
-                onChange={(e) => updateContent(e.target.value)}
-                spellCheck={false}
-                placeholder="在这里写 Markdown…"
-              />
+              <div
+                className={`editor-wrap ${dragOver ? 'drag-over' : ''}`}
+                onDragOver={handleEditorDragOver}
+                onDragLeave={handleEditorDragLeave}
+                onDrop={handleEditorDrop}
+              >
+                <textarea
+                  ref={editorRef}
+                  className="editor"
+                  value={active?.content ?? ''}
+                  onChange={(e) => updateContent(e.target.value)}
+                  onPaste={handleEditorPaste}
+                  spellCheck={false}
+                  placeholder="在这里写 Markdown…（可直接拖拽 / 粘贴图片）"
+                />
+                {dragOver && (
+                  <div className="editor-drop-hint">松开即可插入图片</div>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  hidden
+                  onChange={handleFileInputChange}
+                />
+              </div>
             </section>
             <section className={`pane ${tab === 'preview' ? 'active' : ''}`}>
               <div className="pane-head">
@@ -527,6 +624,15 @@ function MenuIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
       <path d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+}
+function ImageIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <circle cx="9" cy="10" r="1.6" />
+      <path d="M21 16l-5-5-9 9" />
     </svg>
   );
 }
