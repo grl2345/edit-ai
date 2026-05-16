@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar';
 import AISettingsDialog from './components/AISettingsDialog';
 import BeautifyDialog from './components/BeautifyDialog';
 import FormatToolbar, { FormatAction } from './components/FormatToolbar';
+import ImageTransferPanel, { TransferImage } from './components/ImageTransferPanel';
 import { getCaretCoordinates } from './utils/textareaCaret';
 import { findOpenFormatting } from './utils/formatSplit';
 import { ensureCache } from './utils/imageStore';
@@ -85,6 +86,7 @@ export default function App() {
   const [dragOver, setDragOver] = useState(false);
   // 图片仓库异步加载完成后 bump 一下，让预览 useMemo 重新跑、把图填上
   const [imagesVersion, setImagesVersion] = useState(0);
+  const [zhihuTransfer, setZhihuTransfer] = useState<TransferImage[] | null>(null);
   const [formatToolbar, setFormatToolbar] = useState<{
     top: number;
     left: number;
@@ -305,11 +307,20 @@ export default function App() {
     setCopyMenuOpen(false);
     const node = previewRef.current;
     if (!node) return;
-    const html = toZhihuHTML(node.innerHTML);
+    const { html, images } = toZhihuHTML(node.innerHTML);
     const ok = await writeRich(html, node.innerText);
+    if (images.length === 0) {
+      showToast(
+        ok
+          ? '已复制知乎样式，到知乎编辑器粘贴即可'
+          : '已复制纯文本（浏览器不支持富文本写入）'
+      );
+      return;
+    }
+    setZhihuTransfer(images);
     showToast(
       ok
-        ? '已复制知乎样式，到知乎编辑器粘贴即可'
+        ? `正文已复制，含 ${images.length} 张图需逐张转移`
         : '已复制纯文本（浏览器不支持富文本写入）'
     );
   }
@@ -553,7 +564,7 @@ export default function App() {
                 </button>
                 <button onClick={handleCopyZhihu} role="menuitem">
                   <span className="menu-title">知乎</span>
-                  <span className="menu-desc">语义结构 · 标题 / 列表 / 引用 / 代码原样落地</span>
+                  <span className="menu-desc">正文+图片转移 · 标题 / 列表 / 引用 / 代码原样落地</span>
                 </button>
                 <button onClick={handleCopyRich} role="menuitem">
                   <span className="menu-title">飞书 / Notion / 语雀</span>
@@ -731,6 +742,14 @@ export default function App() {
       </div>
 
       <div className={`toast ${toast ? 'show' : ''}`}>{toast}</div>
+
+      {zhihuTransfer && (
+        <ImageTransferPanel
+          images={zhihuTransfer}
+          onToast={showToast}
+          onClose={() => setZhihuTransfer(null)}
+        />
+      )}
 
       <AISettingsDialog
         open={aiSettingsOpen}

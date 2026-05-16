@@ -1082,7 +1082,7 @@ export function toTwitterText(md: string): TwitterStats {
 }
 
 /* ============================================================
-   知乎 zhihu —— 干净语义 HTML
+   知乎 zhihu —— 干净语义 HTML + 图片转移列表
    ============================================================
    知乎编辑器的粘贴流水线：
      - style / class / data-* 几乎全 strip（class 只留代码块的
@@ -1090,14 +1090,21 @@ export function toTwitterText(md: string): TwitterStats {
      - 不认 <mark> / <figure> / <figcaption> / 自定义 callout 容器
      - 支持 h1-h3、p、strong、em、s、code、pre、ul/ol/li、blockquote、
        a、img、hr、table/thead/tbody/tr/th/td
-     - data URL 图片在粘贴时会被它自己的图床自动上传，不需要我们替换
+     - **图片绝对不接 data URL**：服务端 fetch data URL 必失败，所以粘贴
+       后会变成"图片导入失败"占位。靠谱路线是把 <img> 从 HTML 里剥掉、
+       换成 [图N: alt] 占位文字，剩下的图通过剪贴板"单张 image/png"逐张
+       粘贴给知乎（这条路它支持得很好）。
 
    所以这里做的是相反方向的工作：把预览 DOM 转成"知乎能完整保留的语义
-   树"，剥光样式而不是堆样式。"一模一样"做不到（样式被知乎过滤），但
-   排版骨架、列表、引用、代码、图、表都能 1:1 落地。
+   树"，剥光样式而不是堆样式，再把图单独拎出来交给调用方走"逐张转移"。
 */
 
-export function toZhihuHTML(previewHTML: string): string {
+export interface ZhihuPayload {
+  html: string;
+  images: Array<{ src: string; alt: string }>;
+}
+
+export function toZhihuHTML(previewHTML: string): ZhihuPayload {
   const tpl = document.createElement('template');
   tpl.innerHTML = previewHTML;
   const root = tpl.content;
@@ -1107,6 +1114,8 @@ export function toZhihuHTML(previewHTML: string): string {
   zhihuTransformDefinitions(root);
   zhihuTransformChips(root);
   zhihuTransformFigures(root);
+  // 图片在 figures 拆完之后处理，保证 figcaption 已经变成下一行 <em>
+  const images = zhihuStripImages(root);
   zhihuTransformCodeBlocks(root);
   zhihuDemoteDeepHeadings(root);
   zhihuSanitizeAttributes(root);
@@ -1114,7 +1123,32 @@ export function toZhihuHTML(previewHTML: string): string {
   // 顶层留一个简单容器，方便复制到剪贴板
   const out = document.createElement('div');
   while (root.firstChild) out.appendChild(root.firstChild);
-  return out.innerHTML;
+  return { html: out.innerHTML, images };
+}
+
+/**
+ * 把 <img> 全部摘掉，换成 [图N: alt] 占位行，并把原始 src/alt 收集起来
+ * 返给调用方。这样知乎粘贴时不会试图 fetch data URL → 不会出现"导入失败"
+ * 占位；用户事后通过剪贴板逐张粘图（image/png blob 形式）补回。
+ */
+function zhihuStripImages(root: ParentNode): Array<{ src: string; alt: string }> {
+  const out: Array<{ src: string; alt: string }> = [];
+  root.querySelectorAll('img').forEach((img) => {
+    const src = img.getAttribute('src') ?? '';
+    const alt = img.getAttribute('alt') ?? '';
+    if (!src) {
+      img.remove();
+      return;
+    }
+    out.push({ src, alt });
+    const n = out.length;
+    const p = document.createElement('p');
+    const em = document.createElement('em');
+    em.textContent = alt ? `[图 ${n}：${alt}]` : `[图 ${n}]`;
+    p.appendChild(em);
+    img.replaceWith(p);
+  });
+  return out;
 }
 
 function zhihuTransformMark(root: ParentNode) {
