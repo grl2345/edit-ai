@@ -7,7 +7,8 @@ import { getCaretCoordinates } from './utils/textareaCaret';
 import { findOpenFormatting } from './utils/formatSplit';
 import { ensureCache } from './utils/imageStore';
 import { renderMarkdown, buildStandaloneHTML } from './utils/markdown';
-import { toTwitterText, toWeChatHTML, toZhihuHTML } from './utils/copyAdapters';
+import { toWeChatHTML, toZhihuHTML } from './utils/copyAdapters';
+import { copyOrDownloadPreviewImage } from './utils/longImage';
 import { AIConfig, loadAIConfig } from './utils/aiClient';
 import { imagesFromDataTransfer, insertImagesAtCaret } from './utils/imageUpload';
 import {
@@ -315,14 +316,23 @@ export default function App() {
 
   async function handleCopyTwitter() {
     setCopyMenuOpen(false);
-    if (!active) return;
-    const { text, chars, tweets } = toTwitterText(active.content ?? '');
+    const node = previewRef.current;
+    if (!node || !active) return;
+    showToast('正在生成长图，请稍候…');
     try {
-      await navigator.clipboard.writeText(text);
-      const hint = tweets > 1 ? `（${chars} 字，约 ${tweets} 条）` : `（${chars} 字）`;
-      showToast(`已复制推特纯文本 ${hint}`);
-    } catch {
-      showToast('复制失败');
+      const title = active.title || 'tweet';
+      const fname = `${sanitizeFilename(title)}.png`;
+      const result = await copyOrDownloadPreviewImage(node, fname);
+      if (result === 'copied') {
+        showToast('长图已复制，到推特撰文框粘贴即可');
+      } else if (result === 'downloaded') {
+        showToast('长图已下载，可拖入推特媒体附件');
+      } else {
+        showToast('长图生成失败');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('长图生成失败：' + (e instanceof Error ? e.message : ''));
     }
   }
 
@@ -550,8 +560,8 @@ export default function App() {
                   <span className="menu-desc">通用富文本</span>
                 </button>
                 <button onClick={handleCopyTwitter} role="menuitem">
-                  <span className="menu-title">推特 / X</span>
-                  <span className="menu-desc">精炼纯文本 · 字数提示</span>
+                  <span className="menu-title">推特 / X · 长图</span>
+                  <span className="menu-desc">整篇排版截成长图 · 含全部图片 · 粘贴即附媒体</span>
                 </button>
                 <button onClick={handleCopyMarkdown} role="menuitem">
                   <span className="menu-title">Markdown 源码</span>
