@@ -7,7 +7,7 @@ import { getCaretCoordinates } from './utils/textareaCaret';
 import { findOpenFormatting } from './utils/formatSplit';
 import { ensureCache } from './utils/imageStore';
 import { renderMarkdown, buildStandaloneHTML } from './utils/markdown';
-import { toTwitterText, toWeChatHTML } from './utils/copyAdapters';
+import { toTwitterText, toWeChatHTML, toZhihuHTML } from './utils/copyAdapters';
 import { AIConfig, loadAIConfig } from './utils/aiClient';
 import { imagesFromDataTransfer, insertImagesAtCaret } from './utils/imageUpload';
 import {
@@ -300,6 +300,19 @@ export default function App() {
     showToast(ok ? '已复制公众号样式，到编辑器粘贴即可' : '已复制纯文本（浏览器不支持富文本写入）');
   }
 
+  async function handleCopyZhihu() {
+    setCopyMenuOpen(false);
+    const node = previewRef.current;
+    if (!node) return;
+    const html = toZhihuHTML(node.innerHTML);
+    const ok = await writeRich(html, node.innerText);
+    showToast(
+      ok
+        ? '已复制知乎样式，到知乎编辑器粘贴即可'
+        : '已复制纯文本（浏览器不支持富文本写入）'
+    );
+  }
+
   async function handleCopyTwitter() {
     setCopyMenuOpen(false);
     if (!active) return;
@@ -527,6 +540,10 @@ export default function App() {
                 <button onClick={handleCopyWeChat} role="menuitem">
                   <span className="menu-title">公众号</span>
                   <span className="menu-desc">带样式 · 直接粘到编辑器</span>
+                </button>
+                <button onClick={handleCopyZhihu} role="menuitem">
+                  <span className="menu-title">知乎</span>
+                  <span className="menu-desc">语义结构 · 标题 / 列表 / 引用 / 代码原样落地</span>
                 </button>
                 <button onClick={handleCopyRich} role="menuitem">
                   <span className="menu-title">飞书 / Notion / 语雀</span>
