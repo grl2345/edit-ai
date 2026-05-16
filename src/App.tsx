@@ -5,6 +5,7 @@ import BeautifyDialog from './components/BeautifyDialog';
 import FormatToolbar, { FormatAction } from './components/FormatToolbar';
 import { getCaretCoordinates } from './utils/textareaCaret';
 import { findOpenFormatting } from './utils/formatSplit';
+import { ensureCache } from './utils/imageStore';
 import { renderMarkdown, buildStandaloneHTML } from './utils/markdown';
 import { toTwitterText, toWeChatHTML } from './utils/copyAdapters';
 import { AIConfig, loadAIConfig } from './utils/aiClient';
@@ -81,6 +82,8 @@ export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toastTimer = useRef<number>();
   const [dragOver, setDragOver] = useState(false);
+  // 图片仓库异步加载完成后 bump 一下，让预览 useMemo 重新跑、把图填上
+  const [imagesVersion, setImagesVersion] = useState(0);
   const [formatToolbar, setFormatToolbar] = useState<{
     top: number;
     left: number;
@@ -107,7 +110,21 @@ export default function App() {
     [state]
   );
 
-  const html = useMemo(() => renderMarkdown(active?.content ?? ''), [active]);
+  const html = useMemo(
+    () => renderMarkdown(active?.content ?? ''),
+    // imagesVersion 让仓库异步加载完后预览重新渲染、把 app-img:xxx 解成 data URL
+    [active, imagesVersion]
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    ensureCache().then(() => {
+      if (!cancelled) setImagesVersion((v) => v + 1);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const r = document.documentElement;
