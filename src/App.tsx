@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Sidebar from './components/Sidebar';
+import AISettingsDialog from './components/AISettingsDialog';
+import BeautifyDialog from './components/BeautifyDialog';
 import { renderMarkdown, buildStandaloneHTML } from './utils/markdown';
 import { toTwitterText, toWeChatHTML } from './utils/copyAdapters';
+import { AIConfig, loadAIConfig } from './utils/aiClient';
 import {
   Doc,
   DocsState,
@@ -65,6 +68,9 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('edit');
   const [toast, setToast] = useState<string>('');
   const [copyMenuOpen, setCopyMenuOpen] = useState(false);
+  const [aiSettingsOpen, setAISettingsOpen] = useState<boolean>(false);
+  const [aiBeautifyOpen, setAIBeautifyOpen] = useState<boolean>(false);
+  const [aiCfg, setAICfg] = useState<AIConfig | null>(() => loadAIConfig());
   const previewRef = useRef<HTMLDivElement>(null);
   const copyWrapRef = useRef<HTMLDivElement>(null);
   const toastTimer = useRef<number>();
@@ -418,6 +424,33 @@ export default function App() {
                   {active?.title || '未命名'}
                 </span>
                 <span>{active?.content?.length ?? 0} 字</span>
+                <div style={{ flex: 1 }} />
+                <button
+                  className="pane-action"
+                  onClick={() => {
+                    if (!active?.content?.trim()) {
+                      showToast('文档为空，无需排版');
+                      return;
+                    }
+                    if (!aiCfg) {
+                      setAISettingsOpen(true);
+                      showToast('先配置 AI 服务');
+                      return;
+                    }
+                    setAIBeautifyOpen(true);
+                  }}
+                  title="用 AI 重新排版（保留原文字句）"
+                >
+                  ✦ AI 美化排版
+                </button>
+                <button
+                  className="pane-action-icon"
+                  onClick={() => setAISettingsOpen(true)}
+                  title="AI 服务配置"
+                  aria-label="AI 服务配置"
+                >
+                  ⚙
+                </button>
               </div>
               <textarea
                 className="editor"
@@ -445,6 +478,28 @@ export default function App() {
       </div>
 
       <div className={`toast ${toast ? 'show' : ''}`}>{toast}</div>
+
+      <AISettingsDialog
+        open={aiSettingsOpen}
+        onClose={() => setAISettingsOpen(false)}
+        onSaved={(cfg) => {
+          setAICfg(cfg);
+          showToast('AI 配置已保存');
+        }}
+      />
+
+      {aiCfg && active && (
+        <BeautifyDialog
+          open={aiBeautifyOpen}
+          source={active.content ?? ''}
+          cfg={aiCfg}
+          onApply={(next) => {
+            updateContent(next);
+            showToast('已应用 AI 美化排版');
+          }}
+          onClose={() => setAIBeautifyOpen(false)}
+        />
+      )}
     </div>
   );
 }
