@@ -1080,3 +1080,192 @@ export function toTwitterText(md: string): TwitterStats {
     tweets: Math.max(1, Math.ceil([...text].length / TWEET_LIMIT)),
   };
 }
+
+/* ============================================================
+   知乎 zhihu —— 干净语义 HTML
+   ============================================================
+   知乎编辑器的粘贴流水线：
+     - style / class / data-* 几乎全 strip（class 只留代码块的
+       language-xxx，但它要的格式是 <pre lang="xx"><code>...</code></pre>）
+     - 不认 <mark> / <figure> / <figcaption> / 自定义 callout 容器
+     - 支持 h1-h3、p、strong、em、s、code、pre、ul/ol/li、blockquote、
+       a、img、hr、table/thead/tbody/tr/th/td
+     - data URL 图片在粘贴时会被它自己的图床自动上传，不需要我们替换
+
+   所以这里做的是相反方向的工作：把预览 DOM 转成"知乎能完整保留的语义
+   树"，剥光样式而不是堆样式。"一模一样"做不到（样式被知乎过滤），但
+   排版骨架、列表、引用、代码、图、表都能 1:1 落地。
+*/
+
+export function toZhihuHTML(previewHTML: string): string {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = previewHTML;
+  const root = tpl.content;
+
+  zhihuTransformMark(root);
+  zhihuTransformCallouts(root);
+  zhihuTransformDefinitions(root);
+  zhihuTransformChips(root);
+  zhihuTransformFigures(root);
+  zhihuTransformCodeBlocks(root);
+  zhihuDemoteDeepHeadings(root);
+  zhihuSanitizeAttributes(root);
+
+  // 顶层留一个简单容器，方便复制到剪贴板
+  const out = document.createElement('div');
+  while (root.firstChild) out.appendChild(root.firstChild);
+  return out.innerHTML;
+}
+
+function zhihuTransformMark(root: ParentNode) {
+  root.querySelectorAll('mark').forEach((m) => {
+    const s = document.createElement('strong');
+    while (m.firstChild) s.appendChild(m.firstChild);
+    m.replaceWith(s);
+  });
+}
+
+function zhihuTransformCallouts(root: ParentNode) {
+  root.querySelectorAll('[data-callout]').forEach((c) => {
+    const type = (c.getAttribute('data-callout') || 'note').toUpperCase();
+    const bq = document.createElement('blockquote');
+    // 头标拿走，剩下的内容塞进 blockquote
+    const head = c.querySelector('[data-callout-head]');
+    head?.remove();
+    // 把头标作为加粗前缀塞到第一段开头
+    let firstP = c.querySelector('p');
+    if (!firstP) {
+      firstP = document.createElement('p');
+      while (c.firstChild) firstP.appendChild(c.firstChild);
+      c.appendChild(firstP);
+    }
+    const tag = document.createElement('strong');
+    tag.textContent = `${type}：`;
+    firstP.insertBefore(tag, firstP.firstChild);
+    while (c.firstChild) bq.appendChild(c.firstChild);
+    c.replaceWith(bq);
+  });
+}
+
+function zhihuTransformDefinitions(root: ParentNode) {
+  root.querySelectorAll('li[data-def]').forEach((li) => {
+    const titleEl = li.querySelector('[data-def-title]');
+    const descEl = li.querySelector('[data-def-desc]');
+    const title = (titleEl?.textContent ?? '').trim();
+    const desc = (descEl?.innerHTML ?? '').trim();
+    li.removeAttribute('data-def');
+    // 用一个段落表达：**标题** 描述
+    const p = document.createElement('p');
+    const strong = document.createElement('strong');
+    strong.textContent = title;
+    p.appendChild(strong);
+    if (desc) {
+      const sep = document.createTextNode('：');
+      p.appendChild(sep);
+      const tmp = document.createElement('span');
+      tmp.innerHTML = desc;
+      while (tmp.firstChild) p.appendChild(tmp.firstChild);
+    }
+    li.innerHTML = '';
+    li.appendChild(p);
+  });
+}
+
+function zhihuTransformChips(root: ParentNode) {
+  root.querySelectorAll('h3[data-chip]').forEach((h) => {
+    h.removeAttribute('data-chip');
+  });
+}
+
+function zhihuTransformFigures(root: ParentNode) {
+  root.querySelectorAll('figure').forEach((fig) => {
+    const parent = fig.parentNode;
+    if (!parent) return;
+    const img = fig.querySelector('img');
+    const cap = fig.querySelector('figcaption');
+    if (img) {
+      const wrap = document.createElement('p');
+      // 克隆出来，原 figure 整个删
+      wrap.appendChild(img.cloneNode(true));
+      parent.insertBefore(wrap, fig);
+    }
+    const capText = cap?.textContent?.trim();
+    if (capText) {
+      const capP = document.createElement('p');
+      const em = document.createElement('em');
+      em.textContent = capText;
+      capP.appendChild(em);
+      parent.insertBefore(capP, fig);
+    }
+    fig.remove();
+  });
+}
+
+function zhihuTransformCodeBlocks(root: ParentNode) {
+  root.querySelectorAll('pre code').forEach((code) => {
+    const pre = code.parentElement;
+    if (!pre || pre.tagName !== 'PRE') return;
+    const cls = code.getAttribute('class') || '';
+    const m = cls.match(/language-([\w-]+)/);
+    if (m && m[1] !== 'plaintext') {
+      pre.setAttribute('lang', m[1]);
+    }
+    // 剥掉 highlight.js 的 <span class="hljs-..."> 包装——知乎要重新染色
+    const text = code.textContent ?? '';
+    code.removeAttribute('class');
+    code.textContent = text;
+  });
+}
+
+function zhihuDemoteDeepHeadings(root: ParentNode) {
+  // 知乎只对 h1-h3 显示真正的标题样式，h4 起常被吞成普通段落，
+  // 不如主动降级成加粗段落，保证视觉权重
+  ['h4', 'h5', 'h6'].forEach((sel) => {
+    root.querySelectorAll(sel).forEach((h) => {
+      const p = document.createElement('p');
+      const s = document.createElement('strong');
+      while (h.firstChild) s.appendChild(h.firstChild);
+      p.appendChild(s);
+      h.replaceWith(p);
+    });
+  });
+}
+
+/**
+ * 白名单式属性清理：
+ *   - <a> 留 href / title
+ *   - <img> 留 src / alt / title
+ *   - <th>/<td> 留 colspan / rowspan / align
+ *   - <span> 留 style（仅 color，便于试试知乎能否吃下文字颜色）
+ *   - 其他 tag 上的 style / class / data-* 全部 strip
+ */
+function zhihuSanitizeAttributes(root: ParentNode) {
+  const KEEP: Record<string, Set<string>> = {
+    A: new Set(['href', 'title']),
+    IMG: new Set(['src', 'alt', 'title']),
+    TH: new Set(['colspan', 'rowspan', 'align']),
+    TD: new Set(['colspan', 'rowspan', 'align']),
+    PRE: new Set(['lang']),
+    SPAN: new Set(['style']),
+  };
+  const walk = (el: Element) => {
+    const keep = KEEP[el.tagName] ?? new Set<string>();
+    for (const attr of Array.from(el.attributes)) {
+      if (!keep.has(attr.name)) el.removeAttribute(attr.name);
+    }
+    // 针对 span 的 style：只保留 color，去掉其它任何 css
+    if (el.tagName === 'SPAN' && el.hasAttribute('style')) {
+      const css = el.getAttribute('style') || '';
+      const colorMatch = css.match(/color\s*:\s*[^;]+/i);
+      if (colorMatch) {
+        el.setAttribute('style', colorMatch[0]);
+      } else {
+        el.removeAttribute('style');
+      }
+    }
+    Array.from(el.children).forEach(walk);
+  };
+  Array.from((root as DocumentFragment).children).forEach((el) =>
+    walk(el as Element)
+  );
+}
