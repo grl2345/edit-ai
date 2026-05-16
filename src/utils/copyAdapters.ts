@@ -1001,10 +1001,30 @@ function applyHongbang(root: ParentNode, ctx: InlineCtx) {
   // hr：accent 短粗块
   replaceHr(root, () => div(`height:4px;background:${ctx.accent};width:54px;margin:40px 0;border-radius:2px`));
 
-  // figure
-  setStyle(root, 'figure', `margin:28px 0;text-align:center`);
-  setStyle(root, 'figure img', `max-width:100%;display:block;margin:0 auto;border-radius:8px;box-shadow:0 4px 18px rgba(0,0,0,0.06)`);
-  setStyle(root, 'figcaption', `font-family:${SANS};font-style:normal;font-size:13px;color:${ctx.gray500};text-align:center;margin-top:12px;letter-spacing:.3px`);
+  // figure：红 FIG 章 + 阴影图（::before 不复制，注入真实 span）
+  let figI = 0;
+  root.querySelectorAll('figure').forEach((fig) => {
+    figI++;
+    (fig as HTMLElement).setAttribute('style', `margin:32px 0;text-align:center`);
+    const img = fig.querySelector('img');
+    if (img) {
+      img.setAttribute('style', `max-width:100%;display:block;margin:0 auto;border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,0.1)`);
+    }
+    const cap = fig.querySelector('figcaption');
+    if (cap) {
+      (cap as HTMLElement).setAttribute('style', `font-family:${SANS};font-style:normal;font-size:13px;color:${ctx.gray500};text-align:center;margin-top:14px;letter-spacing:.3px;line-height:1.6`);
+      const chip = span(
+        `图 ${pad2(figI)}`,
+        `display:inline-block;background:${ctx.accent};color:${ctx.paper};font-family:${SANS};font-size:11px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:3px;margin-right:10px;vertical-align:1px`
+      );
+      cap.insertBefore(chip, cap.firstChild);
+    }
+  });
+  // 兜底：裸 <img>（没有 figure 包裹的）也加阴影
+  root.querySelectorAll('img').forEach((img) => {
+    if ((img as HTMLElement).closest('figure')) return;
+    (img as HTMLElement).setAttribute('style', `max-width:100%;display:block;margin:24px auto;border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,0.1)`);
+  });
 
   // table 黑表头
   setStyle(root, 'table', `width:100%;border-collapse:collapse;margin:22px 0;font-size:14.5px`);
