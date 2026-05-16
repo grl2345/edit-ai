@@ -57,7 +57,7 @@ export async function insertImagesAtCaret(
   for (const f of imgs) {
     const url = await fileToDataURL(f);
     try {
-      const id = putImage(url);
+      const id = await putImage(url);
       snippets.push(`![${altFromFilename(f.name)}](${imageRefURL(id)})`);
     } catch (e) {
       if (e instanceof ImageStoreFullError) {
