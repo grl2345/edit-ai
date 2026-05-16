@@ -4,6 +4,7 @@ import AISettingsDialog from './components/AISettingsDialog';
 import BeautifyDialog from './components/BeautifyDialog';
 import FormatToolbar, { FormatAction } from './components/FormatToolbar';
 import { getCaretCoordinates } from './utils/textareaCaret';
+import { findOpenFormatting } from './utils/formatSplit';
 import { renderMarkdown, buildStandaloneHTML } from './utils/markdown';
 import { toTwitterText, toWeChatHTML } from './utils/copyAdapters';
 import { AIConfig, loadAIConfig } from './utils/aiClient';
@@ -389,10 +390,10 @@ export default function App() {
   function applyFormat(action: FormatAction) {
     if (!active || !formatToolbar) return;
     const { start, end } = formatToolbar;
-    const src = active.content ?? '';
-    const before = src.slice(0, start);
+    const ta = editorRef.current;
+    if (!ta) return;
+    const src = ta.value;
     const selected = src.slice(start, end);
-    const after = src.slice(end);
     if (!selected) return;
 
     let replaced = selected;
@@ -425,17 +426,35 @@ export default function App() {
       }
     }
 
-    const nextValue = before + replaced + after;
-    const newEnd = before.length + replaced.length;
-    updateContent(nextValue);
     setFormatToolbar(null);
-    const ta = editorRef.current;
-    if (ta) {
-      requestAnimationFrame(() => {
-        ta.focus();
-        ta.setSelectionRange(before.length, newEnd);
-      });
-    }
+    replaceWithUndoableInsert(ta, start, end, replaced);
+    // execCommand 把光标留在插入末尾；这里把它再撑回成选区，让用户能继续叠 buff
+    const newEnd = start + replaced.length;
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.setSelectionRange(start, newEnd);
+    });
+  }
+
+  function handleEditorKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key !== 'Enter') return;
+    // Shift+Enter 留给"软换行"，Cmd/Ctrl+Enter 留给系统快捷键
+    if (e.shiftKey || e.metaKey || e.ctrlKey || e.altKey) return;
+    const ta = e.currentTarget;
+    if (ta.selectionStart !== ta.selectionEnd) return; // 选中状态下走原生替换
+    const fmt = findOpenFormatting(ta.value, ta.selectionStart);
+    if (!fmt) return; // 不在任何格式里，原生回车
+
+    e.preventDefault();
+    const pos = ta.selectionStart;
+    const insertion = fmt.close + '\n\n' + fmt.open;
+    replaceWithUndoableInsert(ta, pos, pos, insertion);
+    // 光标落在 reopen 之后，刚好可以继续打字
+    const newPos = pos + insertion.length;
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.setSelectionRange(newPos, newPos);
+    });
   }
 
   async function handleEditorPaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
@@ -617,6 +636,7 @@ export default function App() {
                     updateContent(e.target.value);
                     setFormatToolbar(null);
                   }}
+                  onKeyDown={handleEditorKeyDown}
                   onPaste={handleEditorPaste}
                   onSelect={handleEditorSelect}
                   onBlur={() => {
@@ -695,6 +715,37 @@ export default function App() {
 
 function sanitizeFilename(s: string): string {
   return s.replace(/[\\/:*?"<>|]+/g, '_').slice(0, 60) || 'markdown';
+}
+
+/**
+ * 在 textarea 的 [start,end) 处插入 text，并保留浏览器原生 undo 栈。
+ *
+ * React 受控 textarea 直接 setState 会把 value 整段替换，textarea 的撤销栈
+ * 当场报废（Cmd+Z 没反应）。document.execCommand('insertText') 是 textarea
+ * 上唯一能把改动塞进原生 undo 栈的 API，虽然标记为 deprecated，但所有主流
+ * 浏览器仍然支持，且会触发 input 事件让 React 受控值同步更新。
+ *
+ * execCommand 不可用时退化为直接 setRangeText + 手动派发 input 事件——会丢
+ * undo 但至少功能不坏。
+ */
+function replaceWithUndoableInsert(
+  ta: HTMLTextAreaElement,
+  start: number,
+  end: number,
+  text: string
+) {
+  ta.focus();
+  ta.setSelectionRange(start, end);
+  let ok = false;
+  try {
+    ok = document.execCommand('insertText', false, text);
+  } catch {
+    ok = false;
+  }
+  if (ok) return;
+  // 退化路径
+  ta.setRangeText(text, start, end, 'end');
+  ta.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 function MoonIcon() {
