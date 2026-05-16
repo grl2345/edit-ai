@@ -1,13 +1,14 @@
 /**
- * 把本地图片读成 data URL，并插到 textarea 当前光标处。
+ * 把本地图片读成 data URL，存进 image store，并往 textarea 光标处插入一段
+ * 短引用 markdown（![alt](app-img:xxx)）。
  *
- * 走 base64 data URL 是因为：
- *   1. 应用没有后端，无处上传；
- *   2. 文档本身就是 localStorage 里的 markdown 字符串，data URL 跟着文档走，导入导出都不掉链子；
- *   3. 复制到公众号/飞书时，富文本写入会把 data URL 当作图片源，粘贴端会重新拉取或转存。
+ * 不直接把 data URL 写到 markdown 是因为一张图就能把编辑器撑到几十万字，
+ * 失去可读性也拖慢撤销栈。详见 imageStore.ts 的说明。
  *
- * 体积上限 8MB，太大的图直接拒绝——data URL 会膨胀 ~33%，再大本地存储会爆。
+ * 体积上限 8MB，太大直接拒绝——base64 会膨胀 ~33%，再大 localStorage 会爆。
  */
+
+import { ImageStoreFullError, imageRefURL, putImage } from './imageStore';
 
 const MAX_BYTES = 8 * 1024 * 1024;
 
@@ -55,7 +56,15 @@ export async function insertImagesAtCaret(
   const snippets: string[] = [];
   for (const f of imgs) {
     const url = await fileToDataURL(f);
-    snippets.push(`![${altFromFilename(f.name)}](${url})`);
+    try {
+      const id = putImage(url);
+      snippets.push(`![${altFromFilename(f.name)}](${imageRefURL(id)})`);
+    } catch (e) {
+      if (e instanceof ImageStoreFullError) {
+        return { ok: false, message: e.message };
+      }
+      throw e;
+    }
   }
 
   const before = source.slice(0, caret);

@@ -1,6 +1,7 @@
 import { Marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js/lib/common';
+import { resolveImageRefs } from './imageStore';
 
 const marked = new Marked(
   markedHighlight({
@@ -113,5 +114,6 @@ export function renderMarkdown(src: string): string {
   html = calloutize(html);
   html = chipify(html);
   html = definitionize(html);
+  html = resolveImageRefs(html);
   return html;
 }
