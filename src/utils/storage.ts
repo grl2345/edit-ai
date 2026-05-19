@@ -19,6 +19,32 @@ const NODES_KEY = 'markdown-ai:nodes';
 const ACTIVE_KEY = 'markdown-ai:active-doc';
 const LEGACY_DOCS_KEY = 'markdown-ai:docs';
 const LEGACY_DOC_KEY = 'markdown-ai:doc';
+const SAMPLE_VERSION_KEY = 'markdown-ai:sample-version';
+const LEGACY_SAMPLE_TITLE = 'Markdown AI · 示例';
+const OLD_SAMPLE_MARKER = '# Markdown AI · 在线渲染';
+const CURRENT_SAMPLE_VERSION = 2;
+
+function maybeUpgradeSample(nodes: FsNode[]): FsNode[] {
+  try {
+    const ver = Number(localStorage.getItem(SAMPLE_VERSION_KEY) || '0');
+    if (ver >= CURRENT_SAMPLE_VERSION) return nodes;
+    const legacy = nodes.find(
+      (n) =>
+        n.type === 'doc' &&
+        n.title === LEGACY_SAMPLE_TITLE &&
+        (n.content ?? '').includes(OLD_SAMPLE_MARKER)
+    );
+    if (legacy) {
+      legacy.title = 'AI 不是魔法 · 示范';
+      legacy.content = SAMPLE_MD;
+      legacy.updatedAt = Date.now();
+    }
+    localStorage.setItem(SAMPLE_VERSION_KEY, String(CURRENT_SAMPLE_VERSION));
+  } catch {
+    /* ignore */
+  }
+  return nodes;
+}
 
 function uid(prefix = 'n'): string {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
@@ -99,7 +125,7 @@ export function loadDocs(): DocsState {
         const has =
           saved && parsed.find((n) => n.id === saved && n.type === 'doc');
         const activeId = has ? (saved as string) : firstDocId(parsed) ?? '';
-        return { nodes: parsed, activeId };
+        return { nodes: maybeUpgradeSample(parsed), activeId };
       }
     }
   } catch {
@@ -145,7 +171,7 @@ export function loadDocs(): DocsState {
     return { nodes: [m], activeId: m.id };
   }
 
-  const initial = makeDoc(SAMPLE_MD, 'Markdown AI · 示例');
+  const initial = makeDoc(SAMPLE_MD, 'AI 不是魔法 · 示范');
   return { nodes: [initial], activeId: initial.id };
 }
 
