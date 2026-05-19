@@ -67,9 +67,13 @@ export default function App() {
     return isTemplate(v) ? v : DEFAULT_TEMPLATE;
   });
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(
-    () => localStorage.getItem(SIDEBAR_KEY) === '1'
-  );
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    const saved = localStorage.getItem(SIDEBAR_KEY);
+    if (saved === '1') return true;
+    if (saved === '0') return false;
+    // 首次访问：移动端默认收起，避免抽屉盖住正文
+    return typeof window !== 'undefined' && window.matchMedia('(max-width: 820px)').matches;
+  });
 
   const [tab, setTab] = useState<Tab>('edit');
   const [toast, setToast] = useState<string>('');
@@ -201,6 +205,10 @@ export default function App() {
       if (!target || target.type !== 'doc') return s;
       return { ...s, activeId: id };
     });
+    // 移动端：选完文档自动关侧栏，让用户看到正文
+    if (window.matchMedia('(max-width: 820px)').matches) {
+      setSidebarCollapsed(true);
+    }
   }
 
   function handleRename(id: string, title: string) {
@@ -615,6 +623,13 @@ export default function App() {
       </header>
 
       <div className="body">
+        {!sidebarCollapsed && (
+          <div
+            className="sidebar-backdrop"
+            onClick={() => setSidebarCollapsed(true)}
+            aria-hidden
+          />
+        )}
         <Sidebar
           nodes={state.nodes}
           activeId={state.activeId}
