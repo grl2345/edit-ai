@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { AIConfig, beautifyMarkdown } from '../utils/aiClient';
 
+export interface BeautifyApplyOptions {
+  /** 应用时是否把原文另存一份副本（默认 true） */
+  keepOriginal: boolean;
+}
+
 export interface BeautifyDialogProps {
   open: boolean;
   source: string;
   cfg: AIConfig;
-  onApply(next: string): void;
+  onApply(next: string, opts: BeautifyApplyOptions): void;
   onClose(): void;
 }
 
@@ -16,6 +21,7 @@ type State =
 
 export default function BeautifyDialog({ open, source, cfg, onApply, onClose }: BeautifyDialogProps) {
   const [state, setState] = useState<State>({ kind: 'loading' });
+  const [keepOriginal, setKeepOriginal] = useState(true);
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -36,7 +42,7 @@ export default function BeautifyDialog({ open, source, cfg, onApply, onClose }: 
 
   function handleApply() {
     if (state.kind === 'result') {
-      onApply(state.result);
+      onApply(state.result, { keepOriginal });
       onClose();
     }
   }
@@ -96,6 +102,16 @@ export default function BeautifyDialog({ open, source, cfg, onApply, onClose }: 
 
         <div className="ai-dialog-foot">
           <button className="ai-btn-ghost" onClick={handleCancel}>取消</button>
+          {state.kind === 'result' && (
+            <label className="ai-keep-original" title="把原文另存为一份副本到文档列表，应用后还能找回">
+              <input
+                type="checkbox"
+                checked={keepOriginal}
+                onChange={(e) => setKeepOriginal(e.target.checked)}
+              />
+              <span>保留原文为副本</span>
+            </label>
+          )}
           <div style={{ flex: 1 }} />
           {state.kind === 'result' && (
             <button className="ai-btn-primary" onClick={handleApply}>应用</button>

@@ -809,9 +809,35 @@ export default function App() {
           open={aiBeautifyOpen}
           source={active.content ?? ''}
           cfg={aiCfg}
-          onApply={(next) => {
-            updateContent(next);
-            showToast('已应用 AI 美化排版');
+          onApply={(next, { keepOriginal }) => {
+            if (keepOriginal) {
+              // 把当前文档应用美化前的内容存一份副本插到列表里，跟着活动文档同级
+              const backup: Doc = {
+                ...active,
+                id: makeDoc().id,
+                title: `${active.title || '未命名'} · 美化前`,
+                content: active.content ?? '',
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+              };
+              setState((s) => {
+                const idx = s.nodes.findIndex((n) => n.id === active.id);
+                const nodes = [...s.nodes];
+                // 把副本插在原文档紧接其后
+                nodes.splice(idx + 1, 0, backup);
+                // 同时把当前文档内容换为美化后的版本
+                return {
+                  ...s,
+                  nodes: nodes.map((n) =>
+                    n.id === active.id ? { ...n, content: next, updatedAt: Date.now() } : n
+                  ),
+                };
+              });
+              showToast('已应用 · 原文已存为「美化前」副本');
+            } else {
+              updateContent(next);
+              showToast('已应用 AI 美化排版');
+            }
           }}
           onClose={() => setAIBeautifyOpen(false)}
         />
