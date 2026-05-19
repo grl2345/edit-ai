@@ -330,12 +330,12 @@ export default function App() {
     }
     setImageTransfer({
       images,
-      title: '知乎图片转移',
-      hint: '正文已复制 · 到知乎粘贴正文后，按顺序逐张点「复制」→ 在知乎 Cmd+V，会自动建图片块',
+      title: '知乎 · 逐张粘图',
+      hint: '①正文已复制,先粘到知乎 ②再回这里按顺序点「复制」 ③切回知乎 Cmd+V,自动建图片块',
     });
     showToast(
       ok
-        ? `正文已复制，含 ${images.length} 张图需逐张转移`
+        ? `正文已复制 · 还有 ${images.length} 张图要逐张粘`
         : '已复制纯文本（浏览器不支持富文本写入）'
     );
   }
@@ -368,10 +368,10 @@ export default function App() {
     }
     setImageTransfer({
       images,
-      title: '推特图片转移',
-      hint: '正文已复制 · 到推特撰文框 Cmd+V 粘贴 · 然后回这里挨张点「复制」→ 切回推特 Cmd+V，会作为媒体附件附上',
+      title: '推特 / X · 逐张粘图',
+      hint: '①文字已复制,先粘到推特撰文框 ②再回这里按顺序点「复制」 ③切回推特 Cmd+V,作为媒体附件',
     });
-    showToast(`已复制推特文字 ${threadHint}，含 ${images.length} 张图需逐张转移`);
+    showToast(`已复制推特文字 ${threadHint} · 还有 ${images.length} 张图要逐张粘`);
   }
 
   function handleExportHTML() {
@@ -585,25 +585,33 @@ export default function App() {
             </button>
             {copyMenuOpen && (
               <div className="copy-menu" role="menu">
+                <div className="copy-menu-group">一键复制</div>
                 <button onClick={handleCopyWeChat} role="menuitem">
                   <span className="menu-title">公众号</span>
                   <span className="menu-desc">带样式 · 直接粘到编辑器</span>
-                </button>
-                <button onClick={handleCopyZhihu} role="menuitem">
-                  <span className="menu-title">知乎</span>
-                  <span className="menu-desc">正文+图片转移 · 标题 / 列表 / 引用 / 代码原样落地</span>
                 </button>
                 <button onClick={handleCopyRich} role="menuitem">
                   <span className="menu-title">飞书 / Notion / 语雀</span>
                   <span className="menu-desc">通用富文本</span>
                 </button>
-                <button onClick={handleCopyTwitter} role="menuitem">
-                  <span className="menu-title">推特 / X</span>
-                  <span className="menu-desc">精炼文本 + thread 分条 · 图片单独转移粘贴</span>
-                </button>
                 <button onClick={handleCopyMarkdown} role="menuitem">
                   <span className="menu-title">Markdown 源码</span>
                   <span className="menu-desc">原文 · 跨工具迁移</span>
+                </button>
+                <div className="copy-menu-group">
+                  分步发布 <span className="copy-menu-group-hint">含图需逐张粘贴</span>
+                </div>
+                <button onClick={handleCopyZhihu} role="menuitem">
+                  <span className="menu-title">
+                    知乎 <span className="menu-tag">分步</span>
+                  </span>
+                  <span className="menu-desc">正文一次复制 · 图片打开面板逐张粘</span>
+                </button>
+                <button onClick={handleCopyTwitter} role="menuitem">
+                  <span className="menu-title">
+                    推特 / X <span className="menu-tag">分步</span>
+                  </span>
+                  <span className="menu-desc">精炼文本 + thread 分条 · 图片单独逐张粘</span>
                 </button>
               </div>
             )}

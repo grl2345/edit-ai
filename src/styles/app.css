@@ -178,6 +178,42 @@
   letter-spacing: 0.4px;
   color: var(--text-muted);
 }
+.copy-menu-group {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 10px 12px 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.copy-menu-group:first-child {
+  padding-top: 6px;
+}
+.copy-menu-group-hint {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.4px;
+  text-transform: none;
+  color: var(--text-muted);
+  opacity: 0.75;
+}
+.copy-menu .menu-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--accent-glow);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  vertical-align: 1px;
+}
 
 /* ============ Body layout ============ */
 .body {
