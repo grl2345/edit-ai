@@ -1171,6 +1171,33 @@
   color: var(--accent);
 }
 
+.save-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+  text-transform: none;
+  cursor: default;
+}
+.save-indicator .save-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16a34a;
+  flex-shrink: 0;
+}
+.save-indicator.saving .save-dot {
+  background: var(--accent);
+  animation: save-pulse 1.2s ease-in-out infinite;
+}
+@keyframes save-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
 /* ============ AI Dialog ============ */
 .ai-dialog-overlay {
   position: fixed;
@@ -2009,9 +2036,13 @@
     max-width: 32%;
     font-size: 12.5px;
   }
-  /* 字数统计在极窄屏隐藏 */
-  .pane-head > span:not(.pane-tag):not(.pane-title) {
+  /* 字数统计在极窄屏隐藏（保留保存指示，给用户安全感） */
+  .pane-head > span:not(.pane-tag):not(.pane-title):not(.save-indicator) {
     display: none;
+  }
+  .save-indicator {
+    font-size: 10px;
+    gap: 4px;
   }
   .pane-action {
     padding: 4px 8px;

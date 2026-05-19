@@ -78,11 +78,17 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('edit');
   const [toast, setToast] = useState<string>('');
   const [copyMenuOpen, setCopyMenuOpen] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  // "已自动保存 · HH:MM" 指示：state 改动 250ms 后落盘，落盘时刷新
+  const [lastSavedAt, setLastSavedAt] = useState<number | null>(() => Date.now());
+  const [saving, setSaving] = useState(false);
   const [aiSettingsOpen, setAISettingsOpen] = useState<boolean>(false);
   const [aiBeautifyOpen, setAIBeautifyOpen] = useState<boolean>(false);
   const [aiCfg, setAICfg] = useState<AIConfig | null>(() => loadAIConfig());
   const previewRef = useRef<HTMLDivElement>(null);
   const copyWrapRef = useRef<HTMLDivElement>(null);
+  const exportWrapRef = useRef<HTMLDivElement>(null);
+  const initialStateRef = useRef(true);
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toastTimer = useRef<number>();
@@ -111,6 +117,17 @@ export default function App() {
     window.addEventListener('mousedown', onClick);
     return () => window.removeEventListener('mousedown', onClick);
   }, [copyMenuOpen]);
+
+  useEffect(() => {
+    if (!exportMenuOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (exportWrapRef.current && !exportWrapRef.current.contains(e.target as Node)) {
+        setExportMenuOpen(false);
+      }
+    };
+    window.addEventListener('mousedown', onClick);
+    return () => window.removeEventListener('mousedown', onClick);
+  }, [exportMenuOpen]);
 
   const active: Doc | undefined = useMemo(
     () =>
@@ -153,7 +170,17 @@ export default function App() {
   }, [sidebarCollapsed]);
 
   useEffect(() => {
-    const id = window.setTimeout(() => saveDocs(state), 250);
+    // 首次挂载不算"用户编辑"，跳过 saving 指示
+    if (initialStateRef.current) {
+      initialStateRef.current = false;
+      return;
+    }
+    setSaving(true);
+    const id = window.setTimeout(() => {
+      saveDocs(state);
+      setLastSavedAt(Date.now());
+      setSaving(false);
+    }, 250);
     return () => window.clearTimeout(id);
   }, [state]);
 
@@ -375,6 +402,7 @@ export default function App() {
   }
 
   function handleExportHTML() {
+    setExportMenuOpen(false);
     if (!active) return;
     const content = active.content ?? '';
     const title = active.title || extractTitle(content, 'markdown');
@@ -391,6 +419,35 @@ export default function App() {
     a.remove();
     URL.revokeObjectURL(url);
     showToast('HTML 已下载');
+  }
+
+  function handleExportAll() {
+    setExportMenuOpen(false);
+    const payload = {
+      app: 'markdown-ai',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      // 仅导出文档与目录结构，外观偏好不归档
+      nodes: state.nodes,
+      activeId: state.activeId,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: 'application/json;charset=utf-8',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace(/[:T]/g, '-');
+    a.href = url;
+    a.download = `markdown-ai-backup-${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    const docCount = state.nodes.filter((n) => n.type === 'doc').length;
+    showToast(`已导出全部文档备份（共 ${docCount} 份）`);
   }
 
   async function insertImageFiles(files: File[]) {
@@ -616,9 +673,30 @@ export default function App() {
               </div>
             )}
           </div>
-          <button className="btn primary" onClick={handleExportHTML} title="导出独立 HTML">
-            <span className="txt">导出 HTML</span>
-          </button>
+          <div className="copy-wrap" ref={exportWrapRef}>
+            <button
+              className="btn primary"
+              onClick={() => setExportMenuOpen((o) => !o)}
+              aria-haspopup="menu"
+              aria-expanded={exportMenuOpen}
+              title="导出 / 备份"
+            >
+              <span className="txt">导出</span>
+              <CaretIcon />
+            </button>
+            {exportMenuOpen && (
+              <div className="copy-menu" role="menu">
+                <button onClick={handleExportHTML} role="menuitem">
+                  <span className="menu-title">当前文档 · HTML</span>
+                  <span className="menu-desc">独立 HTML · 样式内嵌可直接打开</span>
+                </button>
+                <button onClick={handleExportAll} role="menuitem">
+                  <span className="menu-title">全部文档 · JSON 备份</span>
+                  <span className="menu-desc">所有文档与目录结构 · 防本地数据丢失</span>
+                </button>
+              </div>
+            )}
+          </div>
           <button
             className="icon-btn"
             onClick={() => setTheme((t) => (t === 'light' ? 'dark' : 'light'))}
@@ -683,6 +761,19 @@ export default function App() {
                   {active?.title || '未命名'}
                 </span>
                 <span>{active?.content?.length ?? 0} 字</span>
+                <span
+                  className={`save-indicator ${saving ? 'saving' : 'saved'}`}
+                  title={
+                    saving
+                      ? '正在自动保存到本地'
+                      : lastSavedAt
+                      ? `已保存到本地存储 · ${new Date(lastSavedAt).toLocaleString()}`
+                      : ''
+                  }
+                >
+                  <span className="save-dot" />
+                  {saving ? '保存中…' : `已保存 ${formatSavedTime(lastSavedAt)}`}
+                </span>
                 <div style={{ flex: 1 }} />
                 <button
                   className="pane-action-icon"
@@ -855,6 +946,14 @@ export default function App() {
 
 function sanitizeFilename(s: string): string {
   return s.replace(/[\\/:*?"<>|]+/g, '_').slice(0, 60) || 'markdown';
+}
+
+function formatSavedTime(ts: number | null): string {
+  if (!ts) return '';
+  const d = new Date(ts);
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${hh}:${mm}`;
 }
 
 /**
