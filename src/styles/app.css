@@ -1279,6 +1279,12 @@
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
 }
+.editor::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+  white-space: pre-line;
+  line-height: 1.85;
+}
 .editor-wrap.drag-over .editor {
   background: var(--accent-glow);
 }

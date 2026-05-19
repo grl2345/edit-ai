@@ -742,7 +742,14 @@ export default function App() {
                   }}
                   onScroll={() => setFormatToolbar(null)}
                   spellCheck={false}
-                  placeholder="在这里写 Markdown…（可直接拖拽 / 粘贴图片）"
+                  placeholder={
+                    '在这里写 Markdown…\n\n' +
+                    '小提示\n' +
+                    '· 直接拖拽 / 粘贴图片到这里\n' +
+                    '· 选中文字会浮出格式工具栏（颜色 / 加粗 / 高亮）\n' +
+                    '· 侧栏底部能换 14 套版式 / 配色 / 字体\n' +
+                    '· 写完点上方 ✦ AI 美化排版 一键重排'
+                  }
                 />
                 {formatToolbar && (
                   <FormatToolbar
