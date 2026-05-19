@@ -1,13 +1,6 @@
 import { useMemo, useState } from 'react';
-import {
-  FONTS,
-  FontId,
-  PALETTES,
-  PaletteId,
-  TEMPLATES,
-  TemplateId,
-  ThemeMode,
-} from '../utils/themes';
+import { useI18n } from '../i18n';
+import { FontId, PaletteId, TemplateId, ThemeMode, getSidebarTemplates } from '../utils/themes';
 import { recommend, Recommendation } from '../utils/aiRecommend';
 import TemplateThumb from './TemplateThumb';
 import TemplateGallery from './TemplateGallery';
@@ -17,7 +10,6 @@ export interface AppearancePanelProps {
   font: FontId;
   theme: ThemeMode;
   template: TemplateId;
-  /** 当前文档 markdown，用于 AI 推荐版式选型 */
   content?: string;
   onPalette(id: PaletteId): void;
   onFont(id: FontId): void;
@@ -36,6 +28,7 @@ export default function AppearancePanel({
   onTheme,
   onTemplate,
 }: AppearancePanelProps) {
+  const { t, palettes, fonts, templates } = useI18n();
   const [recommendations, setRecommendations] = useState<Recommendation[] | null>(null);
   const [galleryOpen, setGalleryOpen] = useState(false);
 
@@ -51,61 +44,109 @@ export default function AppearancePanel({
   };
 
   const handleRecommend = () => {
-    const result = recommend(content ?? '');
-    setRecommendations(result);
+    setRecommendations(recommend(content ?? ''));
   };
 
   const handleClear = () => setRecommendations(null);
 
+  const sidebarTemplates = useMemo(
+    () => getSidebarTemplates(template, templates),
+    [template, templates]
+  );
+
+  const templateName = templates.find((item) => item.id === template)?.name ?? template;
+  const paletteName = palettes.find((p) => p.id === palette)?.name ?? palette;
+  const fontName = fonts.find((f) => f.id === font)?.name ?? font;
+  const themeLabel =
+    theme === 'light' ? t.appearance.themeLight : t.appearance.themeDark;
+
+  const nameOf = (id: TemplateId) => templates.find((item) => item.id === id)?.name ?? id;
+
   return (
     <div className="appearance">
+      <div className="appearance-summary" title={t.appearance.summaryTitle}>
+        <span className="appearance-summary-item">
+          <span className="appearance-summary-k">{t.appearance.labelTemplate}</span>
+          <strong>{templateName}</strong>
+        </span>
+        <span className="appearance-summary-dot" aria-hidden>
+          ·
+        </span>
+        <span className="appearance-summary-item">
+          <span className="appearance-summary-k">{t.appearance.labelPalette}</span>
+          <strong>{paletteName}</strong>
+        </span>
+        <span className="appearance-summary-dot" aria-hidden>
+          ·
+        </span>
+        <span className="appearance-summary-item">
+          <span className="appearance-summary-k">{t.appearance.labelFont}</span>
+          <strong>{fontName}</strong>
+        </span>
+        <span className="appearance-summary-dot" aria-hidden>
+          ·
+        </span>
+        <span className="appearance-summary-item">
+          <span className="appearance-summary-k">{t.appearance.labelTheme}</span>
+          <strong>{themeLabel}</strong>
+        </span>
+      </div>
+
       <div className="appearance-row">
         <div className="appearance-label-row">
-          <span className="appearance-label">版式</span>
+          <span className="appearance-label">{t.appearance.templates}</span>
           <div className="appearance-label-actions">
             <button
               className="appearance-more-btn"
               onClick={() => setGalleryOpen(true)}
-              title="查看全部 14 套版式 · 大图分类预览"
+              title={t.appearance.viewAllTitle}
             >
-              查看全部 →
+              {t.appearance.viewAll}
             </button>
             {topThree ? (
-              <button className="ai-recommend-btn active" onClick={handleClear} title="清除推荐标记">
+              <button
+                className="ai-recommend-btn active"
+                onClick={handleClear}
+                title={t.appearance.aiRecommendTitle}
+              >
                 <SparkleIcon />
-                已推荐
+                {t.appearance.aiRecommended}
               </button>
             ) : (
-              <button className="ai-recommend-btn" onClick={handleRecommend} title="按当前正文内容推荐最合适的 3 套版式">
+              <button
+                className="ai-recommend-btn"
+                onClick={handleRecommend}
+                title={t.appearance.aiRecommendTitle}
+              >
                 <SparkleIcon />
-                AI 推荐
+                {t.appearance.aiRecommend}
               </button>
             )}
           </div>
         </div>
         {topThree && topThree.length > 0 && (
           <div className="ai-recommend-banner">
-            建议 <strong>{nameOf(topThree[0].templateId)}</strong>
+            {t.appearance.aiRecommendBanner}{' '}
+            <strong>{nameOf(topThree[0].templateId)}</strong>
             {topThree[0].reasons.length > 0 && (
               <span className="ai-recommend-why"> · {topThree[0].reasons.join(' · ')}</span>
             )}
           </div>
         )}
-        <div className="template-grid">
-          {TEMPLATES.map((t) => {
-            const rank = rankOf(t.id);
+        <div className="template-grid template-grid--sidebar">
+          {sidebarTemplates.map((item) => {
+            const rank = rankOf(item.id);
             return (
               <button
-                key={t.id}
-                className={`template-chip ${template === t.id ? 'active' : ''} ${rank ? 'recommended' : ''}`}
-                onClick={() => onTemplate(t.id)}
-                title={`${t.name} · ${t.desc}`}
+                key={item.id}
+                className={`template-chip ${template === item.id ? 'active' : ''} ${rank ? 'recommended' : ''}`}
+                onClick={() => onTemplate(item.id)}
+                title={`${item.name} · ${item.desc}`}
                 data-rank={rank ?? undefined}
               >
                 {rank && <span className="template-chip-rank">AI #{rank}</span>}
-                <TemplateThumb id={t.id} scope="sp" />
-                <span className="template-chip-name">{t.name}</span>
-                <span className="template-chip-desc">{t.desc}</span>
+                <TemplateThumb id={item.id} scope="sp" />
+                <span className="template-chip-name">{item.name}</span>
               </button>
             );
           })}
@@ -113,9 +154,9 @@ export default function AppearancePanel({
       </div>
 
       <div className="appearance-row">
-        <span className="appearance-label">配色</span>
+        <span className="appearance-label">{t.appearance.palettes}</span>
         <div className="palette-grid">
-          {PALETTES.map((p) => (
+          {palettes.map((p) => (
             <button
               key={p.id}
               className={`palette-chip ${palette === p.id ? 'active' : ''}`}
@@ -130,9 +171,9 @@ export default function AppearancePanel({
       </div>
 
       <div className="appearance-row">
-        <span className="appearance-label">字体</span>
+        <span className="appearance-label">{t.appearance.fonts}</span>
         <div className="font-grid">
-          {FONTS.map((f) => (
+          {fonts.map((f) => (
             <button
               key={f.id}
               data-font={f.id}
@@ -147,7 +188,7 @@ export default function AppearancePanel({
       </div>
 
       <div className="appearance-row">
-        <span className="appearance-label">主题</span>
+        <span className="appearance-label">{t.appearance.theme}</span>
         <div className="theme-seg" role="tablist">
           <button
             className={theme === 'light' ? 'active' : ''}
@@ -155,7 +196,7 @@ export default function AppearancePanel({
             role="tab"
             aria-selected={theme === 'light'}
           >
-            <SunIcon /> 浅色
+            <SunIcon /> {t.appearance.themeLight}
           </button>
           <button
             className={theme === 'dark' ? 'active' : ''}
@@ -163,7 +204,7 @@ export default function AppearancePanel({
             role="tab"
             aria-selected={theme === 'dark'}
           >
-            <MoonIcon /> 深色
+            <MoonIcon /> {t.appearance.themeDark}
           </button>
         </div>
       </div>
@@ -183,17 +224,12 @@ export default function AppearancePanel({
   );
 }
 
-
 function SparkleIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2zM19 14l.9 2.6L22 17.5l-2.1.9L19 21l-.9-2.6L16 17.5l2.1-.9L19 14z" />
     </svg>
   );
-}
-
-function nameOf(id: TemplateId): string {
-  return TEMPLATES.find((t) => t.id === id)?.name ?? id;
 }
 
 function SunIcon() {

@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n';
 import { TemplateId } from '../utils/themes';
 
 /**
@@ -13,6 +14,8 @@ export default function TemplateThumb({
   id: TemplateId;
   scope?: string;
 }) {
+  const { t } = useI18n();
+  const thumb = t.themes.thumb;
   const sid = (k: string) => `${scope}-${k}`;
   switch (id) {
     case 'qingye':
@@ -50,7 +53,7 @@ export default function TemplateThumb({
           <rect x="8" y="8" width="32" height="3.6" fill="currentColor" />
           <rect x="8" y="14" width="14" height="3" fill="var(--accent)" />
           <rect x="8" y="24" width="32" height="11" fill="var(--accent)" />
-          <text x="11" y="32" fontSize="6.5" fill="white" fontWeight="700">二级标题</text>
+          <text x="11" y="32" fontSize="6.5" fill="white" fontWeight="700">{thumb.h2}</text>
           <rect x="8" y="40" width="56" height="1" fill="currentColor" opacity="0.4" />
           <rect x="8" y="45" width="50" height="1" fill="currentColor" opacity="0.4" />
           <rect x="8" y="50" width="36" height="1" fill="currentColor" opacity="0.4" />
@@ -115,24 +118,25 @@ export default function TemplateThumb({
           </text>
           <rect x="8" y="22" width="36" height="8" fill="none" stroke="var(--accent)" strokeWidth="0.7" strokeDasharray="2 1.5" />
           <text x="11" y="28" fontSize="5" fontFamily="monospace" fill="currentColor">
-            <tspan fill="var(--accent)" fontWeight="700">[</tspan> 模块 <tspan fill="var(--accent)" fontWeight="700">]</tspan>
+            <tspan fill="var(--accent)" fontWeight="700">[</tspan> {thumb.module}{' '}
+            <tspan fill="var(--accent)" fontWeight="700">]</tspan>
           </text>
           <text x="8" y="40" fontSize="4.5" fontFamily="monospace" fill="currentColor">
-            <tspan fill="var(--accent)">01.</tspan> 列表项
+            <tspan fill="var(--accent)">01.</tspan> {thumb.listItem}
           </text>
           <text x="8" y="48" fontSize="4.5" fontFamily="monospace" fill="currentColor">
-            <tspan fill="var(--accent)">02.</tspan> 列表项
+            <tspan fill="var(--accent)">02.</tspan> {thumb.listItem}
           </text>
         </svg>
       );
     case 'shouzha':
       return (
         <svg className="template-thumb" viewBox="0 0 80 56" aria-hidden>
-          <text x="8" y="14" fontSize="9" fill="currentColor" fontFamily="STKaiti" fontWeight="700">标题</text>
+          <text x="8" y="14" fontSize="9" fill="currentColor" fontFamily="STKaiti" fontWeight="700">{thumb.title}</text>
           <path d="M8 17 Q12 14 16 17 T24 17 T32 17 T40 17" stroke="var(--accent)" strokeWidth="1.4" fill="none" strokeLinecap="round" />
-          <text x="8" y="32" fontSize="7" fill="currentColor" fontFamily="STKaiti" fontWeight="700">二级标题</text>
+          <text x="8" y="32" fontSize="7" fill="currentColor" fontFamily="STKaiti" fontWeight="700">{thumb.h2}</text>
           <path d="M8 35 Q12 32 16 35 T24 35 T32 35 T40 35" stroke="var(--accent)" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-          <text x="8" y="46" fontSize="3.5" fill="var(--accent)" fontFamily="STKaiti">✎ 子标题</text>
+          <text x="8" y="46" fontSize="3.5" fill="var(--accent)" fontFamily="STKaiti">{thumb.subtitle}</text>
           <line x1="50" y1="22" x2="52" y2="50" stroke="var(--accent)" strokeWidth="1" strokeDasharray="2 2" />
           <rect x="54" y="22" width="20" height="1" fill="currentColor" opacity="0.4" />
           <rect x="54" y="28" width="22" height="1" fill="currentColor" opacity="0.4" />
@@ -166,7 +170,7 @@ export default function TemplateThumb({
         <svg className="template-thumb" viewBox="0 0 80 56" aria-hidden>
           <text x="40" y="9" fontSize="3.5" fill="var(--accent)" textAnchor="middle" letterSpacing="2" fontFamily="Georgia" fontWeight="700">CHAPTER</text>
           <line x1="14" y1="13" x2="66" y2="13" stroke="currentColor" strokeWidth="0.6" />
-          <text x="40" y="20" fontSize="6.5" fill="currentColor" textAnchor="middle" letterSpacing="1.5">标题</text>
+          <text x="40" y="20" fontSize="6.5" fill="currentColor" textAnchor="middle" letterSpacing="1.5">{thumb.title}</text>
           <line x1="14" y1="24" x2="66" y2="24" stroke="currentColor" strokeWidth="0.6" />
           <text x="40" y="33" fontSize="7" fill="var(--accent)" textAnchor="middle" fontFamily="Georgia" fontStyle="italic">Ⅰ</text>
           <line x1="36" y1="36" x2="44" y2="36" stroke="currentColor" strokeWidth="0.6" />
@@ -211,7 +215,7 @@ export default function TemplateThumb({
           <text x="6" y="22" fontSize="18" fontWeight="900" fill="var(--accent)" letterSpacing="-1.5" fontFamily="PingFang SC,sans-serif">01</text>
           <rect x="6" y="26" width="40" height="3.4" fill="currentColor" />
           <rect x="6" y="33" width="22" height="6" rx="3" fill="currentColor" />
-          <text x="9" y="37.5" fontSize="3.5" fill="white" fontWeight="700" fontFamily="PingFang SC,sans-serif">三大核心：</text>
+          <text x="9" y="37.5" fontSize="3.5" fill="white" fontWeight="700" fontFamily="PingFang SC,sans-serif">{thumb.coreFeatures}</text>
           <circle cx="9" cy="44" r="1.2" fill="currentColor" />
           <rect x="14" y="42.5" width="20" height="2" fill="currentColor" />
           <rect x="14" y="46.5" width="48" height="1" fill="currentColor" opacity="0.4" />

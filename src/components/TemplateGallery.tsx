@@ -1,10 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import {
-  TEMPLATES,
-  TEMPLATE_CATEGORIES,
-  TemplateCategory,
-  TemplateId,
-} from '../utils/themes';
+import { useI18n } from '../i18n';
+import { TEMPLATE_CATEGORIES, TemplateCategory, TemplateId } from '../utils/themes';
 import { Recommendation } from '../utils/aiRecommend';
 import TemplateThumb from './TemplateThumb';
 
@@ -19,12 +15,6 @@ export interface TemplateGalleryProps {
 
 type Filter = 'all' | TemplateCategory;
 
-/**
- * 版式画廊：大图分类预览。
- * - 顶部分类筛选 + AI 推荐快捷
- * - 卡片大缩略图 + 名称 + 描述
- * - 当前版式 / AI 推荐 Top 3 在卡片上做标记
- */
 export default function TemplateGallery({
   open,
   currentTemplate,
@@ -33,9 +23,9 @@ export default function TemplateGallery({
   onRecommend,
   onClose,
 }: TemplateGalleryProps) {
+  const { t, templates, categoryLabel } = useI18n();
   const [filter, setFilter] = useState<Filter>('all');
 
-  // ESC 关闭
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -54,9 +44,9 @@ export default function TemplateGallery({
   }, [recommendations]);
 
   const list = useMemo(() => {
-    if (filter === 'all') return TEMPLATES;
-    return TEMPLATES.filter((t) => t.category === filter);
-  }, [filter]);
+    if (filter === 'all') return templates;
+    return templates.filter((item) => item.category === filter);
+  }, [filter, templates]);
 
   if (!open) return null;
 
@@ -66,22 +56,22 @@ export default function TemplateGallery({
         className="gallery-dialog"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
-        aria-label="版式画廊"
+        aria-label={t.gallery.ariaLabel}
       >
         <div className="gallery-head">
           <div className="gallery-head-text">
-            <h3>版式画廊</h3>
-            <p>14 套版式 · 按风格分类 · 点击应用到当前文档</p>
+            <h3>{t.gallery.title}</h3>
+            <p>{t.gallery.subtitle}</p>
           </div>
           <div className="gallery-head-actions">
             <button
               className="ai-recommend-btn"
               onClick={onRecommend}
-              title="按当前正文内容推荐最合适的 3 套"
+              title={t.gallery.aiRecommendTitle}
             >
-              <SparkleIcon /> AI 推荐
+              <SparkleIcon /> {t.appearance.aiRecommend}
             </button>
-            <button className="ai-dialog-close" onClick={onClose} aria-label="关闭">
+            <button className="ai-dialog-close" onClick={onClose} aria-label={t.gallery.close}>
               ✕
             </button>
           </div>
@@ -93,10 +83,11 @@ export default function TemplateGallery({
             className={filter === 'all' ? 'active' : ''}
             onClick={() => setFilter('all')}
           >
-            全部 <span className="gallery-filter-num">{TEMPLATES.length}</span>
+            {t.gallery.all}{' '}
+            <span className="gallery-filter-num">{templates.length}</span>
           </button>
           {TEMPLATE_CATEGORIES.map((c) => {
-            const count = TEMPLATES.filter((t) => t.category === c).length;
+            const count = templates.filter((item) => item.category === c).length;
             return (
               <button
                 key={c}
@@ -104,34 +95,35 @@ export default function TemplateGallery({
                 className={filter === c ? 'active' : ''}
                 onClick={() => setFilter(c)}
               >
-                {c} <span className="gallery-filter-num">{count}</span>
+                {categoryLabel(c)}{' '}
+                <span className="gallery-filter-num">{count}</span>
               </button>
             );
           })}
         </div>
 
         <div className="gallery-grid">
-          {list.map((t) => {
-            const isActive = t.id === currentTemplate;
-            const rank = recRank.get(t.id);
+          {list.map((item) => {
+            const isActive = item.id === currentTemplate;
+            const rank = recRank.get(item.id);
             return (
               <button
-                key={t.id}
+                key={item.id}
                 className={`gallery-card ${isActive ? 'active' : ''} ${rank ? 'recommended' : ''}`}
-                onClick={() => onSelect(t.id)}
+                onClick={() => onSelect(item.id)}
                 data-rank={rank ?? undefined}
-                title={`${t.name} · ${t.desc}`}
+                title={`${item.name} · ${item.desc}`}
               >
                 {rank && <span className="gallery-card-rank">AI #{rank}</span>}
-                {isActive && <span className="gallery-card-current">使用中</span>}
+                {isActive && <span className="gallery-card-current">{t.gallery.inUse}</span>}
                 <div className="gallery-card-thumb">
-                  <TemplateThumb id={t.id} scope={`gl-${t.id}`} />
+                  <TemplateThumb id={item.id} scope={`gl-${item.id}`} />
                 </div>
                 <div className="gallery-card-meta">
-                  <div className="gallery-card-name">{t.name}</div>
-                  <div className="gallery-card-cat">{t.category}</div>
+                  <div className="gallery-card-name">{item.name}</div>
+                  <div className="gallery-card-cat">{categoryLabel(item.category)}</div>
                 </div>
-                <div className="gallery-card-desc">{t.desc}</div>
+                <div className="gallery-card-desc">{item.desc}</div>
               </button>
             );
           })}

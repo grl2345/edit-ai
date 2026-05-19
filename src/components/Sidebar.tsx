@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useI18n } from '../i18n';
 import type { FsNode } from '../utils/storage';
 import AppearancePanel, { AppearancePanelProps } from './AppearancePanel';
 
@@ -29,6 +30,7 @@ export default function Sidebar({
   onDuplicate,
   onToggleFolder,
 }: SidebarProps) {
+  const { t, format } = useI18n();
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [menuId, setMenuId] = useState<string | null>(null);
   const [newMenuOpen, setNewMenuOpen] = useState(false);
@@ -68,11 +70,14 @@ export default function Sidebar({
   }, [menuId, newMenuOpen]);
 
   function confirmDelete(n: FsNode) {
-    const desc =
+    const name =
+      n.title ||
+      (n.type === 'folder' ? t.sidebar.untitledFolder : t.sidebar.untitledDoc);
+    const msg =
       n.type === 'folder'
-        ? `目录 “${n.title || '未命名目录'}” 及其全部内容`
-        : `“${n.title || '未命名'}”`;
-    if (window.confirm(`确定删除 ${desc}？此操作不可撤销。`)) {
+        ? format(t.sidebar.confirmDeleteFolder, { name })
+        : format(t.sidebar.confirmDeleteDoc, { name });
+    if (window.confirm(`${msg} ${t.sidebar.confirmIrreversible}`)) {
       onDelete(n.id);
     }
     setMenuId(null);
@@ -125,7 +130,7 @@ export default function Sidebar({
             />
           ) : (
             <span className="tree-title" title={n.title}>
-              {n.title || (isFolder ? '未命名目录' : '未命名')}
+              {n.title || (isFolder ? t.sidebar.untitledFolder : t.sidebar.untitledDoc)}
             </span>
           )}
 
@@ -134,8 +139,8 @@ export default function Sidebar({
               {isFolder && (
                 <button
                   className="tree-icon-btn"
-                  aria-label="在此目录下新建文档"
-                  title="新建文档"
+                  aria-label={t.sidebar.newDocInFolder}
+                  title={t.sidebar.newDoc}
                   onClick={() => {
                     if (n.expanded === false) onToggleFolder(n.id);
                     onCreateDoc(n.id);
@@ -146,8 +151,8 @@ export default function Sidebar({
               )}
               <button
                 className="tree-icon-btn"
-                aria-label="更多操作"
-                title="更多"
+                aria-label="more"
+                title="more"
                 onClick={() => setMenuId(menuId === n.id ? null : n.id)}
               >
                 <DotsIcon />
@@ -163,7 +168,7 @@ export default function Sidebar({
                           setMenuId(null);
                         }}
                       >
-                        新建文档
+                        {t.sidebar.newDoc}
                       </button>
                       <button
                         onClick={() => {
@@ -172,7 +177,7 @@ export default function Sidebar({
                           setMenuId(null);
                         }}
                       >
-                        新建子目录
+                        {t.sidebar.newSubfolder}
                       </button>
                     </>
                   )}
@@ -182,7 +187,7 @@ export default function Sidebar({
                       setMenuId(null);
                     }}
                   >
-                    重命名
+                    {t.sidebar.rename}
                   </button>
                   {!isFolder && (
                     <button
@@ -191,11 +196,11 @@ export default function Sidebar({
                         setMenuId(null);
                       }}
                     >
-                      复制副本
+                      {t.sidebar.duplicate}
                     </button>
                   )}
                   <button className="danger" onClick={() => confirmDelete(n)}>
-                    删除
+                    {t.sidebar.delete}
                   </button>
                 </div>
               )}
@@ -217,16 +222,16 @@ export default function Sidebar({
   return (
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`} aria-hidden={collapsed}>
       <div className="sidebar-section">
-        <span className="sidebar-section-title">文档</span>
+        <span className="sidebar-section-title">{t.sidebar.docs}</span>
         <div className="new-wrap" ref={newMenuRef}>
           <button
             className="sidebar-new"
             onClick={() => setNewMenuOpen((o) => !o)}
-            title="新建"
+            title={t.sidebar.new}
             aria-haspopup="menu"
             aria-expanded={newMenuOpen}
           >
-            <PlusIcon /> <span>新建</span> <CaretDownIcon />
+            <PlusIcon /> <span>{t.sidebar.new}</span> <CaretDownIcon />
           </button>
           {newMenuOpen && (
             <div className="menu-pop new-menu" role="menu">
@@ -237,7 +242,7 @@ export default function Sidebar({
                 }}
               >
                 <DocIcon />
-                <span>新建文档</span>
+                <span>{t.sidebar.newDoc}</span>
               </button>
               <button
                 onClick={() => {
@@ -246,7 +251,7 @@ export default function Sidebar({
                 }}
               >
                 <FolderIcon />
-                <span>新建目录</span>
+                <span>{t.sidebar.newFolder}</span>
               </button>
             </div>
           )}
@@ -255,7 +260,7 @@ export default function Sidebar({
 
       <div className="doc-list tree-list" role="tree">
         {roots.length === 0 && (
-          <div className="doc-empty">还没有内容，点 “新建” 开始</div>
+          <div className="doc-empty">{t.sidebar.empty}</div>
         )}
         {roots.map((r) => renderRow(r, 0))}
       </div>

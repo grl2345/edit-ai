@@ -1,4 +1,7 @@
-import { SAMPLE_MD } from './sample';
+import { getStoredLocale } from '../i18n';
+import { en } from '../i18n/locales/en';
+import { zh } from '../i18n/locales/zh';
+import { getSampleMd, isLegacySampleDoc } from './sample';
 
 export type NodeType = 'doc' | 'folder';
 
@@ -19,6 +22,41 @@ const NODES_KEY = 'markdown-ai:nodes';
 const ACTIVE_KEY = 'markdown-ai:active-doc';
 const LEGACY_DOCS_KEY = 'markdown-ai:docs';
 const LEGACY_DOC_KEY = 'markdown-ai:doc';
+const SAMPLE_VERSION_KEY = 'markdown-ai:sample-version';
+const CURRENT_SAMPLE_VERSION = 4;
+
+function maybeUpgradePromoSample(nodes: FsNode[]): FsNode[] {
+  try {
+    const ver = Number(localStorage.getItem(SAMPLE_VERSION_KEY) || '0');
+    const locale = getStoredLocale();
+    const msg = locale === 'en' ? en : zh;
+    const promo = getSampleMd(locale);
+    let changed = false;
+    for (const n of nodes) {
+      if (n.type !== 'doc') continue;
+      const content = n.content ?? '';
+      const needsUpgrade =
+        isLegacySampleDoc(n.title, content) ||
+        (ver < CURRENT_SAMPLE_VERSION &&
+          content.trimStart().startsWith('# Markdown AI'));
+      if (needsUpgrade) {
+        n.title = msg.doc.sampleTitle;
+        n.content = promo;
+        n.updatedAt = Date.now();
+        changed = true;
+      }
+    }
+    if (changed) {
+      localStorage.setItem(
+        SAMPLE_VERSION_KEY,
+        String(CURRENT_SAMPLE_VERSION)
+      );
+    }
+  } catch {
+    /* ignore */
+  }
+  return nodes;
+}
 
 function uid(prefix = 'n'): string {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
@@ -99,7 +137,7 @@ export function loadDocs(): DocsState {
         const has =
           saved && parsed.find((n) => n.id === saved && n.type === 'doc');
         const activeId = has ? (saved as string) : firstDocId(parsed) ?? '';
-        return { nodes: parsed, activeId };
+        return { nodes: maybeUpgradePromoSample(parsed), activeId };
       }
     }
   } catch {
@@ -145,7 +183,9 @@ export function loadDocs(): DocsState {
     return { nodes: [m], activeId: m.id };
   }
 
-  const initial = makeDoc(SAMPLE_MD, 'Markdown AI · 示例');
+  const locale = getStoredLocale();
+  const msg = locale === 'en' ? en : zh;
+  const initial = makeDoc(getSampleMd(locale), msg.doc.sampleTitle);
   return { nodes: [initial], activeId: initial.id };
 }
 

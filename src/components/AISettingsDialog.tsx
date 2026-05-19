@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useI18n } from '../i18n';
 import {
   AIConfig,
   PROVIDER_PRESETS,
@@ -14,6 +15,7 @@ export interface AISettingsDialogProps {
 }
 
 export default function AISettingsDialog({ open, onClose, onSaved }: AISettingsDialogProps) {
+  const { t } = useI18n();
   const [providerId, setProviderId] = useState<string>('deepseek');
   const [baseUrl, setBaseUrl] = useState<string>('');
   const [apiKey, setApiKey] = useState<string>('');
@@ -53,7 +55,7 @@ export default function AISettingsDialog({ open, onClose, onSaved }: AISettingsD
 
   function handleSave() {
     if (!baseUrl.trim() || !model.trim()) {
-      setTestResult('Base URL 和 Model 不能为空');
+      setTestResult(t.aiSettings.urlModelRequired);
       return;
     }
     const cfg: AIConfig = {
@@ -67,21 +69,21 @@ export default function AISettingsDialog({ open, onClose, onSaved }: AISettingsD
   }
 
   function handleClear() {
-    if (!confirm('确定清除 AI 配置吗？')) return;
+    if (!confirm(t.aiSettings.confirmClear)) return;
     clearAIConfig();
     setBaseUrl('');
     setApiKey('');
     setModel('');
-    setTestResult('已清除');
+    setTestResult(t.aiSettings.cleared);
   }
 
   async function handleTest() {
     if (!baseUrl.trim() || !model.trim()) {
-      setTestResult('Base URL 和 Model 不能为空');
+      setTestResult(t.aiSettings.urlModelRequired);
       return;
     }
     setTesting(true);
-    setTestResult('测试中…');
+    setTestResult(t.aiSettings.testing);
     try {
       const url = `${baseUrl.trim().replace(/\/+$/, '')}/chat/completions`;
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -100,10 +102,12 @@ export default function AISettingsDialog({ open, onClose, onSaved }: AISettingsD
         const text = await res.text().catch(() => '');
         setTestResult(`✗ ${res.status}: ${text.slice(0, 120) || res.statusText}`);
       } else {
-        setTestResult('✓ 连接成功');
+        setTestResult(`✓ ${t.aiSettings.testOk}`);
       }
     } catch (e) {
-      setTestResult(`✗ 网络错误: ${e instanceof Error ? e.message : String(e)}`);
+      setTestResult(
+        `✗ ${t.aiSettings.networkError}: ${e instanceof Error ? e.message : String(e)}`
+      );
     } finally {
       setTesting(false);
     }
@@ -116,15 +120,15 @@ export default function AISettingsDialog({ open, onClose, onSaved }: AISettingsD
       <div className="ai-dialog" onClick={(e) => e.stopPropagation()}>
         <div className="ai-dialog-head">
           <div>
-            <h3>AI 服务配置</h3>
-            <p>OpenAI 兼容 API · 数据只存浏览器本地</p>
+            <h3>{t.aiSettings.title}</h3>
+            <p>{t.aiSettings.subtitle}</p>
           </div>
-          <button className="ai-dialog-close" onClick={onClose} aria-label="关闭">✕</button>
+          <button className="ai-dialog-close" onClick={onClose} aria-label={t.aiSettings.close}>✕</button>
         </div>
 
         <div className="ai-dialog-body">
           <div className="ai-field">
-            <label>服务商</label>
+            <label>{t.aiSettings.provider}</label>
             <div className="ai-preset-grid">
               {PROVIDER_PRESETS.map((p) => (
                 <button
@@ -150,7 +154,7 @@ export default function AISettingsDialog({ open, onClose, onSaved }: AISettingsD
               autoComplete="off"
               spellCheck={false}
             />
-            <span className="ai-field-hint">必须支持 /chat/completions endpoint</span>
+            <span className="ai-field-hint">{t.aiSettings.endpointHint}</span>
           </div>
 
           <div className="ai-field">
@@ -160,7 +164,7 @@ export default function AISettingsDialog({ open, onClose, onSaved }: AISettingsD
               type="text"
               value={model}
               onChange={(e) => setModel(e.target.value)}
-              placeholder="如 deepseek-chat / gpt-4o-mini / qwen-plus"
+              placeholder={t.aiSettings.modelPlaceholder}
               autoComplete="off"
               spellCheck={false}
             />
@@ -174,15 +178,15 @@ export default function AISettingsDialog({ open, onClose, onSaved }: AISettingsD
                 type={showKey ? 'text' : 'password'}
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder="sk-..."
+                placeholder={t.aiSettings.keyPlaceholder}
                 autoComplete="off"
                 spellCheck={false}
               />
               <button type="button" className="ai-key-toggle" onClick={() => setShowKey((v) => !v)}>
-                {showKey ? '隐藏' : '显示'}
+                {showKey ? t.aiSettings.hideKey : t.aiSettings.showKey}
               </button>
             </div>
-            <span className="ai-field-hint">仅存浏览器 localStorage，不会上传任何服务器</span>
+            <span className="ai-field-hint">{t.aiSettings.keyHint}</span>
           </div>
 
           {testResult && (
@@ -193,12 +197,12 @@ export default function AISettingsDialog({ open, onClose, onSaved }: AISettingsD
         </div>
 
         <div className="ai-dialog-foot">
-          <button className="ai-btn-ghost" onClick={handleClear}>清除</button>
+          <button className="ai-btn-ghost" onClick={handleClear}>{t.aiSettings.clear}</button>
           <div style={{ flex: 1 }} />
           <button className="ai-btn-ghost" onClick={handleTest} disabled={testing}>
-            {testing ? '测试中…' : '测试连接'}
+            {testing ? t.aiSettings.testing : t.aiSettings.test}
           </button>
-          <button className="ai-btn-primary" onClick={handleSave}>保存</button>
+          <button className="ai-btn-primary" onClick={handleSave}>{t.aiSettings.save}</button>
         </div>
       </div>
     </div>

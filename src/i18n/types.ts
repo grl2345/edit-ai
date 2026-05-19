@@ -1,0 +1,216 @@
+import type { FontId, PaletteId, TemplateCategory, TemplateId } from '../utils/themes';
+
+export type Locale = 'zh' | 'en';
+
+export interface ThemeLabel {
+  name: string;
+  desc: string;
+}
+
+export interface Messages {
+  app: {
+    brandSub: string;
+    expandSidebar: string;
+    collapseSidebar: string;
+    copy: string;
+    copyTitle: string;
+    export: string;
+    exportTitle: string;
+    toggleDark: string;
+    toggleLight: string;
+    langZh: string;
+    langEn: string;
+    langSwitch: string;
+    documentTitle: string;
+  };
+  copyMenu: {
+    groupOneClick: string;
+    wechatTitle: string;
+    wechatDesc: string;
+    richTitle: string;
+    richDesc: string;
+    mdTitle: string;
+    mdDesc: string;
+    groupStep: string;
+    groupStepHint: string;
+    zhihuTitle: string;
+    stepTag: string;
+    zhihuDesc: string;
+    twitterTitle: string;
+    twitterDesc: string;
+  };
+  exportMenu: {
+    htmlTitle: string;
+    htmlDesc: string;
+    backupTitle: string;
+    backupDesc: string;
+  };
+  editor: {
+    tabEdit: string;
+    tabPreview: string;
+    untitled: string;
+    charUnit: string;
+    saving: string;
+    saved: string;
+    savedAt: string;
+    savingTitle: string;
+    insertImage: string;
+    beautify: string;
+    beautifyTitle: string;
+    aiSettings: string;
+    dropHint: string;
+    placeholder: string;
+    formatClearColor: string;
+    formatBold: string;
+    formatHighlight: string;
+  };
+  toast: {
+    docCreated: string;
+    folderCreated: string;
+    deleted: string;
+    duplicated: string;
+    copyRichOk: string;
+    copyRichFail: string;
+    copyWechatOk: string;
+    copyWechatFail: string;
+    copyZhihuOk: string;
+    copyZhihuFail: string;
+    copyZhihuStep: string;
+    copyTwitterOk: string;
+    copyTwitterStep: string;
+    copyFail: string;
+    copyMdOk: string;
+    htmlDownloaded: string;
+    backupExported: string;
+    selectDocFirst: string;
+    emptyDocBeautify: string;
+    configureAiFirst: string;
+    aiSaved: string;
+    beautifyAppliedBackup: string;
+    beautifyApplied: string;
+    imageCopied: string;
+    twitterThreadMulti: string;
+    twitterThreadSingle: string;
+  };
+  imageTransfer: {
+    zhihuTitle: string;
+    zhihuHint: string;
+    twitterTitle: string;
+    twitterHint: string;
+    defaultTitle: string;
+    defaultHint: string;
+    copyBtn: string;
+    copiedBtn: string;
+    copyFail: string;
+    progress: string;
+    close: string;
+    imageCount: string;
+    imageIndex: string;
+  };
+  sidebar: {
+    docs: string;
+    new: string;
+    newDoc: string;
+    newFolder: string;
+    empty: string;
+    untitledDoc: string;
+    untitledFolder: string;
+    rename: string;
+    duplicate: string;
+    delete: string;
+    newDocInFolder: string;
+    newSubfolder: string;
+    confirmDeleteDoc: string;
+    confirmDeleteFolder: string;
+    confirmIrreversible: string;
+  };
+  appearance: {
+    summaryTitle: string;
+    labelTemplate: string;
+    labelPalette: string;
+    labelFont: string;
+    labelTheme: string;
+    templates: string;
+    viewAll: string;
+    viewAllTitle: string;
+    aiRecommend: string;
+    aiRecommended: string;
+    aiRecommendTitle: string;
+    aiRecommendBanner: string;
+    palettes: string;
+    fonts: string;
+    theme: string;
+    themeLight: string;
+    themeDark: string;
+  };
+  gallery: {
+    ariaLabel: string;
+    title: string;
+    subtitle: string;
+    aiRecommendTitle: string;
+    close: string;
+    all: string;
+    inUse: string;
+  };
+  beautify: {
+    title: string;
+    subtitle: string;
+    close: string;
+    loadingTitle: string;
+    loadingSub: string;
+    errorTitle: string;
+    errorTip: string;
+    original: string;
+    result: string;
+    cancel: string;
+    keepOriginal: string;
+    keepOriginalTitle: string;
+    apply: string;
+    beforeBackupSuffix: string;
+  };
+  aiSettings: {
+    title: string;
+    provider: string;
+    baseUrl: string;
+    apiKey: string;
+    model: string;
+    showKey: string;
+    hideKey: string;
+    test: string;
+    testing: string;
+    save: string;
+    clear: string;
+    close: string;
+    urlModelRequired: string;
+    confirmClear: string;
+    cleared: string;
+    testOk: string;
+    testFail: string;
+    subtitle: string;
+    endpointHint: string;
+    modelPlaceholder: string;
+    keyHint: string;
+    keyPlaceholder: string;
+    networkError: string;
+  };
+  doc: {
+    sampleTitle: string;
+    newDoc: string;
+    newFolder: string;
+    duplicateSuffix: string;
+  };
+  themes: {
+    categories: Record<TemplateCategory, string>;
+    palettes: Record<PaletteId, ThemeLabel>;
+    fonts: Record<FontId, ThemeLabel>;
+    templates: Record<TemplateId, ThemeLabel>;
+    thumb: {
+      h2: string;
+      title: string;
+      module: string;
+      listItem: string;
+      subtitle: string;
+      coreFeatures: string;
+    };
+  };
+}

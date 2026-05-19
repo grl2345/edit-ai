@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useI18n } from '../i18n';
 import { copyImageURLToClipboard } from '../utils/imageClipboard';
 
 export interface TransferImage {
@@ -29,14 +30,17 @@ export interface ImageTransferPanelProps {
  */
 export default function ImageTransferPanel({
   images,
-  title = '图片转移',
-  hint = '正文已复制 · 请先粘贴正文，再按顺序逐张点「复制」→ 在目标编辑器 Cmd+V',
+  title,
+  hint,
   onToast,
   onClose,
 }: ImageTransferPanelProps) {
+  const { t, format } = useI18n();
   const [doneIds, setDoneIds] = useState<Set<number>>(new Set());
 
   if (images.length === 0) return null;
+
+  const panelTitle = title ?? t.imageTransfer.defaultTitle;
 
   async function handleCopy(idx: number) {
     const ok = await copyImageURLToClipboard(images[idx].src);
@@ -46,23 +50,23 @@ export default function ImageTransferPanel({
         next.add(idx);
         return next;
       });
-      onToast(`图 ${idx + 1} 已复制，去目标编辑器 Cmd+V 粘贴`);
+      onToast(format(t.toast.imageCopied, { n: idx + 1 }));
     } else {
-      onToast(`图 ${idx + 1} 复制失败（浏览器不支持图片剪贴板）`);
+      onToast(t.imageTransfer.copyFail);
     }
   }
 
   return (
-    <div className="img-transfer-panel" role="dialog" aria-label={title}>
+    <div className="img-transfer-panel" role="dialog" aria-label={panelTitle}>
       <div className="img-transfer-head">
         <div className="img-transfer-title">
-          {title} · 共 {images.length} 张
+          {format(t.imageTransfer.imageCount, { title: panelTitle, count: images.length })}
         </div>
         <button
           className="img-transfer-close"
           onClick={onClose}
-          aria-label="关闭"
-          title="关闭"
+          aria-label={t.imageTransfer.close}
+          title={t.imageTransfer.close}
         >
           ×
         </button>
@@ -73,7 +77,9 @@ export default function ImageTransferPanel({
           <li key={i} className="img-transfer-item">
             <img className="img-transfer-thumb" src={img.src} alt={img.alt} />
             <div className="img-transfer-meta">
-              <div className="img-transfer-idx">图 {i + 1}</div>
+              <div className="img-transfer-idx">
+                {format(t.imageTransfer.imageIndex, { n: i + 1 })}
+              </div>
               {img.alt && (
                 <div className="img-transfer-alt" title={img.alt}>
                   {img.alt}
@@ -84,7 +90,7 @@ export default function ImageTransferPanel({
               className={`img-transfer-copy ${doneIds.has(i) ? 'done' : ''}`}
               onClick={() => handleCopy(i)}
             >
-              {doneIds.has(i) ? '✓ 再复制' : '复制'}
+              {doneIds.has(i) ? `✓ ${t.imageTransfer.copiedBtn}` : t.imageTransfer.copyBtn}
             </button>
           </li>
         ))}

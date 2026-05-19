@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useI18n } from './i18n';
 import Sidebar from './components/Sidebar';
 import AISettingsDialog from './components/AISettingsDialog';
 import BeautifyDialog from './components/BeautifyDialog';
@@ -11,6 +12,7 @@ import { renderMarkdown, buildStandaloneHTML } from './utils/markdown';
 import { toTwitterText, toWeChatHTML, toZhihuHTML } from './utils/copyAdapters';
 import { AIConfig, loadAIConfig } from './utils/aiClient';
 import { imagesFromDataTransfer, insertImagesAtCaret } from './utils/imageUpload';
+import { syncPromoDocsForLocale } from './utils/sample';
 import {
   Doc,
   DocsState,
@@ -44,6 +46,7 @@ const TEMPLATE_KEY = 'markdown-ai:template';
 const SIDEBAR_KEY = 'markdown-ai:sidebar-collapsed';
 
 export default function App() {
+  const { t, format, locale, setLocale } = useI18n();
   const [state, setState] = useState<DocsState>(() => loadDocs());
 
   const [theme, setTheme] = useState<ThemeMode>(() => {
@@ -89,6 +92,7 @@ export default function App() {
   const copyWrapRef = useRef<HTMLDivElement>(null);
   const exportWrapRef = useRef<HTMLDivElement>(null);
   const initialStateRef = useRef(true);
+  const prevLocaleRef = useRef(locale);
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toastTimer = useRef<number>();
@@ -184,6 +188,15 @@ export default function App() {
     return () => window.clearTimeout(id);
   }, [state]);
 
+  useEffect(() => {
+    if (prevLocaleRef.current === locale) return;
+    prevLocaleRef.current = locale;
+    setState((s) => {
+      const nodes = syncPromoDocsForLocale(s.nodes, locale);
+      return nodes === s.nodes ? s : { ...s, nodes };
+    });
+  }, [locale]);
+
   function showToast(msg: string) {
     setToast(msg);
     window.clearTimeout(toastTimer.current);
@@ -201,7 +214,7 @@ export default function App() {
   }
 
   function handleCreateDoc(parentId: string | null = null) {
-    const doc = makeDoc('', '未命名文档', parentId);
+    const doc = makeDoc('', t.doc.newDoc, parentId);
     setState((s) => {
       const nodes = parentId
         ? s.nodes.map((n) =>
@@ -210,11 +223,11 @@ export default function App() {
         : s.nodes;
       return { nodes: [doc, ...nodes], activeId: doc.id };
     });
-    showToast('已新建文档');
+    showToast(t.toast.docCreated);
   }
 
   function handleCreateFolder(parentId: string | null = null) {
-    const folder = makeFolder('新建目录', parentId);
+    const folder = makeFolder(t.doc.newFolder, parentId);
     setState((s) => {
       const nodes = parentId
         ? s.nodes.map((n) =>
@@ -223,7 +236,7 @@ export default function App() {
         : s.nodes;
       return { nodes: [folder, ...nodes], activeId: s.activeId };
     });
-    showToast('已新建目录');
+    showToast(t.toast.folderCreated);
   }
 
   function handleSelect(id: string) {
@@ -270,13 +283,13 @@ export default function App() {
         if (fallback) {
           activeId = fallback;
         } else {
-          const fresh = makeDoc('', '未命名文档');
+          const fresh = makeDoc('', t.doc.newDoc);
           return { nodes: [fresh, ...next], activeId: fresh.id };
         }
       }
       return { nodes: next, activeId };
     });
-    showToast('已删除');
+    showToast(t.toast.deleted);
   }
 
   function handleDuplicate(id: string) {
@@ -286,7 +299,7 @@ export default function App() {
       const copy: Doc = {
         ...src,
         id: makeDoc().id,
-        title: `${src.title} 副本`,
+        title: `${src.title} ${t.doc.duplicateSuffix}`,
         updatedAt: Date.now(),
         createdAt: Date.now(),
       };
@@ -295,7 +308,7 @@ export default function App() {
       nodes.splice(idx + 1, 0, copy);
       return { nodes, activeId: copy.id };
     });
-    showToast('已复制副本');
+    showToast(t.toast.duplicated);
   }
 
   async function writeRich(htmlContent: string, plain: string): Promise<boolean> {
@@ -329,7 +342,7 @@ export default function App() {
     const node = previewRef.current;
     if (!node) return;
     const ok = await writeRich(node.innerHTML, node.innerText);
-    showToast(ok ? '已复制富文本，可贴到飞书 / Notion / 语雀' : '当前浏览器不支持富文本，已复制纯文本');
+    showToast(ok ? t.toast.copyRichOk : t.toast.copyRichFail);
   }
 
   async function handleCopyWeChat() {
@@ -338,7 +351,7 @@ export default function App() {
     if (!node) return;
     const styled = toWeChatHTML(node.innerHTML, palette, font, theme, template);
     const ok = await writeRich(styled, node.innerText);
-    showToast(ok ? '已复制公众号样式，到编辑器粘贴即可' : '已复制纯文本（浏览器不支持富文本写入）');
+    showToast(ok ? t.toast.copyWechatOk : t.toast.copyWechatFail);
   }
 
   async function handleCopyZhihu() {
@@ -348,22 +361,16 @@ export default function App() {
     const { html, images } = toZhihuHTML(node.innerHTML);
     const ok = await writeRich(html, node.innerText);
     if (images.length === 0) {
-      showToast(
-        ok
-          ? '已复制知乎样式，到知乎编辑器粘贴即可'
-          : '已复制纯文本（浏览器不支持富文本写入）'
-      );
+      showToast(ok ? t.toast.copyZhihuOk : t.toast.copyZhihuFail);
       return;
     }
     setImageTransfer({
       images,
-      title: '知乎 · 逐张粘图',
-      hint: '①正文已复制,先粘到知乎 ②再回这里按顺序点「复制」 ③切回知乎 Cmd+V,自动建图片块',
+      title: t.imageTransfer.zhihuTitle,
+      hint: t.imageTransfer.zhihuHint,
     });
     showToast(
-      ok
-        ? `正文已复制 · 还有 ${images.length} 张图要逐张粘`
-        : '已复制纯文本（浏览器不支持富文本写入）'
+      ok ? format(t.toast.copyZhihuStep, { count: images.length }) : t.toast.copyZhihuFail
     );
   }
 
@@ -384,21 +391,23 @@ export default function App() {
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      showToast('复制失败');
+      showToast(t.toast.copyFail);
       return;
     }
     const threadHint =
-      tweets > 1 ? `（${chars} 字 · 约 ${tweets} 条 thread）` : `（${chars} 字）`;
+      tweets > 1
+        ? format(t.toast.twitterThreadMulti, { chars, tweets })
+        : format(t.toast.twitterThreadSingle, { chars });
     if (images.length === 0) {
-      showToast(`已复制推特文字 ${threadHint}`);
+      showToast(format(t.toast.copyTwitterOk, { hint: threadHint }));
       return;
     }
     setImageTransfer({
       images,
-      title: '推特 / X · 逐张粘图',
-      hint: '①文字已复制,先粘到推特撰文框 ②再回这里按顺序点「复制」 ③切回推特 Cmd+V,作为媒体附件',
+      title: t.imageTransfer.twitterTitle,
+      hint: t.imageTransfer.twitterHint,
     });
-    showToast(`已复制推特文字 ${threadHint} · 还有 ${images.length} 张图要逐张粘`);
+    showToast(`${format(t.toast.copyTwitterOk, { hint: threadHint })} · ${format(t.toast.copyTwitterStep, { count: images.length })}`);
   }
 
   function handleExportHTML() {
@@ -418,7 +427,7 @@ export default function App() {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    showToast('HTML 已下载');
+    showToast(t.toast.htmlDownloaded);
   }
 
   function handleExportAll() {
@@ -447,7 +456,7 @@ export default function App() {
     a.remove();
     URL.revokeObjectURL(url);
     const docCount = state.nodes.filter((n) => n.type === 'doc').length;
-    showToast(`已导出全部文档备份（共 ${docCount} 份）`);
+    showToast(format(t.toast.backupExported, { count: docCount }));
   }
 
   async function insertImageFiles(files: File[]) {
@@ -473,7 +482,7 @@ export default function App() {
 
   function handleImagePick() {
     if (!active) {
-      showToast('请先选择一个文档');
+      showToast(t.toast.selectDocFirst);
       return;
     }
     fileInputRef.current?.click();
@@ -604,9 +613,9 @@ export default function App() {
     if (!active) return;
     try {
       await navigator.clipboard.writeText(active.content ?? '');
-      showToast('Markdown 源码已复制');
+      showToast(t.toast.copyMdOk);
     } catch {
-      showToast('复制失败');
+      showToast(t.toast.copyFail);
     }
   }
 
@@ -617,7 +626,7 @@ export default function App() {
           <button
             className="icon-btn"
             onClick={() => setSidebarCollapsed((c) => !c)}
-            title={sidebarCollapsed ? '展开侧栏' : '收起侧栏'}
+            title={sidebarCollapsed ? t.app.expandSidebar : t.app.collapseSidebar}
             aria-label="toggle sidebar"
           >
             <MenuIcon />
@@ -625,7 +634,7 @@ export default function App() {
           <div className="brand">
             <div className="brand-icon">M</div>
             <div className="brand-text">Markdown AI</div>
-            <div className="brand-sub">在线渲染</div>
+            <div className="brand-sub">{t.app.brandSub}</div>
           </div>
         </div>
         <div className="actions">
@@ -635,40 +644,40 @@ export default function App() {
               onClick={() => setCopyMenuOpen((o) => !o)}
               aria-haspopup="menu"
               aria-expanded={copyMenuOpen}
-              title="复制到不同平台"
+              title={t.app.copyTitle}
             >
-              <span className="txt">复制</span>
+              <span className="txt">{t.app.copy}</span>
               <CaretIcon />
             </button>
             {copyMenuOpen && (
               <div className="copy-menu" role="menu">
-                <div className="copy-menu-group">一键复制</div>
+                <div className="copy-menu-group">{t.copyMenu.groupOneClick}</div>
                 <button onClick={handleCopyWeChat} role="menuitem">
-                  <span className="menu-title">公众号</span>
-                  <span className="menu-desc">带样式 · 直接粘到编辑器</span>
+                  <span className="menu-title">{t.copyMenu.wechatTitle}</span>
+                  <span className="menu-desc">{t.copyMenu.wechatDesc}</span>
                 </button>
                 <button onClick={handleCopyRich} role="menuitem">
-                  <span className="menu-title">飞书 / Notion / 语雀</span>
-                  <span className="menu-desc">通用富文本</span>
+                  <span className="menu-title">{t.copyMenu.richTitle}</span>
+                  <span className="menu-desc">{t.copyMenu.richDesc}</span>
                 </button>
                 <button onClick={handleCopyMarkdown} role="menuitem">
-                  <span className="menu-title">Markdown 源码</span>
-                  <span className="menu-desc">原文 · 跨工具迁移</span>
+                  <span className="menu-title">{t.copyMenu.mdTitle}</span>
+                  <span className="menu-desc">{t.copyMenu.mdDesc}</span>
                 </button>
                 <div className="copy-menu-group">
-                  分步发布 <span className="copy-menu-group-hint">含图需逐张粘贴</span>
+                  {t.copyMenu.groupStep} <span className="copy-menu-group-hint">{t.copyMenu.groupStepHint}</span>
                 </div>
                 <button onClick={handleCopyZhihu} role="menuitem">
                   <span className="menu-title">
-                    知乎 <span className="menu-tag">分步</span>
+                    {t.copyMenu.zhihuTitle} <span className="menu-tag">{t.copyMenu.stepTag}</span>
                   </span>
-                  <span className="menu-desc">正文一次复制 · 图片打开面板逐张粘</span>
+                  <span className="menu-desc">{t.copyMenu.zhihuDesc}</span>
                 </button>
                 <button onClick={handleCopyTwitter} role="menuitem">
                   <span className="menu-title">
-                    推特 / X <span className="menu-tag">分步</span>
+                    {t.copyMenu.twitterTitle} <span className="menu-tag">{t.copyMenu.stepTag}</span>
                   </span>
-                  <span className="menu-desc">精炼文本 + thread 分条 · 图片单独逐张粘</span>
+                  <span className="menu-desc">{t.copyMenu.twitterDesc}</span>
                 </button>
               </div>
             )}
@@ -679,28 +688,44 @@ export default function App() {
               onClick={() => setExportMenuOpen((o) => !o)}
               aria-haspopup="menu"
               aria-expanded={exportMenuOpen}
-              title="导出 / 备份"
+              title={t.app.exportTitle}
             >
-              <span className="txt">导出</span>
+              <span className="txt">{t.app.export}</span>
               <CaretIcon />
             </button>
             {exportMenuOpen && (
               <div className="copy-menu" role="menu">
                 <button onClick={handleExportHTML} role="menuitem">
-                  <span className="menu-title">当前文档 · HTML</span>
-                  <span className="menu-desc">独立 HTML · 样式内嵌可直接打开</span>
+                  <span className="menu-title">{t.exportMenu.htmlTitle}</span>
+                  <span className="menu-desc">{t.exportMenu.htmlDesc}</span>
                 </button>
                 <button onClick={handleExportAll} role="menuitem">
-                  <span className="menu-title">全部文档 · JSON 备份</span>
-                  <span className="menu-desc">所有文档与目录结构 · 防本地数据丢失</span>
+                  <span className="menu-title">{t.exportMenu.backupTitle}</span>
+                  <span className="menu-desc">{t.exportMenu.backupDesc}</span>
                 </button>
               </div>
             )}
           </div>
+          <div className="lang-switch" role="group" aria-label={t.app.langSwitch}>
+            <button
+              type="button"
+              className={locale === 'zh' ? 'active' : ''}
+              onClick={() => setLocale('zh')}
+            >
+              {t.app.langZh}
+            </button>
+            <button
+              type="button"
+              className={locale === 'en' ? 'active' : ''}
+              onClick={() => setLocale('en')}
+            >
+              {t.app.langEn}
+            </button>
+          </div>
           <button
             className="icon-btn"
-            onClick={() => setTheme((t) => (t === 'light' ? 'dark' : 'light'))}
-            title={theme === 'light' ? '切换深色' : '切换浅色'}
+            onClick={() => setTheme((th) => (th === 'light' ? 'dark' : 'light'))}
+            title={theme === 'light' ? t.app.toggleDark : t.app.toggleLight}
             aria-label="toggle theme"
           >
             {theme === 'light' ? <MoonIcon /> : <SunIcon />}
@@ -743,13 +768,13 @@ export default function App() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
           <div className="mobile-tabs" role="tablist">
             <button className={tab === 'edit' ? 'active' : ''} onClick={() => setTab('edit')}>
-              编辑
+              {t.editor.tabEdit}
             </button>
             <button
               className={tab === 'preview' ? 'active' : ''}
               onClick={() => setTab('preview')}
             >
-              预览
+              {t.editor.tabPreview}
             </button>
           </div>
 
@@ -758,28 +783,28 @@ export default function App() {
               <div className="pane-head">
                 <span className="pane-tag">Markdown</span>
                 <span className="pane-title" title={active?.title}>
-                  {active?.title || '未命名'}
+                  {active?.title || t.editor.untitled}
                 </span>
-                <span>{active?.content?.length ?? 0} 字</span>
+                <span>{active?.content?.length ?? 0} {t.editor.charUnit}</span>
                 <span
                   className={`save-indicator ${saving ? 'saving' : 'saved'}`}
                   title={
                     saving
-                      ? '正在自动保存到本地'
+                      ? t.editor.savingTitle
                       : lastSavedAt
-                      ? `已保存到本地存储 · ${new Date(lastSavedAt).toLocaleString()}`
+                      ? format(t.editor.savedAt, { time: new Date(lastSavedAt).toLocaleString() })
                       : ''
                   }
                 >
                   <span className="save-dot" />
-                  {saving ? '保存中…' : `已保存 ${formatSavedTime(lastSavedAt)}`}
+                  {saving ? t.editor.saving : `${t.editor.saved} ${formatSavedTime(lastSavedAt)}`}
                 </span>
                 <div style={{ flex: 1 }} />
                 <button
                   className="pane-action-icon"
                   onClick={handleImagePick}
-                  title="插入图片（也可拖拽 / 粘贴）"
-                  aria-label="插入图片"
+                  title={t.editor.insertImage}
+                  aria-label={t.editor.insertImage}
                 >
                   <ImageIcon />
                 </button>
@@ -787,25 +812,25 @@ export default function App() {
                   className="pane-action"
                   onClick={() => {
                     if (!active?.content?.trim()) {
-                      showToast('文档为空，无需排版');
+                      showToast(t.toast.emptyDocBeautify);
                       return;
                     }
                     if (!aiCfg) {
                       setAISettingsOpen(true);
-                      showToast('先配置 AI 服务');
+                      showToast(t.toast.configureAiFirst);
                       return;
                     }
                     setAIBeautifyOpen(true);
                   }}
-                  title="用 AI 重新排版（保留原文字句）"
+                  title={t.editor.beautifyTitle}
                 >
-                  ✦ AI 美化排版
+                  {t.editor.beautify}
                 </button>
                 <button
                   className="pane-action-icon"
                   onClick={() => setAISettingsOpen(true)}
-                  title="AI 服务配置"
-                  aria-label="AI 服务配置"
+                  title={t.editor.aiSettings}
+                  aria-label={t.editor.aiSettings}
                 >
                   ⚙
                 </button>
@@ -833,14 +858,7 @@ export default function App() {
                   }}
                   onScroll={() => setFormatToolbar(null)}
                   spellCheck={false}
-                  placeholder={
-                    '在这里写 Markdown…\n\n' +
-                    '小提示\n' +
-                    '· 直接拖拽 / 粘贴图片到这里\n' +
-                    '· 选中文字会浮出格式工具栏（颜色 / 加粗 / 高亮）\n' +
-                    '· 侧栏底部能换 14 套版式 / 配色 / 字体\n' +
-                    '· 写完点上方 ✦ AI 美化排版 一键重排'
-                  }
+                  placeholder={t.editor.placeholder}
                 />
                 {formatToolbar && (
                   <FormatToolbar
@@ -852,7 +870,7 @@ export default function App() {
                   />
                 )}
                 {dragOver && (
-                  <div className="editor-drop-hint">松开即可插入图片</div>
+                  <div className="editor-drop-hint">{t.editor.dropHint}</div>
                 )}
                 <input
                   ref={fileInputRef}
@@ -898,7 +916,7 @@ export default function App() {
         onClose={() => setAISettingsOpen(false)}
         onSaved={(cfg) => {
           setAICfg(cfg);
-          showToast('AI 配置已保存');
+          showToast(t.toast.aiSaved);
         }}
       />
 
@@ -913,7 +931,7 @@ export default function App() {
               const backup: Doc = {
                 ...active,
                 id: makeDoc().id,
-                title: `${active.title || '未命名'} · 美化前`,
+                title: `${active.title || t.editor.untitled} · ${t.beautify.beforeBackupSuffix}`,
                 content: active.content ?? '',
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
@@ -931,10 +949,10 @@ export default function App() {
                   ),
                 };
               });
-              showToast('已应用 · 原文已存为「美化前」副本');
+              showToast(t.toast.beautifyAppliedBackup);
             } else {
               updateContent(next);
-              showToast('已应用 AI 美化排版');
+              showToast(t.toast.beautifyApplied);
             }
           }}
           onClose={() => setAIBeautifyOpen(false)}

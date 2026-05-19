@@ -30,7 +30,13 @@ export interface FontMeta {
   desc: string;
 }
 
-export type TemplateCategory = '杂志' | '海报' | '书籍' | '手记' | '极客' | '中式';
+export type TemplateCategory =
+  | 'magazine'
+  | 'poster'
+  | 'book'
+  | 'notebook'
+  | 'geek'
+  | 'chinese';
 
 export interface TemplateMeta {
   id: TemplateId;
@@ -40,12 +46,12 @@ export interface TemplateMeta {
 }
 
 export const TEMPLATE_CATEGORIES: TemplateCategory[] = [
-  '杂志',
-  '海报',
-  '书籍',
-  '手记',
-  '极客',
-  '中式',
+  'magazine',
+  'poster',
+  'book',
+  'notebook',
+  'geek',
+  'chinese',
 ];
 
 export const PALETTES: PaletteMeta[] = [
@@ -64,21 +70,43 @@ export const FONTS: FontMeta[] = [
 ];
 
 export const TEMPLATES: TemplateMeta[] = [
-  { id: 'qingye', name: '晴野', desc: '点阵 · 大引号', category: '书籍' },
-  { id: 'haibao', name: '海报', desc: '反白 · hero', category: '海报' },
-  { id: 'ningmeng', name: '柠檬', desc: '高亮笔 · 海报', category: '海报' },
-  { id: 'chongying', name: '重影', desc: '贴纸 · 偏移', category: '手记' },
-  { id: 'huabao', name: '画报', desc: '杂志 · 首字', category: '杂志' },
-  { id: 'yinzhang', name: '印章', desc: '中式 · 朱印', category: '中式' },
-  { id: 'geshan', name: '格栅', desc: '点阵 · 极客', category: '极客' },
-  { id: 'shouzha', name: '手札', desc: '波浪 · 手记', category: '手记' },
-  { id: 'jiguang', name: '极光', desc: '渐变 · 现代', category: '极客' },
-  { id: 'zhangye', name: '章页', desc: '书籍 · 罗马', category: '书籍' },
-  { id: 'juanshou', name: '卷首', desc: '杂志 · 大首字', category: '杂志' },
-  { id: 'jiekan', name: '街刊', desc: '杂志 · Monocle', category: '杂志' },
-  { id: 'yuebao', name: '月报', desc: '杂志 · 数据感', category: '杂志' },
-  { id: 'hongbang', name: '红榜', desc: '大红 · 黑体粗', category: '海报' },
+  { id: 'qingye', name: '晴野', desc: '点阵 · 大引号', category: 'book' },
+  { id: 'haibao', name: '海报', desc: '反白 · hero', category: 'poster' },
+  { id: 'ningmeng', name: '柠檬', desc: '高亮笔 · 海报', category: 'poster' },
+  { id: 'chongying', name: '重影', desc: '贴纸 · 偏移', category: 'notebook' },
+  { id: 'huabao', name: '画报', desc: '杂志 · 首字', category: 'magazine' },
+  { id: 'yinzhang', name: '印章', desc: '中式 · 朱印', category: 'chinese' },
+  { id: 'geshan', name: '格栅', desc: '点阵 · 极客', category: 'geek' },
+  { id: 'shouzha', name: '手札', desc: '波浪 · 手记', category: 'notebook' },
+  { id: 'jiguang', name: '极光', desc: '渐变 · 现代', category: 'geek' },
+  { id: 'zhangye', name: '章页', desc: '书籍 · 罗马', category: 'book' },
+  { id: 'juanshou', name: '卷首', desc: '杂志 · 大首字', category: 'magazine' },
+  { id: 'jiekan', name: '街刊', desc: '杂志 · Monocle', category: 'magazine' },
+  { id: 'yuebao', name: '月报', desc: '杂志 · 数据感', category: 'magazine' },
+  { id: 'hongbang', name: '红榜', desc: '大红 · 黑体粗', category: 'poster' },
 ];
+
+/** 侧栏快捷展示的常用版式（其余在「查看全部」画廊） */
+export const SIDEBAR_FEATURED_TEMPLATES: TemplateId[] = [
+  'qingye',
+  'haibao',
+  'ningmeng',
+  'hongbang',
+  'jiekan',
+  'yuebao',
+];
+
+/** 侧栏版式列表：当前选中置顶 + 常用版式，去重 */
+export function getSidebarTemplates(
+  current: TemplateId,
+  source: TemplateMeta[] = TEMPLATES
+): TemplateMeta[] {
+  const ordered: TemplateId[] = [current];
+  for (const id of SIDEBAR_FEATURED_TEMPLATES) {
+    if (id !== current) ordered.push(id);
+  }
+  return ordered.map((id) => source.find((t) => t.id === id)!);
+}
 
 export const DEFAULT_PALETTE: PaletteId = 'chushaa';
 export const DEFAULT_FONT: FontId = 'wenkai';
