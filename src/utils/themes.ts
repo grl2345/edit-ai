@@ -68,9 +68,9 @@ export const TEMPLATES: TemplateMeta[] = [
   { id: 'hongbang', name: '红榜', desc: '大红 · 黑体粗' },
 ];
 
-export const DEFAULT_PALETTE: PaletteId = 'liyuan';
-export const DEFAULT_FONT: FontId = 'kaiti';
-export const DEFAULT_TEMPLATE: TemplateId = 'haibao';
+export const DEFAULT_PALETTE: PaletteId = 'chushaa';
+export const DEFAULT_FONT: FontId = 'wenkai';
+export const DEFAULT_TEMPLATE: TemplateId = 'qingye';
 
 export interface PaletteVars {
   accent: string;
