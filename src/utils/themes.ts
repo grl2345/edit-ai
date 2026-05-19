@@ -112,6 +112,35 @@ export const DEFAULT_PALETTE: PaletteId = 'chushaa';
 export const DEFAULT_FONT: FontId = 'wenkai';
 export const DEFAULT_TEMPLATE: TemplateId = 'qingye';
 
+export const TEMPLATE_STORAGE_KEY = 'markdown-ai:template';
+const APPEARANCE_DEFAULT_VERSION_KEY = 'markdown-ai:appearance-default-v';
+const APPEARANCE_DEFAULT_VERSION = 1;
+
+/** 读取版式；曾用海报作宣传默认时，一次性迁回晴野 */
+export function getStoredTemplate(): TemplateId {
+  try {
+    const ver = localStorage.getItem(APPEARANCE_DEFAULT_VERSION_KEY);
+    const v = localStorage.getItem(TEMPLATE_STORAGE_KEY);
+    if (ver !== String(APPEARANCE_DEFAULT_VERSION)) {
+      const next: TemplateId =
+        !v || v === 'haibao'
+          ? DEFAULT_TEMPLATE
+          : isTemplate(v)
+            ? v
+            : DEFAULT_TEMPLATE;
+      localStorage.setItem(TEMPLATE_STORAGE_KEY, next);
+      localStorage.setItem(
+        APPEARANCE_DEFAULT_VERSION_KEY,
+        String(APPEARANCE_DEFAULT_VERSION)
+      );
+      return next;
+    }
+    return isTemplate(v) ? v : DEFAULT_TEMPLATE;
+  } catch {
+    return DEFAULT_TEMPLATE;
+  }
+}
+
 export interface PaletteVars {
   accent: string;
   accentLight: string;

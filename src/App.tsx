@@ -27,14 +27,14 @@ import {
 import {
   DEFAULT_FONT,
   DEFAULT_PALETTE,
-  DEFAULT_TEMPLATE,
   FontId,
   PaletteId,
   TemplateId,
   ThemeMode,
+  TEMPLATE_STORAGE_KEY,
+  getStoredTemplate,
   isFont,
   isPalette,
-  isTemplate,
 } from './utils/themes';
 
 type Tab = 'edit' | 'preview';
@@ -42,7 +42,7 @@ type Tab = 'edit' | 'preview';
 const THEME_KEY = 'markdown-ai:theme';
 const PALETTE_KEY = 'markdown-ai:palette';
 const FONT_KEY = 'markdown-ai:font';
-const TEMPLATE_KEY = 'markdown-ai:template';
+const TEMPLATE_KEY = TEMPLATE_STORAGE_KEY;
 const SIDEBAR_KEY = 'markdown-ai:sidebar-collapsed';
 
 export default function App() {
@@ -65,10 +65,7 @@ export default function App() {
     return isFont(v) ? v : DEFAULT_FONT;
   });
 
-  const [template, setTemplate] = useState<TemplateId>(() => {
-    const v = localStorage.getItem(TEMPLATE_KEY);
-    return isTemplate(v) ? v : DEFAULT_TEMPLATE;
-  });
+  const [template, setTemplate] = useState<TemplateId>(() => getStoredTemplate());
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
     const saved = localStorage.getItem(SIDEBAR_KEY);
