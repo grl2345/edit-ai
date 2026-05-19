@@ -30,11 +30,23 @@ export interface FontMeta {
   desc: string;
 }
 
+export type TemplateCategory = '杂志' | '海报' | '书籍' | '手记' | '极客' | '中式';
+
 export interface TemplateMeta {
   id: TemplateId;
   name: string;
   desc: string;
+  category: TemplateCategory;
 }
+
+export const TEMPLATE_CATEGORIES: TemplateCategory[] = [
+  '杂志',
+  '海报',
+  '书籍',
+  '手记',
+  '极客',
+  '中式',
+];
 
 export const PALETTES: PaletteMeta[] = [
   { id: 'chushaa', name: '朱砂', desc: '红 · 米纸', swatch: '#c44b2b' },
@@ -52,20 +64,20 @@ export const FONTS: FontMeta[] = [
 ];
 
 export const TEMPLATES: TemplateMeta[] = [
-  { id: 'qingye', name: '晴野', desc: '点阵 · 大引号' },
-  { id: 'haibao', name: '海报', desc: '反白 · hero' },
-  { id: 'ningmeng', name: '柠檬', desc: '高亮笔 · 海报' },
-  { id: 'chongying', name: '重影', desc: '贴纸 · 偏移' },
-  { id: 'huabao', name: '画报', desc: '杂志 · 首字' },
-  { id: 'yinzhang', name: '印章', desc: '中式 · 朱印' },
-  { id: 'geshan', name: '格栅', desc: '点阵 · 极客' },
-  { id: 'shouzha', name: '手札', desc: '波浪 · 手记' },
-  { id: 'jiguang', name: '极光', desc: '渐变 · 现代' },
-  { id: 'zhangye', name: '章页', desc: '书籍 · 罗马' },
-  { id: 'juanshou', name: '卷首', desc: '杂志 · 大首字' },
-  { id: 'jiekan', name: '街刊', desc: '杂志 · Monocle' },
-  { id: 'yuebao', name: '月报', desc: '杂志 · 数据感' },
-  { id: 'hongbang', name: '红榜', desc: '大红 · 黑体粗' },
+  { id: 'qingye', name: '晴野', desc: '点阵 · 大引号', category: '书籍' },
+  { id: 'haibao', name: '海报', desc: '反白 · hero', category: '海报' },
+  { id: 'ningmeng', name: '柠檬', desc: '高亮笔 · 海报', category: '海报' },
+  { id: 'chongying', name: '重影', desc: '贴纸 · 偏移', category: '手记' },
+  { id: 'huabao', name: '画报', desc: '杂志 · 首字', category: '杂志' },
+  { id: 'yinzhang', name: '印章', desc: '中式 · 朱印', category: '中式' },
+  { id: 'geshan', name: '格栅', desc: '点阵 · 极客', category: '极客' },
+  { id: 'shouzha', name: '手札', desc: '波浪 · 手记', category: '手记' },
+  { id: 'jiguang', name: '极光', desc: '渐变 · 现代', category: '极客' },
+  { id: 'zhangye', name: '章页', desc: '书籍 · 罗马', category: '书籍' },
+  { id: 'juanshou', name: '卷首', desc: '杂志 · 大首字', category: '杂志' },
+  { id: 'jiekan', name: '街刊', desc: '杂志 · Monocle', category: '杂志' },
+  { id: 'yuebao', name: '月报', desc: '杂志 · 数据感', category: '杂志' },
+  { id: 'hongbang', name: '红榜', desc: '大红 · 黑体粗', category: '海报' },
 ];
 
 export const DEFAULT_PALETTE: PaletteId = 'chushaa';
