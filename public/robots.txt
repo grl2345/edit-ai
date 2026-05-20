@@ -11,4 +11,4 @@ Allow: /
 User-agent: AdsBot-Google-Mobile
 Allow: /
 
-Sitemap: https://YOUR_DOMAIN_HERE/sitemap.xml
+Sitemap: https://www.markdown-text.com/sitemap.xml
