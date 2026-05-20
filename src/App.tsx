@@ -9,6 +9,7 @@ import { getCaretCoordinates } from './utils/textareaCaret';
 import { findOpenFormatting } from './utils/formatSplit';
 import { ensureCache } from './utils/imageStore';
 import { renderMarkdown, buildStandaloneHTML } from './utils/markdown';
+import { htmlToMarkdown, extractHtmlTitle } from './utils/htmlToMarkdown';
 import { toTwitterText, toWeChatHTML, toZhihuHTML } from './utils/copyAdapters';
 import { AIConfig, loadAIConfig } from './utils/aiClient';
 import { imagesFromDataTransfer, insertImagesAtCaret } from './utils/imageUpload';
@@ -92,6 +93,7 @@ export default function App() {
   const prevLocaleRef = useRef(locale);
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const htmlImportInputRef = useRef<HTMLInputElement>(null);
   const toastTimer = useRef<number>();
   const [dragOver, setDragOver] = useState(false);
   // 图片仓库异步加载完成后 bump 一下，让预览 useMemo 重新跑、把图填上
@@ -427,6 +429,31 @@ export default function App() {
     showToast(t.toast.htmlDownloaded);
   }
 
+  function handleImportHTMLClick() {
+    htmlImportInputRef.current?.click();
+  }
+
+  async function handleImportHTMLFile(file: File) {
+    try {
+      const text = await file.text();
+      const md = htmlToMarkdown(text);
+      if (!md.trim()) {
+        showToast(t.toast.htmlImportEmpty);
+        return;
+      }
+      const fileTitle = file.name.replace(/\.[^.]+$/, '');
+      const title =
+        extractHtmlTitle(text) ||
+        extractTitle(md, fileTitle || t.doc.newDoc);
+      const doc = makeDoc(md, title, null);
+      setState((s) => ({ nodes: [doc, ...s.nodes], activeId: doc.id }));
+      showToast(t.toast.htmlImported);
+    } catch (e) {
+      console.error(e);
+      showToast(t.toast.htmlImportFail);
+    }
+  }
+
   function handleExportAll() {
     setExportMenuOpen(false);
     const payload = {
@@ -679,6 +706,24 @@ export default function App() {
               </div>
             )}
           </div>
+          <button
+            className="btn"
+            onClick={handleImportHTMLClick}
+            title={t.app.importHtmlTitle}
+          >
+            <span className="txt">{t.app.importHtml}</span>
+          </button>
+          <input
+            ref={htmlImportInputRef}
+            type="file"
+            accept=".html,.htm,text/html"
+            hidden
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleImportHTMLFile(f);
+              e.target.value = '';
+            }}
+          />
           <div className="copy-wrap" ref={exportWrapRef}>
             <button
               className="btn primary"

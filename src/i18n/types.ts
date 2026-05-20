@@ -16,6 +16,8 @@ export interface Messages {
     copyTitle: string;
     export: string;
     exportTitle: string;
+    importHtml: string;
+    importHtmlTitle: string;
     toggleDark: string;
     toggleLight: string;
     langZh: string;
@@ -81,6 +83,9 @@ export interface Messages {
     copyFail: string;
     copyMdOk: string;
     htmlDownloaded: string;
+    htmlImported: string;
+    htmlImportEmpty: string;
+    htmlImportFail: string;
     backupExported: string;
     selectDocFirst: string;
     emptyDocBeautify: string;
