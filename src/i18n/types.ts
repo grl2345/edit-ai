@@ -123,6 +123,10 @@ export interface Messages {
     confirmDeleteDoc: string;
     confirmDeleteFolder: string;
     confirmIrreversible: string;
+    legalNav: string;
+    about: string;
+    privacy: string;
+    terms: string;
   };
   appearance: {
     summaryTitle: string;

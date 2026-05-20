@@ -266,6 +266,14 @@ export default function Sidebar({
       </div>
 
       <AppearancePanel {...appearance} />
+
+      <nav className="sidebar-legal" aria-label={t.sidebar.legalNav}>
+        <a href="/about.html">{t.sidebar.about}</a>
+        <span aria-hidden>·</span>
+        <a href="/privacy.html">{t.sidebar.privacy}</a>
+        <span aria-hidden>·</span>
+        <a href="/terms.html">{t.sidebar.terms}</a>
+      </nav>
     </aside>
   );
 }

@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# AdSense / AdsBot 显式放行（避免被规则误伤）
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: AdsBot-Google-Mobile
+Allow: /
+
+Sitemap: https://YOUR_DOMAIN_HERE/sitemap.xml

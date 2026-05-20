@@ -3,19 +3,75 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="一个优雅的中文 Markdown 在线渲染工具：实时预览、代码高亮、导出 HTML、复制富文本，深浅色自适配。" />
+    <title>Markdown AI · 优雅的中文 Markdown 在线渲染与排版工具</title>
+    <meta
+      name="description"
+      content="Markdown AI 是一款专注中文排版的在线 Markdown 渲染工具：实时预览、代码高亮、霞鹜文楷字体、一键复制富文本到公众号 / 知乎 / 飞书 / Notion，纯前端运行，数据保存在本机。"
+    />
+    <meta
+      name="keywords"
+      content="Markdown,Markdown 编辑器,在线 Markdown,中文 Markdown,公众号排版,知乎排版,飞书,Notion,霞鹜文楷,代码高亮"
+    />
+    <meta name="author" content="Markdown AI" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://YOUR_DOMAIN_HERE/" />
+
     <meta name="theme-color" content="#f6f3ed" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#14181f" media="(prefers-color-scheme: dark)" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <title>Markdown AI · 在线渲染工具</title>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Markdown AI" />
+    <meta property="og:title" content="Markdown AI · 优雅的中文 Markdown 在线渲染工具" />
+    <meta
+      property="og:description"
+      content="实时预览、代码高亮、霞鹜文楷字体、一键复制富文本到公众号 / 知乎 / 飞书 / Notion。纯前端，零上传。"
+    />
+    <meta property="og:url" content="https://YOUR_DOMAIN_HERE/" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Markdown AI · 优雅的中文 Markdown 在线渲染工具" />
+    <meta
+      name="twitter:description"
+      content="实时预览、代码高亮、霞鹜文楷字体、一键复制富文本到公众号 / 知乎 / 飞书 / Notion。"
+    />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=LXGW+WenKai+TC:wght@400;700&display=swap"
       rel="stylesheet"
     />
+
+    <!-- JSON-LD: WebApplication -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Markdown AI",
+        "url": "https://YOUR_DOMAIN_HERE/",
+        "applicationCategory": "Productivity",
+        "operatingSystem": "Any (browser-based)",
+        "inLanguage": ["zh-CN", "en"],
+        "description": "一款专注中文排版的在线 Markdown 渲染与排版工具，支持实时预览、代码高亮、富文本复制到公众号 / 知乎 / 飞书 / Notion。",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "CNY"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Markdown AI"
+        }
+      }
+    </script>
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-FL9HQC8KT8"></script>
     <script>
@@ -28,6 +84,20 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- SEO 兜底：SPA 未加载时，爬虫与无 JS 用户至少能拿到品牌、简介与法务页入口 -->
+    <noscript>
+      <div style="max-width: 720px; margin: 48px auto; padding: 0 24px; font-family: 'LXGW WenKai TC', 'Songti SC', 'PingFang SC', serif; line-height: 1.8;">
+        <h1>Markdown AI</h1>
+        <p>
+          一款专注中文排版的在线 Markdown 渲染工具：实时预览、代码高亮、霞鹜文楷字体、一键复制富文本到公众号 / 知乎 / 飞书 / Notion。
+        </p>
+        <p>请启用 JavaScript 以使用编辑器。</p>
+        <p>
+          <a href="/about.html">关于</a> · <a href="/privacy.html">隐私政策</a> ·
+          <a href="/terms.html">服务条款</a>
+        </p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

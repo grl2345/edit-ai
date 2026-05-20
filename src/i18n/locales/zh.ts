@@ -119,6 +119,10 @@ export const zh: Messages = {
     confirmDeleteDoc: '确定删除 “{name}”？',
     confirmDeleteFolder: '确定删除目录 “{name}” 及其全部内容？',
     confirmIrreversible: '此操作不可撤销。',
+    legalNav: '站点信息',
+    about: '关于',
+    privacy: '隐私',
+    terms: '条款',
   },
   appearance: {
     summaryTitle: '当前样式',

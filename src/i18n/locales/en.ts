@@ -119,6 +119,10 @@ export const en: Messages = {
     confirmDeleteDoc: 'Delete “{name}”?',
     confirmDeleteFolder: 'Delete folder “{name}” and all contents?',
     confirmIrreversible: 'This cannot be undone.',
+    legalNav: 'Site info',
+    about: 'About',
+    privacy: 'Privacy',
+    terms: 'Terms',
   },
   appearance: {
     summaryTitle: 'Current style',
