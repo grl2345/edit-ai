@@ -1,0 +1,72 @@
+# Markdown AI
+
+> 一款专注中文排版的在线 Markdown 渲染与一键复制工具。打开浏览器即用、纯前端运行、零上传、所有数据保存在本机浏览器里。设计目标是让中文 Markdown 直接复制到公众号、知乎、飞书、Notion 时,样式就已经很好看。
+
+**站点**: https://www.markdown-text.com/
+**语言**: 简体中文 / English
+**定价**: 完全免费,无需注册
+**运行方式**: 纯前端单页应用,不向服务器上传任何文档或图片
+
+## 这个工具能做什么
+
+- **实时双栏渲染**: 左侧编辑 Markdown,右侧实时预览,所见即所得
+- **中文排版优化**: 内置霞鹜文楷 TC、思源宋体、JetBrains Mono 字体组合,行距/字距/标点挤压按中文阅读习惯调校
+- **十余种排版模板**: 宠英、格栅、海报、红榜、画报、节刊、激光、卷首、柠檬、清叶、手札、印章、月报、樟叶等风格,一键切换
+- **代码语法高亮**: 基于 highlight.js,支持上百种语言,默认使用 terminal-dark 配色
+- **一键复制富文本**: 复制后可直接粘贴到微信公众号、知乎、飞书、Notion,样式不丢失
+- **平台适配**: 知乎按其编辑器特性做了 HTML 适配;Twitter / X 长文自动拆分发推串
+- **导出独立 HTML**: 样式全部内嵌到单文件,双击即可在浏览器打开,可离线分发
+- **AI 美化(可选)**: 用户自行配置 OpenAI / Anthropic / DeepSeek 等 API Key,对文档做排版优化或错字润色,Key 仅存于本机
+- **深色 / 浅色主题**: 跟随系统或手动切换
+- **移动端编辑预览切换**: 小屏自动适配
+
+## 适合谁用
+
+- 微信公众号写作者: 解决"在编辑器排好版,粘到公众号就全乱"的痛点
+- 知乎专栏作者: 代码块、引用、表格能完整带样式过去
+- 飞书 / Notion 文档使用者: 富文本格式可直接保留
+- 写技术博客的工程师: 代码高亮 + 中文衬线字体,长文不累眼
+- 需要把 Markdown 转成 PDF / 截图 / 独立 HTML 分发的人
+
+## 常见问题
+
+**Q: 我的文档会被上传到服务器吗?**
+A: 不会。Markdown AI 是纯前端单页应用,所有文档、图片、AI API Key 都只保存在你当前浏览器的 localStorage / IndexedDB,刷新页面也在,但换设备不同步。
+
+**Q: 复制到公众号样式会丢吗?**
+A: 不会。点"复制富文本"后直接 Ctrl/Cmd+V 粘贴到公众号编辑器,字体、颜色、行距、代码块样式都会保留。
+
+**Q: 需要注册或付费吗?**
+A: 不需要,完全免费。可选的 AI 美化功能需要你自己提供 OpenAI / Anthropic / DeepSeek 等大模型 API Key。
+
+**Q: 支持哪些 Markdown 语法?**
+A: 标准 CommonMark + GFM 扩展(表格、任务列表、删除线、代码围栏)。基于 marked 解析。
+
+**Q: 能离线使用吗?**
+A: 首次加载后,核心功能可在离线状态使用。导出的独立 HTML 文件天然就能离线打开。
+
+**Q: 数据会丢失吗?**
+A: 文档保存在浏览器 localStorage,清理浏览数据会清掉。建议重要文档手动导出 .md 或 .html 备份。
+
+**Q: 和 Typora / Mark Text / 简悦 等工具有什么区别?**
+A: Markdown AI 不追求做"全能编辑器",专注一件事: **让中文 Markdown 复制到中文社交平台时直接好看**。所以模板和字体都是为中文写作场景调过的。
+
+## 技术栈
+
+- 构建: Vite + React 18 + TypeScript
+- Markdown 解析: marked + marked-highlight
+- 代码高亮: highlight.js
+- 字体: 霞鹜文楷 TC (LXGW WenKai TC) + JetBrains Mono
+- 存储: localStorage + IndexedDB(图片缓存)
+- 部署: 静态托管,任意 CDN 可跑
+
+## 主要页面
+
+- [首页 / 工具](https://www.markdown-text.com/): Markdown 编辑器主界面
+- [关于](https://www.markdown-text.com/about.html): 项目介绍与设计理念
+- [隐私政策](https://www.markdown-text.com/privacy.html): 数据处理说明(简言之: 不收集)
+- [服务条款](https://www.markdown-text.com/terms.html): 使用条款
+
+## 联系方式
+
+反馈、合作或建议: gaoruilinbaima@gmail.com
