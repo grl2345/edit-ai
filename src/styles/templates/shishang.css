@@ -1,0 +1,156 @@
+/* ============================================================
+   时尚 · shishang —— Vogue / Harper's Bazaar
+   签名：极细衬线 · 大写字距 · 优雅线条
+   ============================================================ */
+
+.prose[data-template='shishang'] {
+  font-size: 16px;
+  line-height: 1.85;
+  background-color: var(--paper);
+  padding: 32px 28px 64px;
+  border-radius: 14px;
+}
+
+.prose[data-template='shishang'] h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 38px;
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 12px 0 24px;
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--ink);
+  border-top: none;
+}
+
+.prose[data-template='shishang'] h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 20px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--ink);
+  margin: 40px 0 16px;
+  padding: 0;
+  border: none;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.prose[data-template='shishang'] h2::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.prose[data-template='shishang'] h3 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 12px;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 2.5px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin: 28px 0 12px;
+}
+
+.prose[data-template='shishang'] h4 {
+  font-family: var(--prose-font);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin: 20px 0 8px;
+}
+
+.prose[data-template='shishang'] blockquote {
+  border: none;
+  padding: 20px 0 20px 24px;
+  border-left: 1px solid var(--accent);
+  margin: 28px 0;
+  background: transparent;
+  font-style: italic;
+  color: var(--ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+  line-height: 1.7;
+  font-weight: 300;
+}
+.prose[data-template='shishang'] blockquote p {
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+
+.prose[data-template='shishang'] hr {
+  border: none;
+  height: 1px;
+  background: var(--ink);
+  margin: 40px 0;
+  position: relative;
+}
+
+.prose[data-template='shishang'] strong {
+  font-weight: 700;
+  color: var(--ink);
+}
+.prose[data-template='shishang'] em {
+  font-style: italic;
+  color: var(--accent);
+}
+.prose[data-template='shishang'] a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--accent);
+  text-decoration: none;
+}
+.prose[data-template='shishang'] code {
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: var(--accent);
+  background: transparent;
+  padding: 0;
+}
+
+.prose[data-template='shishang'] ul,
+.prose[data-template='shishang'] ol {
+  padding-left: 4px;
+  list-style: none;
+}
+.prose[data-template='shishang'] ul > li {
+  position: relative;
+  padding-left: 32px;
+}
+.prose[data-template='shishang'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 20px;
+  height: 1px;
+  background: var(--accent);
+}
+.prose[data-template='shishang'] ol {
+  counter-reset: shishang-ol;
+}
+.prose[data-template='shishang'] ol > li {
+  counter-increment: shishang-ol;
+  position: relative;
+  padding-left: 28px;
+}
+.prose[data-template='shishang'] ol > li::before {
+  content: counter(shishang-ol, decimal) '.';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 16px;
+  font-weight: 300;
+}

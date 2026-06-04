@@ -1,0 +1,195 @@
+/* ============================================================
+   文艺 · wenyi —— Paris Review / 文学季刊
+   签名：居中版式 · 罗马数字 · 首字下沉 · 简约衬线
+   ============================================================ */
+
+.prose[data-template='wenyi'] {
+  font-size: 16.5px;
+  line-height: 1.95;
+  background-color: var(--paper);
+  padding: 36px 32px 72px;
+  border-radius: 14px;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.prose[data-template='wenyi'] p {
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.prose[data-template='wenyi'] h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--ink);
+  margin: 12px 0 32px;
+  padding: 20px 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  letter-spacing: 2px;
+}
+
+.prose[data-template='wenyi'] h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 19px;
+  font-weight: 400;
+  font-style: italic;
+  text-align: center;
+  color: var(--ink);
+  margin: 8px 0 18px;
+  padding: 0;
+  border: none;
+  letter-spacing: 0.5px;
+  counter-increment: wenyi-h2;
+}
+.prose[data-template='wenyi'] h2::before {
+  content: counter(wenyi-h2, upper-roman);
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 400;
+  margin-bottom: 6px;
+  margin-top: 40px;
+}
+.prose[data-template='wenyi'] {
+  counter-reset: wenyi-h2;
+}
+
+.prose[data-template='wenyi'] h3 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--accent);
+  margin: 28px 0 10px;
+  padding-bottom: 4px;
+  border-bottom: 1px dotted var(--border);
+}
+
+.prose[data-template='wenyi'] h4 {
+  font-family: var(--prose-font);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin: 20px 0 8px;
+}
+
+.prose[data-template='wenyi'] blockquote {
+  border: none;
+  padding: 16px 28px;
+  margin: 32px 0;
+  background: transparent;
+  font-style: italic;
+  color: var(--gray-600);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+  line-height: 1.8;
+  text-align: center;
+  font-weight: 400;
+  position: relative;
+}
+.prose[data-template='wenyi'] blockquote::before {
+  content: '\201C';
+  display: block;
+  text-align: center;
+  font-size: 52px;
+  color: var(--accent);
+  line-height: 0.6;
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-style: normal;
+  margin-bottom: 12px;
+}
+.prose[data-template='wenyi'] blockquote p {
+  margin: 0 0 6px;
+  color: var(--gray-600);
+  font-style: italic;
+}
+
+.prose[data-template='wenyi'] hr {
+  border: none;
+  text-align: center;
+  margin: 40px 0;
+  height: auto;
+}
+.prose[data-template='wenyi'] hr::after {
+  content: '✦ ✦ ✦';
+  color: var(--accent);
+  font-size: 14px;
+  letter-spacing: 10px;
+}
+
+.prose[data-template='wenyi'] strong {
+  font-weight: 700;
+  color: var(--ink);
+}
+.prose[data-template='wenyi'] em {
+  font-style: italic;
+  color: var(--accent);
+}
+.prose[data-template='wenyi'] a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--accent);
+  text-decoration: none;
+}
+.prose[data-template='wenyi'] code {
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: var(--accent);
+  background: transparent;
+  padding: 0;
+}
+
+/* 首字下沉 */
+.prose[data-template='wenyi'] h1 + p::first-letter,
+.prose[data-template='wenyi'] h2 + p::first-letter {
+  font-size: 4em;
+  float: left;
+  line-height: 0.88;
+  padding: 6px 10px 0 0;
+  color: var(--accent);
+  font-family: Georgia, serif;
+  font-weight: 400;
+}
+
+.prose[data-template='wenyi'] ul,
+.prose[data-template='wenyi'] ol {
+  padding-left: 4px;
+  list-style: none;
+}
+.prose[data-template='wenyi'] ul > li {
+  position: relative;
+  padding-left: 28px;
+}
+.prose[data-template='wenyi'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 16px;
+  height: 1px;
+  background: var(--ink);
+}
+.prose[data-template='wenyi'] ol {
+  counter-reset: wenyi-ol;
+}
+.prose[data-template='wenyi'] ol > li {
+  counter-increment: wenyi-ol;
+  position: relative;
+  padding-left: 28px;
+}
+.prose[data-template='wenyi'] ol > li::before {
+  content: counter(wenyi-ol, lower-roman) '.';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 15px;
+}

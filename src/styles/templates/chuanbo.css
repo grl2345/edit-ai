@@ -1,0 +1,167 @@
+/* ============================================================
+   传播 · chuanbo —— Wired / National Geographic
+   签名：强冲击 · 色块标题 · 数字编号 · 信息密度感
+   ============================================================ */
+
+.prose[data-template='chuanbo'] {
+  font-size: 16px;
+  line-height: 1.85;
+  background-color: var(--paper);
+  padding: 32px 28px 64px;
+  border-radius: 14px;
+}
+
+.prose[data-template='chuanbo'] h1 {
+  font-family: var(--prose-font), 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.2;
+  color: var(--paper);
+  background: var(--ink);
+  padding: 16px 18px;
+  margin: 0 0 24px;
+  letter-spacing: -0.5px;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.prose[data-template='chuanbo'] h1::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 28px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.prose[data-template='chuanbo'] h2 {
+  font-family: var(--prose-font), sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--ink);
+  margin: 40px 0 14px;
+  padding: 0 0 10px;
+  border-bottom: 3px solid var(--ink);
+  letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.prose[data-template='chuanbo'] h3 {
+  font-family: var(--prose-font), sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--ink);
+  margin: 28px 0 10px;
+  padding-left: 12px;
+  border-left: 3px solid var(--accent);
+}
+
+.prose[data-template='chuanbo'] h4 {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 20px 0 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.prose[data-template='chuanbo'] blockquote {
+  border: none;
+  background: var(--accent);
+  color: var(--paper);
+  padding: 16px 18px;
+  margin: 24px 0;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.55;
+}
+.prose[data-template='chuanbo'] blockquote p {
+  color: var(--paper);
+  margin: 0 0 6px;
+}
+
+.prose[data-template='chuanbo'] hr {
+  border: none;
+  margin: 32px 0;
+  height: 4px;
+  background: var(--accent);
+  width: 36px;
+}
+
+.prose[data-template='chuanbo'] strong {
+  font-weight: 800;
+  color: var(--ink);
+}
+.prose[data-template='chuanbo'] em {
+  color: var(--accent);
+  font-style: italic;
+}
+.prose[data-template='chuanbo'] a {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.prose[data-template='chuanbo'] code {
+  background: var(--gray-100);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+.prose[data-template='chuanbo'] th {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: none;
+  text-align: left;
+}
+
+.prose[data-template='chuanbo'] ul,
+.prose[data-template='chuanbo'] ol {
+  padding-left: 4px;
+  list-style: none;
+}
+.prose[data-template='chuanbo'] ul > li {
+  position: relative;
+  padding-left: 22px;
+}
+.prose[data-template='chuanbo'] ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+}
+.prose[data-template='chuanbo'] ol {
+  counter-reset: chuanbo-ol;
+}
+.prose[data-template='chuanbo'] ol > li {
+  counter-increment: chuanbo-ol;
+  position: relative;
+  padding-left: 36px;
+}
+.prose[data-template='chuanbo'] ol > li::before {
+  content: counter(chuanbo-ol, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.85;
+}

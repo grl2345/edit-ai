@@ -1887,6 +1887,11 @@
   padding: 40px 32px 80px;
 }
 
+/* 字号档位覆盖：--preview-font-size 由 JS 写入 :root */
+.preview-inner.prose {
+  font-size: var(--preview-font-size, 16.5px);
+}
+
 /* ============ Toast ============ */
 .toast {
   position: fixed;

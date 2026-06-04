@@ -1,8 +1,10 @@
 import {
   FontId,
+  FontSizeId,
   PaletteId,
   TemplateId,
   ThemeMode,
+  getFontSizePx,
   getFontStack,
   getPaletteVars,
 } from './themes';
@@ -187,7 +189,8 @@ export function toWeChatHTML(
   palette: PaletteId,
   font: FontId,
   theme: ThemeMode,
-  template: TemplateId
+  template: TemplateId,
+  fontSize: FontSizeId = 'medium'
 ): string {
   const ctx = buildCtx(palette, font, theme);
   const tpl = document.createElement('template');
@@ -199,9 +202,10 @@ export function toWeChatHTML(
 
   const section = document.createElement('section');
   const wrapperStyle = wrapperStyleFor(template, ctx);
+  const fsPx = getFontSizePx(fontSize);
   section.setAttribute(
     'style',
-    `font-family:${ctx.prose};color:${ctx.ink};max-width:100%;line-height:1.85;font-size:16px;${wrapperStyle}`
+    `font-family:${ctx.prose};color:${ctx.ink};max-width:100%;line-height:1.85;font-size:${fsPx}px;${wrapperStyle}`
   );
   section.appendChild(root);
   return section.outerHTML;
@@ -212,31 +216,33 @@ function wrapperStyleFor(template: TemplateId, ctx: InlineCtx): string {
   // background-image / gradient / radial 公众号会 strip，所以只用 solid color。
   // padding 让正文不贴边。每个版式可以微调底色。
   const bg: Record<TemplateId, string> = {
-    qingye: ctx.surface,      // 点阵网格降级为纯色卡
+    qingye: ctx.surface,
     haibao: ctx.paper,
     ningmeng: ctx.paper,
     chongying: ctx.paper,
     huabao: ctx.paper,
-    yinzhang: ctx.surface,    // 米色卡
+    yinzhang: ctx.surface,
     geshan: ctx.paper,
-    shouzha: ctx.surface,     // 信笺
+    shouzha: ctx.surface,
     jiguang: ctx.paper,
-    zhangye: ctx.surface,     // 章页 cream
+    zhangye: ctx.surface,
     juanshou: ctx.paper,
     jiekan: ctx.paper,
     yuebao: ctx.paper,
-    hongbang: 'transparent',  // 红榜走"无卡片裸排"——h1/h2/数字编号本身已经够强，再套底色反而干扰
+    hongbang: 'transparent',
+    shishang: ctx.paper,
+    chuanbo: ctx.paper,
+    wenyi: ctx.paper,
   };
   const bgValue = bg[template];
-  // transparent 时不输出 background / border-radius，公众号编辑器里就完全不画矩形
   if (bgValue === 'transparent') {
-    return `padding:8px 0;`;
+    return `padding:6px 0;`;
   }
-  return `background:${bgValue};padding:28px 22px;border-radius:10px;`;
+  return `background:${bgValue};padding:16px 14px;border-radius:8px;`;
 }
 
 function applyShared(root: ParentNode, ctx: InlineCtx) {
-  mergeStyle(root, 'p', `font-family:${ctx.prose};font-size:16px;line-height:1.85;margin:0 0 16px;color:${ctx.ink}`);
+  mergeStyle(root, 'p', `font-family:${ctx.prose};font-size:16px;line-height:1.8;margin:0 0 12px;color:${ctx.ink}`);
   mergeStyle(root, 'em', `font-style:italic`);
   mergeStyle(root, 'figure', `margin:28px 0;text-align:center`);
   mergeStyle(root, 'figure img', `max-width:100%;display:block;margin:0 auto;border-radius:6px`);
@@ -246,7 +252,7 @@ function applyShared(root: ParentNode, ctx: InlineCtx) {
   mergeStyle(root, 'mark', `background:${ctx.accentGlow};color:${ctx.accent};font-weight:600;padding:1px 3px;border-radius:2px`);
   // 自动元素：chip / def-list / callout 的 inline 基线（每个版式可以再覆盖）
   applyAutoElementBase(root, ctx);
-  mergeStyle(root, 'li', `margin:0 0 8px;line-height:1.85;color:${ctx.ink};font-family:${ctx.prose};font-size:16px`);
+  mergeStyle(root, 'li', `margin:0 0 6px;line-height:1.8;color:${ctx.ink};font-family:${ctx.prose};font-size:16px`);
   mergeStyle(root, 'li > p', `margin:0 0 4px`);
   mergeStyle(root, 'img', `max-width:100%;border-radius:8px;margin:18px 0;display:block`);
   mergeStyle(root, 'table', `width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;font-family:${ctx.prose}`);
@@ -357,6 +363,9 @@ function dispatchTemplate(root: ParentNode, ctx: InlineCtx, template: TemplateId
     case 'jiekan': return applyJiekan(root, ctx);
     case 'yuebao': return applyYuebao(root, ctx);
     case 'hongbang': return applyHongbang(root, ctx);
+    case 'shishang': return applyShishang(root, ctx);
+    case 'chuanbo': return applyChuanbo(root, ctx);
+    case 'wenyi': return applyWenyi(root, ctx);
   }
 }
 
@@ -1055,6 +1064,141 @@ function applyHongbang(root: ParentNode, ctx: InlineCtx) {
   setStyle(root, 'mark', `background:${ctx.accentGlow};color:${ctx.accent};font-weight:700;padding:1px 4px;border-radius:2px`);
   setStyle(root, 'a', `color:${ctx.ink};text-decoration:none;border-bottom:2px solid ${ctx.accent};font-weight:600`);
   setStyle(root, 'code', `background:${ctx.gray100};color:${ctx.accent};padding:2px 7px;border-radius:4px;font-family:${MONO};font-size:13.5px;font-weight:600`);
+}
+
+/* ============================================================
+   15. 时尚 shishang —— Vogue / Harper's Bazaar
+   ============================================================ */
+function applyShishang(root: ParentNode, ctx: InlineCtx) {
+  // h1：全大写极细衬线 + 下方一条细线
+  root.querySelectorAll('h1').forEach((h) => {
+    (h as HTMLElement).setAttribute('style', `font-family:${SERIF};font-size:36px;font-weight:300;line-height:1.15;letter-spacing:4px;text-transform:uppercase;color:${ctx.ink};margin:12px 0 20px;padding:0 0 16px;border-bottom:1px solid ${ctx.ink};border-top:none`);
+  });
+  // h2：细斜体 + accent 点
+  root.querySelectorAll('h2').forEach((h) => {
+    (h as HTMLElement).setAttribute('style', `font-family:${SERIF};font-size:20px;font-weight:400;font-style:italic;line-height:1.4;color:${ctx.ink};margin:36px 0 14px;padding:0;border:none;letter-spacing:.5px;display:flex;align-items:center;gap:10px`);
+    const dot = span('', `display:inline-block;width:5px;height:5px;border-radius:50%;background:${ctx.accent};flex-shrink:0`);
+    h.insertBefore(dot, h.firstChild);
+  });
+  setStyle(root, 'h3', `font-family:${SERIF};font-size:16px;font-weight:400;font-style:italic;letter-spacing:1px;color:${ctx.accent};margin:24px 0 10px;text-transform:uppercase;font-size:13px`);
+  setStyle(root, 'h4', `font-family:${ctx.prose};font-size:14px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${ctx.gray500};margin:20px 0 8px`);
+
+  root.querySelectorAll('blockquote').forEach((b) => {
+    (b as HTMLElement).setAttribute('style', `border:none;padding:20px 0 20px 24px;border-left:1px solid ${ctx.accent};margin:28px 0;background:transparent;font-style:italic;color:${ctx.ink};font-family:${SERIF};font-size:18px;line-height:1.7;font-weight:300`);
+  });
+  setStyle(root, 'blockquote p', `margin:0 0 6px;color:${ctx.ink};font-style:italic`);
+
+  replaceHr(root, () => {
+    const w = div(`display:flex;align-items:center;gap:14px;margin:36px 0`);
+    w.appendChild(div(`flex:1;height:1px;background:${ctx.ink}`));
+    w.appendChild(span('◆', `color:${ctx.accent};font-size:10px;flex-shrink:0`));
+    w.appendChild(div(`flex:1;height:1px;background:${ctx.ink}`));
+    return w;
+  });
+
+  setStyle(root, 'strong', `font-weight:700;color:${ctx.ink}`);
+  setStyle(root, 'em', `font-style:italic;color:${ctx.accent}`);
+  setStyle(root, 'a', `color:${ctx.ink};border-bottom:1px solid ${ctx.accent};text-decoration:none`);
+  setStyle(root, 'code', `font-family:${SERIF};font-style:italic;color:${ctx.accent};background:transparent;padding:0`);
+
+  injectListMarkers(root,
+    () => span('', `display:inline-block;width:20px;height:1px;background:${ctx.accent};margin-right:10px;vertical-align:middle;flex-shrink:0`),
+    (_li, n) => span(String(n) + '.', `color:${ctx.accent};font-family:${SERIF};font-style:italic;font-size:16px;font-weight:300;margin-right:10px;flex-shrink:0`)
+  );
+  setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 14px`);
+}
+
+/* ============================================================
+   16. 传播 chuanbo —— Wired / National Geographic
+   ============================================================ */
+function applyChuanbo(root: ParentNode, ctx: InlineCtx) {
+  const SANS = `${ctx.prose},'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif`;
+
+  // h1：accent 色块背景 + 白字
+  root.querySelectorAll('h1').forEach((h) => {
+    (h as HTMLElement).setAttribute('style', `font-family:${SANS};font-size:28px;font-weight:900;line-height:1.2;color:${ctx.paper};background:${ctx.ink};padding:16px 18px;margin:0 0 20px;letter-spacing:-.5px;border:none`);
+    // accent 左侧条
+    const bar = span('', `display:inline-block;width:5px;height:28px;background:${ctx.accent};margin-right:14px;vertical-align:middle;flex-shrink:0`);
+    h.insertBefore(bar, h.firstChild);
+  });
+  // h2：大写 mono label + 粗横线
+  let cbI = 0;
+  root.querySelectorAll('h2').forEach((h) => {
+    cbI++;
+    (h as HTMLElement).setAttribute('style', `font-family:${SANS};font-size:21px;font-weight:800;line-height:1.3;color:${ctx.ink};margin:36px 0 14px;padding:0 0 10px;border-bottom:3px solid ${ctx.ink};letter-spacing:-.2px`);
+    const label = span(pad2(cbI), `font-family:${MONO};font-size:11px;font-weight:700;color:${ctx.paper};background:${ctx.accent};padding:2px 7px;margin-right:12px;vertical-align:3px;letter-spacing:1px`);
+    h.insertBefore(label, h.firstChild);
+  });
+  root.querySelectorAll('h3').forEach((h) => {
+    (h as HTMLElement).setAttribute('style', `font-family:${SANS};font-size:17px;font-weight:700;line-height:1.4;color:${ctx.ink};margin:24px 0 10px;padding-left:10px;border-left:3px solid ${ctx.accent}`);
+  });
+  setStyle(root, 'h4', `font-family:${MONO};font-size:11px;font-weight:700;color:${ctx.accent};margin:20px 0 8px;letter-spacing:2px;text-transform:uppercase`);
+
+  root.querySelectorAll('blockquote').forEach((b) => {
+    (b as HTMLElement).setAttribute('style', `border:none;background:${ctx.accent};color:${ctx.paper};padding:16px 18px;margin:24px 0;font-style:normal;font-weight:600;font-size:17px;line-height:1.55;font-family:${SANS}`);
+  });
+  setStyle(root, 'blockquote p', `color:${ctx.paper};margin:0 0 6px`);
+
+  replaceHr(root, () => {
+    const w = div(`margin:32px 0;display:flex;align-items:center;gap:8px`);
+    w.appendChild(div(`width:36px;height:4px;background:${ctx.accent}`));
+    w.appendChild(div(`flex:1;height:1px;background:${ctx.border}`));
+    return w;
+  });
+
+  setStyle(root, 'strong', `font-weight:800;color:${ctx.ink}`);
+  setStyle(root, 'em', `color:${ctx.accent};font-style:italic`);
+  setStyle(root, 'a', `color:${ctx.accent};font-weight:700;text-decoration:underline`);
+  setStyle(root, 'code', `background:${ctx.gray100};color:${ctx.ink};font-family:${MONO};font-size:13px;padding:2px 6px;border-radius:2px;font-weight:600`);
+  setStyle(root, 'th', `background:${ctx.ink};color:${ctx.paper};padding:10px 14px;font-family:${SANS};font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;border-bottom:none;text-align:left`);
+
+  injectListMarkers(root,
+    () => span('', `display:inline-block;width:8px;height:8px;background:${ctx.accent};margin-right:10px;vertical-align:middle;flex-shrink:0`),
+    (_li, n) => span(pad2(n), `font-family:${MONO};font-size:13px;font-weight:800;color:${ctx.accent};margin-right:10px;flex-shrink:0`)
+  );
+  setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 14px`);
+}
+
+/* ============================================================
+   17. 文艺 wenyi —— Paris Review / literary
+   ============================================================ */
+function applyWenyi(root: ParentNode, ctx: InlineCtx) {
+  // h1：居中 + 小型大写 + 细线框
+  root.querySelectorAll('h1').forEach((h) => {
+    (h as HTMLElement).setAttribute('style', `font-family:${SERIF};font-size:28px;font-weight:400;line-height:1.3;text-align:center;color:${ctx.ink};margin:12px 0 28px;padding:18px 0;border-top:1px solid ${ctx.ink};border-bottom:1px solid ${ctx.ink};letter-spacing:2px`);
+  });
+  // h2：居中罗马数字 + 细斜体
+  let wyI = 0;
+  root.querySelectorAll('h2').forEach((h) => {
+    wyI++;
+    (h as HTMLElement).setAttribute('style', `font-family:${SERIF};font-size:19px;font-weight:400;font-style:italic;text-align:center;color:${ctx.ink};margin:40px 0 16px;padding:0;border:none;letter-spacing:.5px`);
+    const num = div(`text-align:center;font-family:${SERIF};font-size:13px;letter-spacing:4px;color:${ctx.accent};font-style:normal;font-weight:400;margin-bottom:6px`, toRoman(wyI));
+    (h as HTMLElement).parentNode?.insertBefore(num, h);
+  });
+  setStyle(root, 'h3', `font-family:${SERIF};font-size:16px;font-weight:400;font-style:italic;color:${ctx.accent};margin:28px 0 10px;padding-bottom:4px;border-bottom:1px dotted ${ctx.border}`);
+  setStyle(root, 'h4', `font-family:${ctx.prose};font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${ctx.gray500};margin:20px 0 8px`);
+
+  root.querySelectorAll('blockquote').forEach((b) => {
+    (b as HTMLElement).setAttribute('style', `border:none;padding:14px 28px;margin:28px 0;background:transparent;font-style:italic;color:${ctx.gray600};font-family:${SERIF};font-size:17px;line-height:1.8;text-align:center;font-weight:400`);
+    const open = span('"', `font-size:44px;color:${ctx.accent};line-height:.6;font-family:${SERIF};font-weight:400;font-style:normal;display:block;text-align:center;margin-bottom:8px`);
+    b.insertBefore(open, b.firstChild);
+  });
+  setStyle(root, 'blockquote p', `margin:0 0 6px;color:${ctx.gray600};font-style:italic`);
+
+  replaceHr(root, () => div(`text-align:center;color:${ctx.accent};font-size:18px;margin:40px 0;line-height:1;letter-spacing:12px`, '✦ ✦ ✦'));
+
+  setStyle(root, 'strong', `font-weight:700;color:${ctx.ink}`);
+  setStyle(root, 'em', `font-style:italic;color:${ctx.accent}`);
+  setStyle(root, 'a', `color:${ctx.ink};border-bottom:1px solid ${ctx.accent};text-decoration:none`);
+  setStyle(root, 'code', `font-family:${SERIF};font-style:italic;color:${ctx.accent};background:transparent;padding:0`);
+
+  injectListMarkers(root,
+    () => span('', `display:inline-block;width:16px;height:1px;background:${ctx.ink};margin-right:10px;vertical-align:middle;flex-shrink:0`),
+    (_li, n) => span(toRoman(n).toLowerCase() + '.', `color:${ctx.accent};font-family:${SERIF};font-style:italic;font-size:15px;font-weight:400;margin-right:10px;flex-shrink:0`)
+  );
+  setStyle(root, 'ul,ol', `padding-left:4px;list-style:none;margin:0 0 14px`);
+
+  applyDropCap(root, `font-size:4em;float:left;line-height:.88;padding:6px 10px 0 0;font-weight:400;color:${ctx.accent};font-family:${SERIF}`);
 }
 
 /* ---------------- 推特 / X：清理后的纯文本 ---------------- */

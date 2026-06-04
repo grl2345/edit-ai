@@ -144,6 +144,7 @@ export const en: Messages = {
     aiRecommendBanner: 'Suggested',
     palettes: 'Palette',
     fonts: 'Font',
+    fontSize: 'Size',
     theme: 'Theme',
     themeLight: 'Light',
     themeDark: 'Dark',
@@ -151,7 +152,7 @@ export const en: Messages = {
   gallery: {
     ariaLabel: 'Template gallery',
     title: 'Template gallery',
-    subtitle: '14 templates · by style · click to apply',
+    subtitle: '17 templates · by style · click to apply',
     aiRecommendTitle: 'Recommend top 3 for current content',
     close: 'Close',
     all: 'All',
@@ -241,6 +242,9 @@ export const en: Messages = {
       jiekan: { name: 'Street', desc: 'Magazine · Monocle' },
       yuebao: { name: 'Monthly', desc: 'Magazine · data' },
       hongbang: { name: 'Red list', desc: 'Bold red · heavy' },
+      shishang: { name: 'Fashion', desc: 'Magazine · Vogue' },
+      chuanbo: { name: 'Media', desc: 'Magazine · Wired' },
+      wenyi: { name: 'Literary', desc: 'Book · elegant' },
     },
     thumb: {
       h2: 'Heading 2',

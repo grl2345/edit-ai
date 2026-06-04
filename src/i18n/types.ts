@@ -148,6 +148,7 @@ export interface Messages {
     aiRecommendBanner: string;
     palettes: string;
     fonts: string;
+    fontSize: string;
     theme: string;
     themeLight: string;
     themeDark: string;

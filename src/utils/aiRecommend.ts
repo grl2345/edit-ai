@@ -153,6 +153,24 @@ const RULES: Record<TemplateId, Rule[]> = {
     { weight: 2, test: () => true, reason: '通用 · 干净的默认版式' },
     { weight: 2, test: (f) => f.blockquotes >= 1 && f.images >= 1, reason: '图文小品' },
   ],
+  shishang: [
+    { weight: 6, test: (f) => f.literary >= 2, reason: '文学 / 时尚语感' },
+    { weight: 4, test: (f) => f.chars > 1000 && f.images >= 2, reason: '图文并茂' },
+    { weight: 3, test: (f) => f.blockquotes >= 2, reason: '引用丰富' },
+    { weight: 2, test: (f) => f.h1 >= 1 && f.h2 >= 1, reason: '标题层次清晰' },
+  ],
+  chuanbo: [
+    { weight: 6, test: (f) => f.commercial >= 2, reason: '商业 / 科技感强' },
+    { weight: 5, test: (f) => f.h2 >= 3 && f.chars > 1500, reason: '多章节报道' },
+    { weight: 4, test: (f) => f.data >= 2, reason: '数据感强' },
+    { weight: 2, test: (f) => f.enWords > 25, reason: '英文术语多' },
+  ],
+  wenyi: [
+    { weight: 7, test: (f) => f.literary >= 2 && f.codeBlocks === 0, reason: '文学散文' },
+    { weight: 5, test: (f) => f.chars > 2000 && f.h2 >= 2, reason: '长篇叙述' },
+    { weight: 3, test: (f) => f.blockquotes >= 2, reason: '引用丰富' },
+    { weight: 2, test: (f) => f.chineseChars / (f.enWords + 1) > 10, reason: '中文为主' },
+  ],
 };
 
 export function recommend(markdown: string): Recommendation[] {
