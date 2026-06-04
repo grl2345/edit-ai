@@ -25,6 +25,9 @@ import juanshouCss from '../styles/templates/juanshou.css?raw';
 import jiekanCss from '../styles/templates/jiekan.css?raw';
 import yuebaoCss from '../styles/templates/yuebao.css?raw';
 import hongbangCss from '../styles/templates/hongbang.css?raw';
+import shishangCss from '../styles/templates/shishang.css?raw';
+import chuanboCss from '../styles/templates/chuanbo.css?raw';
+import wenyiCss from '../styles/templates/wenyi.css?raw';
 
 const TEMPLATE_CSS: Record<TemplateId, string> = {
   qingye: qingyeCss,
@@ -41,6 +44,9 @@ const TEMPLATE_CSS: Record<TemplateId, string> = {
   jiekan: jiekanCss,
   yuebao: yuebaoCss,
   hongbang: hongbangCss,
+  shishang: shishangCss,
+  chuanbo: chuanboCss,
+  wenyi: wenyiCss,
 };
 
 const FONT_STACK_SANS =

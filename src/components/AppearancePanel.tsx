@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useI18n } from '../i18n';
-import { FontId, PaletteId, TemplateId, ThemeMode, getSidebarTemplates } from '../utils/themes';
+import { FONT_SIZES, FontId, FontSizeId, PaletteId, TemplateId, ThemeMode, getSidebarTemplates } from '../utils/themes';
 import { recommend, Recommendation } from '../utils/aiRecommend';
 import TemplateThumb from './TemplateThumb';
 import TemplateGallery from './TemplateGallery';
@@ -8,11 +8,13 @@ import TemplateGallery from './TemplateGallery';
 export interface AppearancePanelProps {
   palette: PaletteId;
   font: FontId;
+  fontSize: FontSizeId;
   theme: ThemeMode;
   template: TemplateId;
   content?: string;
   onPalette(id: PaletteId): void;
   onFont(id: FontId): void;
+  onFontSize(id: FontSizeId): void;
   onTheme(t: ThemeMode): void;
   onTemplate(id: TemplateId): void;
 }
@@ -20,11 +22,13 @@ export interface AppearancePanelProps {
 export default function AppearancePanel({
   palette,
   font,
+  fontSize,
   theme,
   template,
   content,
   onPalette,
   onFont,
+  onFontSize,
   onTheme,
   onTemplate,
 }: AppearancePanelProps) {
@@ -182,6 +186,24 @@ export default function AppearancePanel({
             >
               <span className="font-chip-name">{f.name}</span>
               <span className="font-chip-desc">{f.desc}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="appearance-row">
+        <span className="appearance-label">{t.appearance.fontSize}</span>
+        <div className="theme-seg" role="tablist">
+          {FONT_SIZES.map((s) => (
+            <button
+              key={s.id}
+              className={fontSize === s.id ? 'active' : ''}
+              onClick={() => onFontSize(s.id)}
+              role="tab"
+              aria-selected={fontSize === s.id}
+              title={`${s.name} · ${s.px}px`}
+            >
+              {s.name}
             </button>
           ))}
         </div>

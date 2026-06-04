@@ -1,6 +1,7 @@
 export type PaletteId = 'chushaa' | 'qingmo' | 'mohei' | 'molan' | 'liyuan';
 export type FontId = 'wenkai' | 'songti' | 'kaiti' | 'heiti';
 export type ThemeMode = 'light' | 'dark';
+export type FontSizeId = 'small' | 'medium' | 'large';
 export type TemplateId =
   | 'qingye'
   | 'haibao'
@@ -15,7 +16,10 @@ export type TemplateId =
   | 'juanshou'
   | 'jiekan'
   | 'yuebao'
-  | 'hongbang';
+  | 'hongbang'
+  | 'shishang'
+  | 'chuanbo'
+  | 'wenyi';
 
 export interface PaletteMeta {
   id: PaletteId;
@@ -28,6 +32,12 @@ export interface FontMeta {
   id: FontId;
   name: string;
   desc: string;
+}
+
+export interface FontSizeMeta {
+  id: FontSizeId;
+  name: string;
+  px: number;
 }
 
 export type TemplateCategory =
@@ -69,6 +79,14 @@ export const FONTS: FontMeta[] = [
   { id: 'heiti', name: '苹方·黑体', desc: '简洁 · 现代' },
 ];
 
+export const FONT_SIZES: FontSizeMeta[] = [
+  { id: 'small', name: '小', px: 14 },
+  { id: 'medium', name: '中', px: 16 },
+  { id: 'large', name: '大', px: 18 },
+];
+
+export const DEFAULT_FONT_SIZE: FontSizeId = 'medium';
+
 export const TEMPLATES: TemplateMeta[] = [
   { id: 'qingye', name: '晴野', desc: '点阵 · 大引号', category: 'book' },
   { id: 'haibao', name: '海报', desc: '反白 · hero', category: 'poster' },
@@ -84,16 +102,19 @@ export const TEMPLATES: TemplateMeta[] = [
   { id: 'jiekan', name: '街刊', desc: '杂志 · Monocle', category: 'magazine' },
   { id: 'yuebao', name: '月报', desc: '杂志 · 数据感', category: 'magazine' },
   { id: 'hongbang', name: '红榜', desc: '大红 · 黑体粗', category: 'poster' },
+  { id: 'shishang', name: '时尚', desc: '杂志 · Vogue 风', category: 'magazine' },
+  { id: 'chuanbo', name: '传播', desc: '杂志 · Wired 风', category: 'magazine' },
+  { id: 'wenyi', name: '文艺', desc: '文学 · 简约优雅', category: 'book' },
 ];
 
 /** 侧栏快捷展示的常用版式（其余在「查看全部」画廊） */
 export const SIDEBAR_FEATURED_TEMPLATES: TemplateId[] = [
   'qingye',
   'haibao',
-  'ningmeng',
-  'hongbang',
+  'shishang',
+  'chuanbo',
+  'wenyi',
   'jiekan',
-  'yuebao',
 ];
 
 /** 侧栏版式列表：当前选中置顶 + 常用版式，去重 */
@@ -300,4 +321,10 @@ export function isFont(v: unknown): v is FontId {
 }
 export function isTemplate(v: unknown): v is TemplateId {
   return typeof v === 'string' && TEMPLATES.some((t) => t.id === v);
+}
+export function isFontSize(v: unknown): v is FontSizeId {
+  return typeof v === 'string' && FONT_SIZES.some((s) => s.id === v);
+}
+export function getFontSizePx(id: FontSizeId): number {
+  return FONT_SIZES.find((s) => s.id === id)?.px ?? 16;
 }

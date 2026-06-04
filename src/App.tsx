@@ -27,14 +27,18 @@ import {
 } from './utils/storage';
 import {
   DEFAULT_FONT,
+  DEFAULT_FONT_SIZE,
   DEFAULT_PALETTE,
   FontId,
+  FontSizeId,
   PaletteId,
   TemplateId,
   ThemeMode,
   TEMPLATE_STORAGE_KEY,
+  getFontSizePx,
   getStoredTemplate,
   isFont,
+  isFontSize,
   isPalette,
 } from './utils/themes';
 
@@ -43,6 +47,7 @@ type Tab = 'edit' | 'preview';
 const THEME_KEY = 'markdown-ai:theme';
 const PALETTE_KEY = 'markdown-ai:palette';
 const FONT_KEY = 'markdown-ai:font';
+const FONT_SIZE_KEY = 'markdown-ai:font-size';
 const TEMPLATE_KEY = TEMPLATE_STORAGE_KEY;
 const SIDEBAR_KEY = 'markdown-ai:sidebar-collapsed';
 
@@ -64,6 +69,11 @@ export default function App() {
   const [font, setFont] = useState<FontId>(() => {
     const v = localStorage.getItem(FONT_KEY);
     return isFont(v) ? v : DEFAULT_FONT;
+  });
+
+  const [fontSize, setFontSize] = useState<FontSizeId>(() => {
+    const v = localStorage.getItem(FONT_SIZE_KEY);
+    return isFontSize(v) ? v : DEFAULT_FONT_SIZE;
   });
 
   const [template, setTemplate] = useState<TemplateId>(() => getStoredTemplate());
@@ -162,11 +172,13 @@ export default function App() {
     r.setAttribute('data-palette', palette);
     r.setAttribute('data-font', font);
     r.setAttribute('data-template', template);
+    r.style.setProperty('--preview-font-size', `${getFontSizePx(fontSize)}px`);
     localStorage.setItem(THEME_KEY, theme);
     localStorage.setItem(PALETTE_KEY, palette);
     localStorage.setItem(FONT_KEY, font);
+    localStorage.setItem(FONT_SIZE_KEY, fontSize);
     localStorage.setItem(TEMPLATE_KEY, template);
-  }, [theme, palette, font, template]);
+  }, [theme, palette, font, fontSize, template]);
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_KEY, sidebarCollapsed ? '1' : '0');
@@ -348,7 +360,7 @@ export default function App() {
     setCopyMenuOpen(false);
     const node = previewRef.current;
     if (!node) return;
-    const styled = toWeChatHTML(node.innerHTML, palette, font, theme, template);
+    const styled = toWeChatHTML(node.innerHTML, palette, font, theme, template, fontSize);
     const ok = await writeRich(styled, node.innerText);
     showToast(ok ? t.toast.copyWechatOk : t.toast.copyWechatFail);
   }
@@ -790,11 +802,13 @@ export default function App() {
           appearance={{
             palette,
             font,
+            fontSize,
             theme,
             template,
             content: active?.content ?? '',
             onPalette: setPalette,
             onFont: setFont,
+            onFontSize: setFontSize,
             onTheme: setTheme,
             onTemplate: setTemplate,
           }}
