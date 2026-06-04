@@ -148,11 +148,23 @@ function injectListMarkers(
   ulMarker: (li: HTMLElement) => HTMLElement | null,
   olMarker: (li: HTMLElement, n: number) => HTMLElement | null
 ) {
+  function wrapLi(li: HTMLElement, marker: HTMLElement) {
+    // 把 li 原有内容收进 wrapper，marker + wrapper 并排（flex），
+    // 避免 li > p 作为块级元素顶开 marker 到上一行
+    const wrapper = document.createElement('span');
+    wrapper.setAttribute('style', 'flex:1;min-width:0;display:block');
+    while (li.firstChild) wrapper.appendChild(li.firstChild);
+    li.appendChild(marker);
+    li.appendChild(wrapper);
+    const prev = li.getAttribute('style') ?? '';
+    li.setAttribute('style', (prev ? prev + ';' : '') + 'display:flex;align-items:flex-start');
+  }
+
   root.querySelectorAll('ul').forEach((ul) => {
     Array.from(ul.children).forEach((li) => {
       if (!(li instanceof HTMLElement) || li.tagName !== 'LI') return;
       const m = ulMarker(li);
-      if (m) li.insertBefore(m, li.firstChild);
+      if (m) wrapLi(li, m);
     });
   });
   root.querySelectorAll('ol').forEach((ol) => {
@@ -161,7 +173,7 @@ function injectListMarkers(
       if (!(li instanceof HTMLElement) || li.tagName !== 'LI') return;
       i++;
       const m = olMarker(li, i);
-      if (m) li.insertBefore(m, li.firstChild);
+      if (m) wrapLi(li, m);
     });
   });
 }
@@ -235,6 +247,7 @@ function applyShared(root: ParentNode, ctx: InlineCtx) {
   // 自动元素：chip / def-list / callout 的 inline 基线（每个版式可以再覆盖）
   applyAutoElementBase(root, ctx);
   mergeStyle(root, 'li', `margin:0 0 8px;line-height:1.85;color:${ctx.ink};font-family:${ctx.prose};font-size:16px`);
+  mergeStyle(root, 'li > p', `margin:0 0 4px`);
   mergeStyle(root, 'img', `max-width:100%;border-radius:8px;margin:18px 0;display:block`);
   mergeStyle(root, 'table', `width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;font-family:${ctx.prose}`);
   mergeStyle(root, 'th', `text-align:left;padding:10px 14px;background:${ctx.gray100};font-weight:600;border-bottom:2px solid ${ctx.border};color:${ctx.ink}`);
